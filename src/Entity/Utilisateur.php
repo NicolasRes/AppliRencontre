@@ -4,9 +4,13 @@ namespace App\Entity;
 
 use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
-class Utilisateur
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -27,6 +31,9 @@ class Utilisateur
 
     #[ORM\Column]
     private ?bool $accordGdpr = null;
+
+    #[ORM\Column]
+    private ?bool $isModo = null;
 
     public function getId(): ?int
     {
@@ -92,4 +99,21 @@ class Utilisateur
 
         return $this;
     }
+
+    public function isModo(): ?bool
+    {
+        return $this->isModo;
+    }
+
+    public function setIsModo(bool $isModo): static
+    {
+        $this->isModo = $isModo;
+
+        return $this;
+    }
+
+    public function getUserIdentifier(): string { return (string) $this->email; }
+    public function getRoles(): array { return $this->isModo ? ['ROLE_MODO'] : ['ROLE_USER']; }
+    public function eraseCredentials(): void {}
+    public function getPassword(): ?string { return $this->mdp; }
 }
