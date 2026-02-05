@@ -51,6 +51,8 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
+            $this->addFlash('success', 'Votre compte a été créé. Un modérateur doit le valider avant que vous puissiez vous connecter.');
+            
             return $this->redirectToRoute('app_login');
         }
 

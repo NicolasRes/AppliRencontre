@@ -23,7 +23,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 40)]
+    #[ORM\Column(length: 255)]
     private ?string $mdp = null;
 
     #[ORM\Column(length: 50, nullable: true)]
@@ -112,8 +112,23 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getUserIdentifier(): string { return (string) $this->email; }
-    public function getRoles(): array { return $this->isModo ? ['ROLE_MODO'] : ['ROLE_USER']; }
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+    public function getRoles(): array
+    {
+        $roles = [];
+        if ($this->isModo) {
+            $roles[] = 'ROLE_ADMIN';
+        }
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
     public function eraseCredentials(): void {}
-    public function getPassword(): ?string { return $this->mdp; }
+    public function getPassword(): ?string
+    {
+        return $this->mdp;
+    }
 }
