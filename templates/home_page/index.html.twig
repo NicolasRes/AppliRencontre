@@ -1,117 +1,38 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil - DateApp{% endblock %}
+{% block stylesheets %}
+    {# {{ parent() }} Pour eviter que le css pète tout #}
+
+    <link rel="stylesheet" href="{{ asset('css/app_design.css') }}">
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { 
-        margin: 1em auto;
-        font: 18px/1.5 sans-serif;
-        width: 100%;
-        max-width: 900px;
-    }
-    
-    .my-home-table {
-        border: 2px solid black;
-        border-radius: 10px;
-        width: 100%;
-        border-spacing: 0;
-        overflow: hidden;
-        display: block; 
-    }
+<div class="app-body-reset">
+    <div id="date-app-container">
+        <aside class="sidebar">
+            <h1 style="color: #ed3692; margin-bottom: 30px; font-family: sans-serif;">Tindr</h1>
+            {{ include('partials/_header_app.html.twig') }}
+        </aside>
 
-    .my-home-table tr {
-        display: flex;
-        width: 100%;
-        align-items: stretch; 
-    }
+        <main class="main-content">
+            <div class="profile-card">
+                <img class="profile-img" src="{{ asset('images/PlaceHolderProfil.jpg') }}" alt="Profil">
+            </div>
 
-    .my-home-table td {
-        border: 1px solid #eee;
-        padding: 0; 
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+            <div class="actions-overlay">
+                {# Refuser #}
+                <button class="action-btn">
+                    <img class="bg" src="{{ asset('images/Red.jpg') }}" alt="Red">
+                    <img class="icon" src="{{ asset('images/Denied.jpg') }}" alt="X">
+                </button>
 
-    /* --- LIGNE 1 : HEADER --- */
-    .td-header-text {
-        /* "flex: 1" dit au navigateur : prend tout l'espace disponible 
-           une fois que les icônes ont pris leur place fixe */
-        flex: 1; 
-        justify-content: flex-start !important; 
-        padding-left: 15px !important; 
-        font-weight: bold;
-        font-size: 24px; /* Agrandit le texte pour correspondre aux icônes */
-        background-color: #f8f9fa;
-    }
-
-    .td-header-icon {
-        /* On fixe une largeur précise en pixels pour que les images soient grandes */
-        width: 60px; 
-        height: 60px;
-        flex-shrink: 0; /* Empêche l'icône de s'écraser */
-    }
-
-    /* --- LIGNE 2 : BODY --- */
-    .td-action {
-        width: 60px; /* Même largeur que les icônes du haut pour l'équilibre */
-        flex-shrink: 0;
-    }
-
-    .td-profile {
-        flex: 1; /* Prend tout le centre */
-    }
-
-    /* --- IMAGES --- */
-    .full-fill-img {
-        width: 100%;
-        height: 100%;
-        display: block;
-        object-fit: cover; /* Remplit la case sans déformer */
-    }
-
-    .profile-img {
-        width: 100%;
-        height: auto;
-        min-height: 450px;
-        object-fit: cover;
-        display: block;
-    }
-</style>
-
-<div class="example-wrapper">
-    <table class="my-home-table">
-        <thead>
-            <tr>
-                <td class="td-header-text">
-                <input type="text"id="name" name="name"/>
-                </td>
-                
-                <td class="td-header-icon">
-                    <img class="full-fill-img" src="{{ asset('images/Messagerie.png') }}" alt="Msg">
-                </td>
-                <td class="td-header-icon">
-                    <img class="full-fill-img" src="{{ asset('images/Configuration.webp') }}" alt="Cfg">
-                </td>
-                <td class="td-header-icon">
-                    <img class="full-fill-img" src="{{ asset('images/thispersondoesnotexist.jpeg') }}" alt="Moi">
-                </td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="td-action">
-                    <img class="full-fill-img" src="{{ asset('images/Red.jpg') }}" alt="Denied">
-                </td>
-                <td class="td-profile">
-                    <img class="profile-img" src="{{ asset('images/PlaceHolderProfil.jpg') }}" alt="Profil">
-                </td>
-                <td class="td-action">
-                    <img class="full-fill-img" src="{{ asset('images/green.webp') }}" alt="Valid">
-                </td>
-            </tr>
-        </tbody>
-    </table>
+                {# Valider #}
+                <button class="action-btn">
+                    <img class="bg" src="{{ asset('images/green.webp') }}" alt="Green">
+                    <img class="icon" src="{{ asset('images/valid.webp') }}" alt="Check">
+                </button>
+            </div>
+        </main>
+    </div>
 </div>
 {% endblock %}
