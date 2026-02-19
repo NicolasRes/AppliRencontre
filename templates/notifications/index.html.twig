@@ -6,7 +6,15 @@
 <div class="displayNotifs">
     <h1>Notifications</h1>
     {% for notif in notifs %}
-        <h3>Type : {{notif.type}}</h3>
+        {% if notif.type == 0 %}
+            <h3>Bienvenue sur Tindr !</h3>
+        {% elseif notif.type == 1 %}
+            <h3>Message reçu</h3>
+        {% elseif notif.type == 2 %}
+            <h3>Vous avez un match !</h3>
+        {% elseif notif.type == -1 %}
+            <h3>Vous avez été signalé</h3>
+        {% endif %}
         <p>Message : {{notif.contenu}}</p>
         {% else %}
             <p>Vous n'avez aucune notifications</p>

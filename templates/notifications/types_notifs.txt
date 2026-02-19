@@ -1,0 +1,5 @@
+Les différents types de notifications :
+0 = Notif de bienvenue
+1 = Quand on a reçu un message
+2 = Match entre 2 personnes
+-1 = Une personne vous a signalé
