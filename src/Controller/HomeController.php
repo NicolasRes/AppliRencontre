@@ -17,8 +17,11 @@ class HomeController extends AbstractController
         if ($user && !$user->isAccordGdpr()) {
             // On le redirige ou on affiche le message d'attente
             return $this->render('security/waiting_validation.html.twig');
+        }elseif ($user && $user->isAccordGdpr()) {
+            // Si l'utilisateur est connecté et a validé le GDPR
+            return $this->render('home_page/index.html.twig');
         }
 
-        return $this->render('home_page/index.html.twig');
+        return $this->render('home/index.html.twig');
     }
 }
