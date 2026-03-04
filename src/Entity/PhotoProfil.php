@@ -16,6 +16,9 @@ class PhotoProfil
     #[ORM\Column(length: 50)]
     private ?string $lienPhoto = null;
 
+    #[ORM\ManyToOne(inversedBy: 'photoProfils')]
+    private ?Profil $profil = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -29,6 +32,18 @@ class PhotoProfil
     public function setLienPhoto(string $lienPhoto): static
     {
         $this->lienPhoto = $lienPhoto;
+
+        return $this;
+    }
+
+    public function getProfil(): ?Profil
+    {
+        return $this->profil;
+    }
+
+    public function setProfil(?Profil $profil): static
+    {
+        $this->profil = $profil;
 
         return $this;
     }
