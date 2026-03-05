@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/app_design.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="app-body-reset">
+    <div id="date-app-container">
+        
+        <aside class="sidebar">
+            <h1 style="color: #ed3692; margin-bottom: 30px; font-family: sans-serif;">Tindr Modération</h1>
+            {{ include('partials/_header_moderateur.html.twig') }}
+        </aside>
+
+        <main class="main-content" style="flex-direction: row; gap: 40px; padding: 40px; align-items: flex-start;">
+            
+            {% if signalements is empty %}
+                <div style="width: 100%; text-align: center; margin-top: 50px;">
+                    <h2 style="color: white;">✅ Aucun signalement à traiter pour le moment.</h2>
+                </div>
+            {% else %}
+                {# Pour l'instant on affiche le premier signalement de la liste #}
+                {% set s = signalements|first %}
+                
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                    <h2 style="color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); margin: 0;">Profil Signalé</h2>
+                    
+                    <div class="profile-card" style="position: relative; width: 350px; height: 480px;">
+                        {# On récupère la photo de l'utilisateur cible #}
+                        <img class="profile-img" src="{{ asset('images/' ~ s.cible.imageIdentite) }}" 
+                             onerror="this.src='{{ asset('images/PlaceHolderProfil.jpg') }}'" alt="Profil">
+                        
+                        <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); color: white; padding: 15px; border-radius: 0 0 20px 20px;">
+                            <h3 style="margin: 0; color: #ed3692;">{{ s.cible.pseudo }}</h3>
+                            <p style="margin: 5px 0; font-size: 13px;"><strong>Motif :</strong> {{ s.motif }}</p>
+                            <p style="margin: 0; font-size: 11px; color: #ccc;">Signalé par {{ s.auteur.pseudo }} le {{ s.dateS|date('d/m/Y') }}</p>
+                        </div>
+                    </div>
+
+                    <div class="actions-overlay" style="position: static; margin-top: 10px;">
+                        <button class="action-btn" title="Bannir">
+                            <img class="bg" src="{{ asset('images/Red.jpg') }}">
+                            <img class="icon" src="{{ asset('images/Denied.jpg') }}">
+                        </button>
+                        <button class="action-btn" title="Ignorer">
+                            <img class="bg" src="{{ asset('images/green.webp') }}">
+                            <img class="icon" src="{{ asset('images/valid.webp') }}">
+                        </button>
+                    </div>
+                </div>
+
+                <div style="flex: 1; background: white; border-radius: 20px; height: 600px; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow: hidden;">
+                    <div style="background: #f8f9fa; padding: 15px; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 15px;">
+                        <strong style="color: #333;">Conversation entre {{ s.auteur.pseudo }} et {{ s.cible.pseudo }}</strong>
+                    </div>
+
+                    <div style="flex: 1; padding: 20px; background: #fff1f5; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;">
+                        {# Ici tu boucleras plus tard sur s.cible.messages #}
+                        <div style="text-align: center; color: #999; font-size: 0.8em;">-- Début de la discussion --</div>
+                        
+                        <div style="align-self: flex-start; background: white; padding: 10px 15px; border-radius: 15px; color: #555;">
+                            [Placeholder] Les messages seront récupérés ici via une relation.
+                        </div>
+                    </div>
+
+                    <div style="padding: 15px; background: white; border-top: 1px solid #ddd; text-align: center; color: #999; font-style: italic; font-size: 0.9em;">
+                        ID Signalement : #{{ s.id }}
+                    </div>
+                </div>
+            {% endif %}
+
+        </main>
+    </div>
+</div>
+{% endblock %}
