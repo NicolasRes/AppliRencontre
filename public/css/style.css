@@ -1,4 +1,14 @@
 /* public/css/style.css */
+:root {
+    --back-color1: #fbd3ae;
+    --back-color2: #f3b1c3;
+    --accentuation-color1: ;
+    --accentuation-color2: ;
+    --accentuation-color-yes: ;
+    --accentuation-color-no: ;
+
+}
+
 body {
     /*background-color: #f1c0cd;*/
     background: linear-gradient(to bottom right, #fbd3ae, #f3b1c3);
@@ -27,7 +37,7 @@ a:visited {
 }
 input {
     border-radius: 10px;
-    border-width: 4px;
+    border-width: 3px;
     border-color: #ed3692;
     background: #fff1f5;
 }
@@ -51,6 +61,40 @@ button[type=submit] {
     font-size: 15px;
 
 }
+
+.search-block {
+    position: absolute;
+    width: 100%;
+    box-sizing: border-box;
+    align-items: center;
+    top:0px;
+    left: 0px;
+    padding-left: 20px;
+    background: #ffffff;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 8px;
+
+
+}
+
+.search-block div {
+
+    display: flex;
+    flex-direction: row;
+
+    margin-right: 15px;
+}
+
+.search-block label {
+    min-width: fit-content;
+    vertical-align: middle;
+}
+.search-block input {
+    margin-left: 10px;
+    margin-right: 10px;
+
+}
+
 .form-control { width: 90%; padding: 8px; margin-top: 5px; }
 .btn { padding: 10px; cursor: pointer; border: none; }
 .btn-primary { background-color: #007bff; color: white; }

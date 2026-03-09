@@ -16,8 +16,18 @@
 </a>
 
 <div style="margin-top: auto; border-top: 2px solid #180b0b; padding-top: 20px;">
-    <a href="#" class="sidebar-item">
+    <a href="#" class="sidebar-item" onclick="menu()">
         <img class="sidebar-icon" style="border-radius: 50%;" src="{{ asset('images/thispersondoesnotexist.jpeg') }}" alt="Moi">
         <span>Mon Profil</span>
     </a>
+    <ul id="list">
+        <li><a href="configuration">Mes informations</a></li>
+        <li><a href="">Déconnexion</a></li>
+    </ul>
 </div>
+<script>
+    function menu(){
+        const list = document.getElementById("list");
+        list.classList.toggle("show");
+    }
+</script> 

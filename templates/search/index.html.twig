@@ -12,18 +12,20 @@
 <div class="search-block">
     <h1>Critères de recherche</h1>
     <form>
-        <div>Distance max : </div> <input type="text" class="form-control" id="dist"> <br>
-        Âge : de <input type="text" class="form-control" id="agMin"> à <input type="text" id="agMax" class="form-control"> <br>
+        <div> <label for="dist">Distance max : </label>
+            <input type="text" class="form-control" id="dist"> <br></div>
+
+        <div>
+            <label for="agMin">Âge de</label>
+            <input type="text" class="form-control" id="agMin">
+            <label for="agMax">à</label> <input type="text" id="agMax" class="form-control"> <br>
+        </div>
         Genres : <br>
-        <input type="checkbox" name="genres" value="h">
-        <input type="checkbox" name="genres" value="f">
-        <input type="checkbox" name="genres" value="nb">
+        <input type="checkbox" name="genres" value="h"> <label for="h">Homme</label>
+        <input type="checkbox" name="genres" value="f"> <label for="f">Femme</label>
+        <input type="checkbox" name="genres" value="nb"> <label for="nb">Non-binaire</label>
     </form>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/home/diane/PhpstormProjects/AppliRencontre/src/Controller/SearchController.php</code></li>
-        <li>Your template at <code>/home/diane/PhpstormProjects/AppliRencontre/templates/search/index.html.twig</code></li>
-    </ul>
+
 </div>
 {% endblock %}

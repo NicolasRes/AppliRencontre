@@ -37,6 +37,16 @@
     margin-bottom: 5px;
 }
 
+#list{
+    display: none;
+    list-style: none;
+    padding-left: auto;
+}
+
+#list.show{
+    display: block;
+}
+
 #date-app-container .sidebar-item:hover { background: #fff1f5; }
 
 #date-app-container .sidebar-icon {
