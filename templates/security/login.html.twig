@@ -7,7 +7,13 @@
 <div class="auth-container">
     <form method="post">
         {% if error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            <div class="alert alert-danger">
+                {% if error.messageKey == 'Invalid credentials.' %}
+                    Email ou mot de passe incorrect.
+                {% else %}
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                {% endif %}
+            </div>
         {% endif %}
 
         {% if app.user %}

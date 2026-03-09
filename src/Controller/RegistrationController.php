@@ -37,7 +37,7 @@ class RegistrationController extends AbstractController
                         $newFilename
                     );
                 } catch (FileException $e) {
-                    // gérer l'erreur si besoin
+                    die("Erreur d'upload : " . $e->getMessage() . " dans le dossier : " . $this->getParameter('identite_directory'));
                 }
 
                 $user->setImageIdentite($newFilename);
