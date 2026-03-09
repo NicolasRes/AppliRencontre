@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Profil;
 use App\Entity\Utilisateur;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -51,7 +52,19 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Votre compte a été créé. Un modérateur doit le valider avant que vous puissiez vous connecter.');
+// --- NOUVEAU : CRÉATION DU PROFIL ---
+            $profil = new Profil();
+            $profil->setUtilisateur($user);
+            $profil->setAge(18); // Âge par défaut
+            $profil->setVille("Non renseignée");
+            $profil->setGenre("Non renseigné");
+            $profil->setPresentation("Salut ! Je suis nouveau ici.");
+            
+            $entityManager->persist($profil);
+            $entityManager->flush();
+            // ------------------------------------
+
+            $this->addFlash('success', 'Votre compte a été créé ! Connectez-vous pour commencer à swiper.');
             
             return $this->redirectToRoute('app_login');
         }

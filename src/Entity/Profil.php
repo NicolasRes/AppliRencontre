@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProfilRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -28,6 +30,17 @@ class Profil
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Utilisateur $utilisateur = null;
+
+    /**
+     * @var Collection<int, PhotoProfil>
+     */
+    #[ORM\OneToMany(targetEntity: PhotoProfil::class, mappedBy: 'profil')]
+    private Collection $photoProfils;
+
+    public function __construct()
+    {
+        $this->photoProfils = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -90,6 +103,36 @@ class Profil
     public function setUtilisateur(?Utilisateur $utilisateur): static
     {
         $this->utilisateur = $utilisateur;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PhotoProfil>
+     */
+    public function getPhotoProfils(): Collection
+    {
+        return $this->photoProfils;
+    }
+
+    public function addPhotoProfil(PhotoProfil $photoProfil): static
+    {
+        if (!$this->photoProfils->contains($photoProfil)) {
+            $this->photoProfils->add($photoProfil);
+            $photoProfil->setProfil($this);
+        }
+
+        return $this;
+    }
+
+    public function removePhotoProfil(PhotoProfil $photoProfil): static
+    {
+        if ($this->photoProfils->removeElement($photoProfil)) {
+            // set the owning side to null (unless already changed)
+            if ($photoProfil->getProfil() === $this) {
+                $photoProfil->setProfil(null);
+            }
+        }
 
         return $this;
     }

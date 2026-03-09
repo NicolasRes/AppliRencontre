@@ -37,6 +37,16 @@
     margin-bottom: 5px;
 }
 
+#list{
+    display: none;
+    list-style: none;
+    padding-left: auto;
+}
+
+#list.show{
+    display: block;
+}
+
 #date-app-container .sidebar-item:hover { background: #fff1f5; }
 
 #date-app-container .sidebar-icon {
@@ -66,11 +76,12 @@
 }
 
 #date-app-container .profile-card {
+    position: relative; /* Indispensable pour que bottom: 0 fonctionne à l'intérieur */
     width: 450px;
     height: 550px;
     background: black;
     border-radius: 20px;
-    overflow: hidden;
+    overflow: hidden; /* Coupe tout ce qui dépasse, comme le bas de la photo */
     box-shadow: 0 20px 40px rgba(0,0,0,0.3);
 }
 
@@ -82,9 +93,15 @@
 
 /* --- BOUTONS D'ACTION --- */
 #date-app-container .actions-overlay {
+    position: absolute; /* Fixe les boutons par rapport à la carte */
+    bottom: 20px;       /* Distance du bord bas de la photo */
+    left: 0;
+    right: 0;
     display: flex;
-    gap: 40px;
-    margin-top: 30px;
+    justify-content: center;
+    gap: 30px;
+    z-index: 10;        /* Assure que les boutons sont au-dessus de tout */
+    margin: 0;          /* Supprime les marges automatiques */
 }
 
 #date-app-container .action-btn {
@@ -112,4 +129,61 @@
     z-index: 2;
     width: 35px;
     height: 35px;
+}
+
+/* Le logo dans la sidebar */
+.tindr-logo {
+    color: #ed3692;
+    margin-bottom: 30px;
+    font-family: sans-serif;
+}
+
+/* L'encadré noir transparent sur la photo */
+.profile-info-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    /* Dégradé progressif du noir (bas) vers le transparent (haut) */
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 60%, rgba(0, 0, 0, 0) 100%);
+    color: white;
+    /* On augmente le padding du bas pour ne pas que le texte touche les boutons */
+    padding: 60px 20px 90px 20px; 
+    box-sizing: border-box;
+    pointer-events: none; /* Le clic passe à travers pour atteindre les boutons */
+}
+
+/* Le texte dans l'encadré */
+.profile-name {
+    margin: 0;
+    color: #ed3692;
+}
+
+.profile-location {
+    margin: 5px 0;
+}
+
+.profile-bio {
+    margin: 5px 0;
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+/* Message quand il n'y a plus de profils */
+.no-profile-msg {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Adaptation pour que les liens agissent comme des boutons ronds */
+a.action-btn {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

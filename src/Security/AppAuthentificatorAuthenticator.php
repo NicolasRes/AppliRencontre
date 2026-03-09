@@ -40,13 +40,16 @@ class AppAuthentificatorAuthenticator extends AbstractLoginFormAuthenticator
             ]
         );
     }
-
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
-    {
-        // On redirige vers la home, le SecurityController s'occupera 
-        // d'afficher "waiting_validation" si accordGdpr est false
-        return new RedirectResponse($this->urlGenerator->generate('home'));
+public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
+{
+    // On essaie de rediriger l'utilisateur vers la page qu'il voulait voir au départ
+    if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
+        return new RedirectResponse($targetPath);
     }
+
+    // SINON, on le force à aller sur la page de Swipe (app_home_page)
+    return new RedirectResponse($this->urlGenerator->generate('app_home_page'));
+}
 
     protected function getLoginUrl(Request $request): string
     {

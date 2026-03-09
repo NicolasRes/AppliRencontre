@@ -8,10 +8,19 @@
     <h1>Créer un compte</h1>
 
     {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.pseudo) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword) }}
-        {{ form_row(registrationForm.imageIdentite) }} {# Le champ photo #}
+    <div > {{  form_label(registrationForm.pseudo) }} </div>
+    <div class="form-control"> {{  form_widget(registrationForm.pseudo) }} </div>
+
+    <div > {{  form_label(registrationForm.email) }} </div>
+    <div class="form-control"> {{  form_widget(registrationForm.email) }} </div>
+
+    <div > {{  form_label(registrationForm.plainPassword) }} </div>
+    <div class="form-control"> {{  form_widget(registrationForm.plainPassword) }} </div>
+
+    <div > {{  form_label(registrationForm.imageIdentite) }} </div> {# Le champ photo #}
+    <div class=""> {{  form_widget(registrationForm.imageIdentite) }} </div>
+    <br>
+
 
         <button type="submit" class="btn btn-primary">S'inscrire</button>
     {{ form_end(registrationForm) }}

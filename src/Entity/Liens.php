@@ -6,8 +6,8 @@ use App\Repository\LienssRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: LienssRepository::class)]
-class Lienss
+#[ORM\Entity]
+class Liens
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
