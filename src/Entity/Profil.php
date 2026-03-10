@@ -37,6 +37,12 @@ class Profil
     #[ORM\OneToMany(targetEntity: PhotoProfil::class, mappedBy: 'profil')]
     private Collection $photoProfils;
 
+    #[ORM\Column(length: 255)]
+    private ?string $nom = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $prenom = null;
+
     public function __construct()
     {
         $this->photoProfils = new ArrayCollection();
@@ -133,6 +139,30 @@ class Profil
                 $photoProfil->setProfil(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): static
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getPrenom(): ?string
+    {
+        return $this->prenom;
+    }
+
+    public function setPrenom(string $prenom): static
+    {
+        $this->prenom = $prenom;
 
         return $this;
     }

@@ -4,25 +4,54 @@
 {% block title %}Inscription{% endblock %}
 
 {% block body %}
-<div class="auth-container">
+<div class="auth-container" style="max-width: 500px; margin: auto; padding: 20px;">
     <h1>Créer un compte</h1>
 
     {{ form_start(registrationForm) }}
-    <div > {{  form_label(registrationForm.pseudo) }} </div>
-    <div class="form-control"> {{  form_widget(registrationForm.pseudo) }} </div>
+        <div class="form-group">
+            {{ form_label(registrationForm.pseudo) }}
+            {{ form_widget(registrationForm.pseudo, {'attr': {'class': 'form-control'}}) }}
+        </div>
 
-    <div > {{  form_label(registrationForm.email) }} </div>
-    <div class="form-control"> {{  form_widget(registrationForm.email) }} </div>
+        <div class="form-group">
+            {{ form_label(registrationForm.email) }}
+            {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
+        </div>
 
-    <div > {{  form_label(registrationForm.plainPassword) }} </div>
-    <div class="form-control"> {{  form_widget(registrationForm.plainPassword) }} </div>
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_label(registrationForm.prenom) }}
+                {{ form_widget(registrationForm.prenom, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_label(registrationForm.nom) }}
+                {{ form_widget(registrationForm.nom, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
 
-    <div > {{  form_label(registrationForm.imageIdentite) }} </div> {# Le champ photo #}
-    <div class=""> {{  form_widget(registrationForm.imageIdentite) }} </div>
-    <br>
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_label(registrationForm.age) }}
+                {{ form_widget(registrationForm.age, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_label(registrationForm.genre) }}
+                {{ form_widget(registrationForm.genre, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
 
+        <div class="form-group">
+            {{ form_label(registrationForm.plainPassword) }}
+            {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
+        </div>
 
-        <button type="submit" class="btn btn-primary">S'inscrire</button>
+        <div class="form-group">
+            {{ form_label(registrationForm.imageIdentite) }}
+            {{ form_widget(registrationForm.imageIdentite) }}
+        </div>
+
+        <br>
+        <button type="submit" class="btn btn-primary btn-block">S'inscrire</button>
     {{ form_end(registrationForm) }}
 </div>
 {% endblock %}
