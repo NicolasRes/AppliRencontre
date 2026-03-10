@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class HomePageController extends AbstractController
 {
-    #[Route('/home/page', name: 'app_home_page')]
+    #[Route('/home', name: 'app_home_page')]
     public function index(ProfilRepository $profilRepository): Response
     {
         // Récupération de l'utilisateur connecté
