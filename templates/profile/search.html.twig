@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche de profils{% endblock %}
+
+{% block body %}
+
+    <h1>Recherche de profils</h1>
+
+    <form method="get">
+
+        {# Filtre par pseudo #}
+        <input type="text" name="pseudo" placeholder="Pseudo">
+
+        {# Filtre de genre #}
+        <select name="genre">
+            <option value="">Tous</option>
+            <option value="H">Homme</option>
+            <option value="F">Femme</option>
+            <option value="A">Autre</option>
+        </select>
+
+        {# Filtres âge minimum et maximum #}
+        <label>Age min</label>
+        <input type="number" name="age_min" min="18" max="113">
+
+        <label>Age max</label>
+
+        <input type="number" name="age_max" min="18" max="113">
+        <button type="submit">🔍</button> {# La loupe est le bouton pour lancer la recherche #}
+
+    </form>
+
+    <hr>
+
+    {# Affichage des profils sous forme de tuiles (en ligne) #}
+    <div class="profiles-list">
+
+        {% for profile in profiles %}
+
+            <div class="profile-lile">
+                <a href="{{ path('app_profile_show', {id: profile.id}) }}" class="profile-line">
+                    {{ profile.prenom }} {{ profile.nom }} {{ profile.age }} ans {# {{ profile.ville ?? 'Ville non renseignée' }} #} {# Pour + tard #}
+                </a>
+            </div>
+
+        {% else %}
+
+            <p>Aucun profil trouvé</p>
+
+        {% endfor %}
+
+    </div>
+
+{% endblock %}
