@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20260305083411 extends AbstractMigration
+final class Version20260311101005 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,17 +20,18 @@ final class Version20260305083411 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE configuration (id INT AUTO_INCREMENT NOT NULL, age_min INT NOT NULL, age_max INT NOT NULL, rayon INT NOT NULL, genres_visibles JSON NOT NULL, etat_notif TINYINT NOT NULL, PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
-        $this->addSql('CREATE TABLE liens (id INT AUTO_INCREMENT NOT NULL, exp_date DATE NOT NULL, utilise TINYINT NOT NULL, utilisateur_id INT NOT NULL, INDEX IDX_A0A0BABCFB88E14F (utilisateur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
-        $this->addSql('CREATE TABLE message (id INT AUTO_INCREMENT NOT NULL, contenu LONGTEXT NOT NULL, temps DATE NOT NULL, lien_photo VARCHAR(50) DEFAULT NULL, est_lu TINYINT NOT NULL, rencontre_id INT NOT NULL, auteur_id INT NOT NULL, INDEX IDX_B6BD307F6CFC0818 (rencontre_id), INDEX IDX_B6BD307F60BB6FE6 (auteur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
-        $this->addSql('CREATE TABLE moderateur (id INT AUTO_INCREMENT NOT NULL, utilisateur_id INT NOT NULL, UNIQUE INDEX UNIQ_6DDC3554FB88E14F (utilisateur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
-        $this->addSql('CREATE TABLE notification (id INT AUTO_INCREMENT NOT NULL, contenu VARCHAR(50) NOT NULL, type INT NOT NULL, lu TINYINT NOT NULL, utilisateur_id INT NOT NULL, INDEX IDX_BF5476CAFB88E14F (utilisateur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
-        $this->addSql('CREATE TABLE photo_profil (id INT AUTO_INCREMENT NOT NULL, lien_photo VARCHAR(50) NOT NULL, profil_id INT DEFAULT NULL, INDEX IDX_B369C5BF275ED078 (profil_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
-        $this->addSql('CREATE TABLE profil (id INT AUTO_INCREMENT NOT NULL, age INT NOT NULL, genre VARCHAR(30) NOT NULL, ville VARCHAR(50) NOT NULL, presentation LONGTEXT DEFAULT NULL, utilisateur_id INT DEFAULT NULL, UNIQUE INDEX UNIQ_E6D6B297FB88E14F (utilisateur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
-        $this->addSql('CREATE TABLE rencontre (id INT AUTO_INCREMENT NOT NULL, statut INT NOT NULL, date_creation DATE NOT NULL, utilisateur_id INT NOT NULL, utilisateur2_id INT NOT NULL, INDEX IDX_460C35EDFB88E14F (utilisateur_id), INDEX IDX_460C35ED2241569D (utilisateur2_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
-        $this->addSql('CREATE TABLE reset_password_request (id INT AUTO_INCREMENT NOT NULL, selector VARCHAR(20) NOT NULL, hashed_token VARCHAR(100) NOT NULL, requested_at DATETIME NOT NULL, expires_at DATETIME NOT NULL, user_id INT NOT NULL, INDEX IDX_7CE748AA76ED395 (user_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
-        $this->addSql('CREATE TABLE signalement (id INT AUTO_INCREMENT NOT NULL, date_s DATE NOT NULL, statut INT NOT NULL, motif VARCHAR(50) NOT NULL, auteur_id INT NOT NULL, cible_id INT NOT NULL, INDEX IDX_F4B5511460BB6FE6 (auteur_id), INDEX IDX_F4B55114A96E5E09 (cible_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
-        $this->addSql('CREATE TABLE utilisateur (id INT AUTO_INCREMENT NOT NULL, pseudo VARCHAR(50) NOT NULL, email VARCHAR(180) NOT NULL, mdp VARCHAR(255) NOT NULL, image_identite VARCHAR(50) DEFAULT NULL, accord_gdpr TINYINT NOT NULL, is_modo TINYINT NOT NULL, PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
+        $this->addSql('CREATE TABLE configuration (id INT AUTO_INCREMENT NOT NULL, age_min INT NOT NULL, age_max INT NOT NULL, rayon INT NOT NULL, genres_visibles JSON NOT NULL, etat_notif TINYINT NOT NULL, utilisateur_id INT NOT NULL, UNIQUE INDEX UNIQ_A5E2A5D7FB88E14F (utilisateur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE liens (id INT AUTO_INCREMENT NOT NULL, exp_date DATE NOT NULL, utilise TINYINT NOT NULL, utilisateur_id INT NOT NULL, INDEX IDX_A0A0BABCFB88E14F (utilisateur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE message (id INT AUTO_INCREMENT NOT NULL, contenu LONGTEXT NOT NULL, temps DATE NOT NULL, lien_photo VARCHAR(50) DEFAULT NULL, est_lu TINYINT NOT NULL, rencontre_id INT NOT NULL, auteur_id INT NOT NULL, INDEX IDX_B6BD307F6CFC0818 (rencontre_id), INDEX IDX_B6BD307F60BB6FE6 (auteur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE moderateur (id INT AUTO_INCREMENT NOT NULL, utilisateur_id INT NOT NULL, UNIQUE INDEX UNIQ_6DDC3554FB88E14F (utilisateur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE notification (id INT AUTO_INCREMENT NOT NULL, contenu VARCHAR(50) NOT NULL, type INT NOT NULL, lu TINYINT NOT NULL, utilisateur_id INT NOT NULL, INDEX IDX_BF5476CAFB88E14F (utilisateur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE photo_profil (id INT AUTO_INCREMENT NOT NULL, lien_photo VARCHAR(50) NOT NULL, profil_id INT DEFAULT NULL, INDEX IDX_B369C5BF275ED078 (profil_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE profil (id INT AUTO_INCREMENT NOT NULL, age INT NOT NULL, genre VARCHAR(30) NOT NULL, ville VARCHAR(50) NOT NULL, presentation LONGTEXT DEFAULT NULL, nom VARCHAR(255) NOT NULL, prenom VARCHAR(255) NOT NULL, utilisateur_id INT DEFAULT NULL, UNIQUE INDEX UNIQ_E6D6B297FB88E14F (utilisateur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE rencontre (id INT AUTO_INCREMENT NOT NULL, statut INT NOT NULL, date_creation DATE NOT NULL, utilisateur_id INT NOT NULL, utilisateur2_id INT NOT NULL, INDEX IDX_460C35EDFB88E14F (utilisateur_id), INDEX IDX_460C35ED2241569D (utilisateur2_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE reset_password_request (id INT AUTO_INCREMENT NOT NULL, selector VARCHAR(20) NOT NULL, hashed_token VARCHAR(100) NOT NULL, requested_at DATETIME NOT NULL, expires_at DATETIME NOT NULL, user_id INT NOT NULL, INDEX IDX_7CE748AA76ED395 (user_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE signalement (id INT AUTO_INCREMENT NOT NULL, date_s DATE NOT NULL, statut INT NOT NULL, motif VARCHAR(50) NOT NULL, auteur_id INT NOT NULL, cible_id INT NOT NULL, INDEX IDX_F4B5511460BB6FE6 (auteur_id), INDEX IDX_F4B55114A96E5E09 (cible_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE utilisateur (id INT AUTO_INCREMENT NOT NULL, pseudo VARCHAR(50) NOT NULL, email VARCHAR(180) NOT NULL, mdp VARCHAR(255) NOT NULL, image_identite VARCHAR(50) DEFAULT NULL, accord_gdpr TINYINT NOT NULL, is_modo TINYINT NOT NULL, PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('ALTER TABLE configuration ADD CONSTRAINT FK_A5E2A5D7FB88E14F FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id)');
         $this->addSql('ALTER TABLE liens ADD CONSTRAINT FK_A0A0BABCFB88E14F FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id)');
         $this->addSql('ALTER TABLE message ADD CONSTRAINT FK_B6BD307F6CFC0818 FOREIGN KEY (rencontre_id) REFERENCES rencontre (id)');
         $this->addSql('ALTER TABLE message ADD CONSTRAINT FK_B6BD307F60BB6FE6 FOREIGN KEY (auteur_id) REFERENCES utilisateur (id)');
@@ -48,6 +49,7 @@ final class Version20260305083411 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
+        $this->addSql('ALTER TABLE configuration DROP FOREIGN KEY FK_A5E2A5D7FB88E14F');
         $this->addSql('ALTER TABLE liens DROP FOREIGN KEY FK_A0A0BABCFB88E14F');
         $this->addSql('ALTER TABLE message DROP FOREIGN KEY FK_B6BD307F6CFC0818');
         $this->addSql('ALTER TABLE message DROP FOREIGN KEY FK_B6BD307F60BB6FE6');
