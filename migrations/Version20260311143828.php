@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20260311101005 extends AbstractMigration
+final class Version20260311143828 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,7 +20,7 @@ final class Version20260311101005 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE configuration (id INT AUTO_INCREMENT NOT NULL, age_min INT NOT NULL, age_max INT NOT NULL, rayon INT NOT NULL, genres_visibles JSON NOT NULL, etat_notif TINYINT NOT NULL, utilisateur_id INT NOT NULL, UNIQUE INDEX UNIQ_A5E2A5D7FB88E14F (utilisateur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE configuration (id INT AUTO_INCREMENT NOT NULL, age_min INT DEFAULT NULL, age_max INT DEFAULT NULL, rayon INT DEFAULT NULL, genres_visibles JSON DEFAULT NULL, etat_notif TINYINT NOT NULL, utilisateur_id INT NOT NULL, UNIQUE INDEX UNIQ_A5E2A5D7FB88E14F (utilisateur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE liens (id INT AUTO_INCREMENT NOT NULL, exp_date DATE NOT NULL, utilise TINYINT NOT NULL, utilisateur_id INT NOT NULL, INDEX IDX_A0A0BABCFB88E14F (utilisateur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE message (id INT AUTO_INCREMENT NOT NULL, contenu LONGTEXT NOT NULL, temps DATE NOT NULL, lien_photo VARCHAR(50) DEFAULT NULL, est_lu TINYINT NOT NULL, rencontre_id INT NOT NULL, auteur_id INT NOT NULL, INDEX IDX_B6BD307F6CFC0818 (rencontre_id), INDEX IDX_B6BD307F60BB6FE6 (auteur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE moderateur (id INT AUTO_INCREMENT NOT NULL, utilisateur_id INT NOT NULL, UNIQUE INDEX UNIQ_6DDC3554FB88E14F (utilisateur_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
