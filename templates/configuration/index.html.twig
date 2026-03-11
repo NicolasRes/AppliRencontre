@@ -1,10 +1,40 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ConfigurationController!{% endblock %}
+{% block title %}Mes préférences{% endblock %}
 
 {% block body %}
 
-<div class="">
-    <h1></h1>
+<div class="auth-container">
+    <h1>Configuration des préferences</h1>
+    {{ form_start(formulaire) }}
+        <div class="form-group">
+            {{ form_label(formulaire.ageMin) }}
+            {{ form_widget(formulaire.ageMin) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(formulaire.ageMax) }}
+            {{ form_widget(formulaire.ageMax) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(formulaire.rayon) }}
+            {{ form_widget(formulaire.rayon) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(formulaire.genresVisibles) }}
+            {{ form_widget(formulaire.genresVisibles) }}
+            <select name="genre">
+                <option value="H">Homme</option>
+                <option value="F">Femme</option>
+                <option value="A">Autre</option>
+            </select>
+        </div>
+        <div class="form-group">
+            {{ form_label(formulaire.etatNotif) }}
+            {{ form_widget(formulaire.etatNotif) }}
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Valider">
+        </div>
+    {{ form_end(formulaire) }}
 </div>
 {% endblock %}
