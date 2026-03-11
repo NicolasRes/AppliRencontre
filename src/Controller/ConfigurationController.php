@@ -22,11 +22,11 @@ final class ConfigurationController extends AbstractController
         $form = $this->createForm(ConfigurationType::class, $configUser);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
-
+            $em->persist($configUser);
+            $em->flush();
             return $this->redirectToRoute('app_home_page');
         }
         return $this->render('configuration/index.html.twig', [
-            'config' => $configUser,
             'formulaire' => $form->createView(),
         ]);
     }
