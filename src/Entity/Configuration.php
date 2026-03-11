@@ -13,16 +13,16 @@ class Configuration
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $ageMin = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $ageMax = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $rayon = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private array $genresVisibles = [];
 
     #[ORM\Column]

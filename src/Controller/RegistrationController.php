@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Configuration;
 use App\Entity\Profil;
 use App\Entity\Utilisateur;
 use App\Form\RegistrationFormType;
@@ -70,6 +71,15 @@ class RegistrationController extends AbstractController
             $entityManager->persist($profil);
             
             // On flush une deuxième fois pour enregistrer le nom de l'image et le profil
+            //$entityManager->flush();
+
+            // 4. CRÉATION DE LA CONFIGURATION
+            $config = new Configuration();
+            $config->setUtilisateur($user);
+            $config->setEtatNotif(false);
+
+            $entityManager->persist($config);
+
             $entityManager->flush();
 
             $this->addFlash('success', 'Inscription réussie !');
