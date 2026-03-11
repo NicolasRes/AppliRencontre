@@ -77,7 +77,7 @@ class RegistrationFormType extends AbstractType
                 'choices'  => [
                     'Homme' => 'M',
                     'Femme' => 'F',
-                    'Boeing 737' => 'A',
+                    'Autre ?' => 'A',
                 ],
             ])
         ;

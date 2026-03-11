@@ -18,11 +18,16 @@ final class HomePageController extends AbstractController
         // Récupération de l'utilisateur connecté
         $user = $this->getUser();
 
+        // 1. Sécurité : pas connecté ? -> Login
         if (!$user) {
-            // Si pas connecté, redirection vers le login
-            return $this->redirectToRoute('app_login'); 
+            return $this->redirectToRoute('app_login');
         }
 
+        // 2. Sécurité : Pas validé ? -> Redirection vers la route '/' (HomeController)
+        // C'est là que ton code de vérification GDPR actuel se trouve.
+        if (!$user->isAccordGdpr()) {
+            return $this->redirectToRoute('home');
+        }
         // Utilisation de notre nouvelle méthode de filtrage
         $profils = $profilRepository->findProfilsNonSwipes($user);
 

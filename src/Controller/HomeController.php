@@ -12,6 +12,7 @@ class HomeController extends AbstractController
     public function index(): Response
     {
         $user = $this->getUser();
+        #dump($user->isAccordGdpr()); die;
 
         // Si l'utilisateur est connecté mais n'a pas validé le GDPR (validation modo)
         if ($user && !$user->isAccordGdpr()) {
