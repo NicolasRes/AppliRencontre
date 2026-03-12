@@ -51,7 +51,7 @@ class AppFixtures extends Fixture
         // ==========================================
         // 2. CRÉATION DE 30 UTILISATEURS & PROFILS
         // ==========================================
-        $genres = ['Homme', 'Femme', 'Non-binaire'];
+        $genres = ['H', 'F', 'A'];
         
         for ($i = 0; $i < 30; $i++) {
             
@@ -59,9 +59,9 @@ class AppFixtures extends Fixture
             $genreChoisi = $faker->randomElement($genres);
 
             // 💡 NOUVEAU : On détermine la photo principale en fonction du genre
-            if ($genreChoisi === 'Homme') {
+            if ($genreChoisi === 'H') {
                 $photoPrincipale = 'Homme' . $faker->numberBetween(1, 9) . '.jpeg';
-            } elseif ($genreChoisi === 'Femme') {
+            } elseif ($genreChoisi === 'F') {
                 $photoPrincipale = 'Femme' . $faker->numberBetween(1, 9) . '.jpeg';
             } else {
                 // Pour Non-binaire, on pioche au hasard parmi les photos Homme ou Femme
@@ -93,9 +93,9 @@ class AppFixtures extends Fixture
             // Ajout de 2 photos aléatoires supplémentaires pour la galerie du profil
             for ($j = 0; $j < 2; $j++) {
                 // On regénère une photo du même genre pour varier la galerie
-                if ($genreChoisi === 'Homme') {
+                if ($genreChoisi === 'H') {
                     $photoSup = 'Homme' . $faker->numberBetween(1, 9) . '.jpeg';
-                } elseif ($genreChoisi === 'Femme') {
+                } elseif ($genreChoisi === 'F') {
                     $photoSup = 'Femme' . $faker->numberBetween(1, 9) . '.jpeg';
                 } else {
                     $prefixe = $faker->randomElement(['Homme', 'Femme']);
@@ -122,7 +122,7 @@ class AppFixtures extends Fixture
             $config->setAgeMin(18)
                    ->setAgeMax(99)
                    ->setRayon(50)
-                   ->setGenresVisibles(['Homme', 'Femme'])
+                   ->setGenresVisibles(['H', 'F'])
                    ->setEtatNotif(true)
                    ->setUtilisateur($user);
             $manager->persist($config);
