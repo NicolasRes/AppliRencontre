@@ -52,6 +52,8 @@ class AppFixtures extends Fixture
         // 2. CRÉATION DE 30 UTILISATEURS & PROFILS
         // ==========================================
         $genres = ['H', 'F', 'A'];
+        
+        $genres = ['H', 'F', 'A'];
 
         for ($i = 0; $i < 30; $i++) {
             
@@ -98,6 +100,7 @@ class AppFixtures extends Fixture
                 if ($genreChoisi === 'H') {
                     $photoSup = 'Homme' . $faker->numberBetween(1, 9) . '.jpeg';
                 } elseif ($genreChoisi === 'F') {
+                } elseif ($genreChoisi === 'F') {
                     $photoSup = 'Femme' . $faker->numberBetween(1, 9) . '.jpeg';
                 } else {
                     $prefixe = $faker->randomElement(['Homme', 'Femme']);
@@ -124,6 +127,7 @@ class AppFixtures extends Fixture
             $config->setAgeMin(18)
                    ->setAgeMax(99)
                    ->setRayon(50)
+                   ->setGenresVisibles(['H', 'F'])
                    ->setGenresVisibles(['H', 'F'])
                    ->setEtatNotif(true)
                    ->setUtilisateur($user);
