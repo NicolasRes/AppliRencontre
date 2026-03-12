@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use App\Entity\Notification;
 
 class RegistrationController extends AbstractController
 {
@@ -80,6 +81,18 @@ class RegistrationController extends AbstractController
 
             $entityManager->persist($config);
 
+            $entityManager->flush();
+
+            // 5. ENVOI D'UNE NOTIFICATION DE BIENVENUE
+            $notification = new Notification();
+            $notification->setUtilisateur($user); // On lie la notif à l'utilisateur fraîchement créé
+            $notification->setContenu("Bienvenue ! Votre compte a été créé avec succès.");
+            $notification->setType(1); // Par exemple, 1 pour 'Information' ou 'Système'
+            $notification->setLu(false); // La notification est non lue par défaut
+
+            $entityManager->persist($notification);
+
+            // Le flush() final va tout enregistrer en une seule fois (User, Profil, Config, Notification)
             $entityManager->flush();
 
             $this->addFlash('success', 'Inscription réussie !');
