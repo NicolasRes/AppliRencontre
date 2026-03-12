@@ -42,7 +42,7 @@ class Configuration
         return $this->ageMin;
     }
 
-    public function setAgeMin(int $ageMin): static
+    public function setAgeMin(?int $ageMin): static
     {
         $this->ageMin = $ageMin;
 
@@ -54,7 +54,7 @@ class Configuration
         return $this->ageMax;
     }
 
-    public function setAgeMax(int $ageMax): static
+    public function setAgeMax(?int $ageMax): static
     {
         $this->ageMax = $ageMax;
 
@@ -66,7 +66,7 @@ class Configuration
         return $this->rayon;
     }
 
-    public function setRayon(int $rayon): static
+    public function setRayon(?int $rayon): static
     {
         $this->rayon = $rayon;
 

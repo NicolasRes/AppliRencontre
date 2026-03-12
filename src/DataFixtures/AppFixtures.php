@@ -65,7 +65,9 @@ class AppFixtures extends Fixture
 
             // Le Profil associé
             $profil = new Profil();
-            $profil->setAge($faker->numberBetween(18, 60))
+            $profil->setNom($faker->lastName())       
+                   ->setPrenom($faker->firstName())  
+                   ->setAge($faker->numberBetween(18, 60))
                    ->setGenre($faker->randomElement($genres))
                    ->setVille($faker->city())
                    ->setPresentation($faker->realText(150))
@@ -95,7 +97,8 @@ class AppFixtures extends Fixture
                    ->setAgeMax(99)
                    ->setRayon(50)
                    ->setGenresVisibles(['Homme', 'Femme'])
-                   ->setEtatNotif(true);
+                   ->setEtatNotif(true)
+                   ->setUtilisateur($user);
             $manager->persist($config);
         }
 
@@ -148,7 +151,7 @@ class AppFixtures extends Fixture
                             ->setCible($cible)
                             ->setMotif($faker->randomElement($motifs))
                             ->setDateS($faker->dateTimeThisMonth())
-                            ->setStatut(0); // 0 = En attente (Pour qu'ils s'affichent sur ta page !)
+                            ->setStatut(0); // 0 = En attente
                 $manager->persist($signalement);
             }
         }

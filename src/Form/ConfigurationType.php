@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Configuration;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -15,7 +16,15 @@ class ConfigurationType extends AbstractType
             ->add('ageMin')
             ->add('ageMax')
             ->add('rayon')
-            ->add('genresVisibles')
+            ->add('genresVisibles', ChoiceType::class, [
+                'choices' => [
+                    'Homme' => 'H',
+                    'Femme' => 'F',
+                    'Autres' => 'A',
+                ],
+                'multiple' => true,
+                'expanded' => true,
+            ])
             ->add('etatNotif')
         ;
     }
