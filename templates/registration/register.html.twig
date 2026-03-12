@@ -7,25 +7,42 @@
 <div class="auth-container" style="max-width: 500px; margin: auto; padding: 20px;">
     <h1>Créer un compte</h1>
 
+    {# Affichage des flash messages #}
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ type == 'error' ? 'danger' : type }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
     {{ form_start(registrationForm) }}
+
+        {# Erreurs globales du formulaire #}
+        {{ form_errors(registrationForm) }}
+
         <div class="form-group">
             {{ form_label(registrationForm.pseudo) }}
             {{ form_widget(registrationForm.pseudo, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(registrationForm.pseudo) }}
         </div>
 
         <div class="form-group">
             {{ form_label(registrationForm.email) }}
             {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(registrationForm.email) }}
         </div>
 
         <div class="row">
             <div class="col-md-6">
                 {{ form_label(registrationForm.prenom) }}
                 {{ form_widget(registrationForm.prenom, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(registrationForm.prenom) }}
             </div>
             <div class="col-md-6">
                 {{ form_label(registrationForm.nom) }}
                 {{ form_widget(registrationForm.nom, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(registrationForm.nom) }}
             </div>
         </div>
 
@@ -33,21 +50,25 @@
             <div class="col-md-6">
                 {{ form_label(registrationForm.age) }}
                 {{ form_widget(registrationForm.age, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(registrationForm.age) }}
             </div>
             <div class="col-md-6">
                 {{ form_label(registrationForm.genre) }}
                 {{ form_widget(registrationForm.genre, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(registrationForm.genre) }}
             </div>
         </div>
 
         <div class="form-group">
             {{ form_label(registrationForm.plainPassword) }}
             {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(registrationForm.plainPassword) }}
         </div>
 
         <div class="form-group">
             {{ form_label(registrationForm.imageIdentite) }}
             {{ form_widget(registrationForm.imageIdentite) }}
+            {{ form_errors(registrationForm.imageIdentite) }}
         </div>
 
         <br>
