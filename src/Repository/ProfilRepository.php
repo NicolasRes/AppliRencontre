@@ -21,29 +21,6 @@ class ProfilRepository extends ServiceEntityRepository
     /**
      * Récupère les profils que l'utilisateur n'a pas encore swipés
      */
-<<<<<<< HEAD
-    public function findProfilsNonSwipes(Utilisateur $user): array
-    {
-        $qb = $this->createQueryBuilder('p');
-
-        // On prépare une sous-requête : "Existe-t-il une rencontre où je suis l'auteur et l'autre est la cible ?"
-        $subQuery = $this->getEntityManager()->createQueryBuilder()
-            ->select('r.id')
-            ->from('App\Entity\Rencontre', 'r')
-            ->where('r.utilisateur = :user')
-            ->andWhere('r.utilisateur2 = p.utilisateur'); // On fait le lien avec le profil p
-
-        return $qb
-            // 1. On s'exclut soi-même (on ne veut pas se swiper)
-            ->where('p.utilisateur != :user')
-            
-            // 2. On garde uniquement ceux pour qui la sous-requête ne renvoie RIEN (NOT EXISTS)
-            ->andWhere($qb->expr()->not($qb->expr()->exists($subQuery->getDQL())))
-            
-            ->setParameter('user', $user)
-            ->getQuery()
-            ->getResult();
-=======
     public function findProfilsNonSwipes(Configuration $config, Utilisateur $user): array
     {   
         $qb = $this->createQueryBuilder('p')
@@ -78,7 +55,6 @@ class ProfilRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getResult();
->>>>>>> cda4c413bf74f04229f2ad7822e38a149a94e9f4
     }
 
     /**
