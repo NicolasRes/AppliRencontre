@@ -39,6 +39,7 @@ class AppFixtures extends Fixture
         $adminUser->setPseudo('AdminModo')
                   ->setEmail('admin@tindr.fr')
                   ->setMdp($this->hasher->hashPassword($adminUser, 'admin'))
+                  ->setImageIdentite('PlaceHolderProfil.jpg')
                   ->setAccordGdpr(true)
                   ->setIsModo(true);
         $manager->persist($adminUser);
@@ -53,11 +54,26 @@ class AppFixtures extends Fixture
         $genres = ['Homme', 'Femme', 'Non-binaire'];
         
         for ($i = 0; $i < 30; $i++) {
+            
+            // 💡 NOUVEAU : On choisit le genre en premier
+            $genreChoisi = $faker->randomElement($genres);
+
+            // 💡 NOUVEAU : On détermine la photo principale en fonction du genre
+            if ($genreChoisi === 'Homme') {
+                $photoPrincipale = 'Homme' . $faker->numberBetween(1, 9) . '.jpeg';
+            } elseif ($genreChoisi === 'Femme') {
+                $photoPrincipale = 'Femme' . $faker->numberBetween(1, 9) . '.jpeg';
+            } else {
+                // Pour Non-binaire, on pioche au hasard parmi les photos Homme ou Femme
+                $prefixe = $faker->randomElement(['Homme', 'Femme']);
+                $photoPrincipale = $prefixe . $faker->numberBetween(1, 9) . '.jpeg';
+            }
+
             $user = new Utilisateur();
             $user->setPseudo($faker->userName())
                  ->setEmail($faker->unique()->safeEmail())
                  ->setMdp($this->hasher->hashPassword($user, 'password')) // Le mdp est "password" pour tous
-                 ->setImageIdentite('PlaceHolderProfil.jpg')
+                 ->setImageIdentite($photoPrincipale) // <-- On utilise la photo générée
                  ->setAccordGdpr(true)
                  ->setIsModo(false);
             $manager->persist($user);
@@ -65,19 +81,29 @@ class AppFixtures extends Fixture
 
             // Le Profil associé
             $profil = new Profil();
-            $profil->setNom($faker->lastName())       
-                   ->setPrenom($faker->firstName())  
+            $profil->setNom($faker->lastName())
+                   ->setPrenom($faker->firstName())
                    ->setAge($faker->numberBetween(18, 60))
-                   ->setGenre($faker->randomElement($genres))
+                   ->setGenre($genreChoisi) // <-- On utilise le genre déterminé plus haut
                    ->setVille($faker->city())
                    ->setPresentation($faker->realText(150))
                    ->setUtilisateur($user);
             $manager->persist($profil);
 
-            // Ajout de 2 photos aléatoires pour le profil
+            // Ajout de 2 photos aléatoires supplémentaires pour la galerie du profil
             for ($j = 0; $j < 2; $j++) {
+                // On regénère une photo du même genre pour varier la galerie
+                if ($genreChoisi === 'Homme') {
+                    $photoSup = 'Homme' . $faker->numberBetween(1, 9) . '.jpeg';
+                } elseif ($genreChoisi === 'Femme') {
+                    $photoSup = 'Femme' . $faker->numberBetween(1, 9) . '.jpeg';
+                } else {
+                    $prefixe = $faker->randomElement(['Homme', 'Femme']);
+                    $photoSup = $prefixe . $faker->numberBetween(1, 9) . '.jpeg';
+                }
+
                 $photo = new PhotoProfil();
-                $photo->setLienPhoto('PlaceHolderProfil.jpg')
+                $photo->setLienPhoto($photoSup) // <-- On utilise la photo supplémentaire
                       ->setProfil($profil);
                 $manager->persist($photo);
             }

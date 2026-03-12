@@ -23,18 +23,11 @@ final class HomePageController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        // 2. Sécurité : Pas validé ? -> Redirection vers la route '/' (HomeController)
-        // C'est là que ton code de vérification GDPR actuel se trouve.
         if (!$user->isAccordGdpr()) {
             return $this->redirectToRoute('home');
         }
         // Utilisation de notre nouvelle méthode de filtrage
         $profils = $profilRepository->findProfilsNonSwipes($user);
-
-        // AJOUTE CECI : Cela va arrêter la page et afficher le nombre de profils trouvés
-        // dd(count($profils)); 
-
-        $profilAffiche = !empty($profils) ? $profils[array_rand($profils)] : null;
 
         // On mélange et on prend le premier
         $profilAffiche = !empty($profils) ? $profils[array_rand($profils)] : null;
