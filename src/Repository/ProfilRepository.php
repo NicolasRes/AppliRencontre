@@ -21,6 +21,7 @@ class ProfilRepository extends ServiceEntityRepository
     /**
      * Récupère les profils que l'utilisateur n'a pas encore swipés
      */
+<<<<<<< HEAD
     public function findProfilsNonSwipes(Utilisateur $user): array
     {
         $qb = $this->createQueryBuilder('p');
@@ -42,6 +43,42 @@ class ProfilRepository extends ServiceEntityRepository
             ->setParameter('user', $user)
             ->getQuery()
             ->getResult();
+=======
+    public function findProfilsNonSwipes(Configuration $config, Utilisateur $user): array
+    {   
+        $qb = $this->createQueryBuilder('p')
+            // Exclut les profils déjà swipés par cet utilisateur
+            ->leftJoin('App\Entity\Rencontre', 'r', 'WITH', 'r.utilisateur2 = p.utilisateur AND r.utilisateur = :user')
+            ->where('p.utilisateur != :user') // On exclut l'utilisateur lui-même
+            ->andWhere('r.id IS NULL')        // Seulement ceux qui n'ont pas de ligne dans Rencontre
+            ->setParameter('user', $user);
+
+        // Si l'utilisateur a une configuration, on applique les filtres
+        if ($config) {
+            
+            // Filtre : Âge Minimum
+            if ($config->getAgeMin() !== null) {
+                $qb->andWhere('p.age >= :ageMin')
+                   ->setParameter('ageMin', $config->getAgeMin());
+            }
+
+            // Filtre : Âge Maximum
+            if ($config->getAgeMax() !== null) {
+                $qb->andWhere('p.age <= :ageMax')
+                   ->setParameter('ageMax', $config->getAgeMax());
+            }
+
+            // Filtre : Genres Visibles
+            $genres = $config->getGenresVisibles();
+            if (!empty($genres)) {
+                // Doctrine gère automatiquement les tableaux avec l'opérateur IN
+                $qb->andWhere('p.genre IN (:genres)')
+                   ->setParameter('genres', $genres);
+            }
+        }
+
+        return $qb->getQuery()->getResult();
+>>>>>>> cda4c413bf74f04229f2ad7822e38a149a94e9f4
     }
 
     /**
