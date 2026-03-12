@@ -13,40 +13,40 @@
             {{ include('partials/_header_app.html.twig') }}
         </aside>
 
-       <main class="main-content">
-    
-    <div class="profile-card">
-        {% if profil is defined and profil is not null %}
-            {# --- AFFICHAGE DU PROFIL --- #}
-            <img class="profile-img" src="{{ asset('images/PlaceHolderProfil.jpg') }}" alt="Profil">
-            
-            <div class="profile-info-overlay">
-                <h2 class="profile-name">{{ profil.utilisateur.pseudo }}, {{ profil.age }} ans</h2>
-                <p class="profile-location">📍 {{ profil.ville }}</p>
-                <p class="profile-bio">{{ profil.presentation|slice(0, 80) ~ '...' }}</p>
-            </div>
+        <main class="main-content">
+            <div class="profile-card">
+                {% if profil is defined and profil is not null %}
+                    
+                    <img class="profile-img" 
+                         src="{{ profil.utilisateur.imageIdentite ? asset('images/' ~ profil.utilisateur.imageIdentite) : asset('images/PlaceHolderProfil.jpg') }}" 
+                         alt="Profil de {{ profil.prenom | default("l'utilisateur") }}">
 
-            {# --- BOUTONS D'ACTION (Désormais à l'intérieur du IF) --- #}
-            <div class="actions-overlay">
-                <a href="{{ path('app_swipe', {'id': profil.utilisateur.id, 'action': 'dislike'}) }}" class="action-btn">
-                    <img class="bg" src="{{ asset('images/Red.jpg') }}" alt="Red">
-                    <img class="icon" src="{{ asset('images/Denied.jpg') }}" alt="X">
-                </a>
+                    <div class="profile-info-overlay">
+                        <h2 class="profile-name">{{ profil.utilisateur.pseudo }}, {{ profil.age }} ans</h2>
+                        <p class="profile-location">📍 {{ profil.ville }}</p>
+                        <p class="profile-bio">{{ profil.presentation|slice(0, 80) ~ '...' }}</p>
+                    </div>
 
-                <a href="{{ path('app_swipe', {'id': profil.utilisateur.id, 'action': 'like'}) }}" class="action-btn">
-                    <img class="bg" src="{{ asset('images/green.webp') }}" alt="Green">
-                    <img class="icon" src="{{ asset('images/valid.webp') }}" alt="Check">
-                </a>
-            </div>
+                    <div class="actions-overlay">
+                        <a href="{{ path('app_swipe', {'id': profil.utilisateur.id, 'action': 'dislike'}) }}" class="action-btn">
+                            <img class="bg" src="{{ asset('images/Red.jpg') }}" alt="Red">
+                            <img class="icon" src="{{ asset('images/Denied.jpg') }}" alt="Croix pour refuser">
+                        </a>
 
-        {% else %}
-            {# --- MESSAGE SI VIDE --- #}
-            <div class="no-profile-msg">
-                <h2>Plus personne à découvrir ! 😢</h2>
+                        <a href="{{ path('app_swipe', {'id': profil.utilisateur.id, 'action': 'like'}) }}" class="action-btn">
+                            <img class="bg" src="{{ asset('images/green.webp') }}" alt="Green">
+                            <img class="icon" src="{{ asset('images/valid.webp') }}" alt="Cœur pour valider">
+                        </a>
+                    </div>
+
+                {% else %}
+                    <div class="no-profile-msg">
+                        <h2>Plus personne à découvrir !</h2>
+                    </div>
+                {% endif %}
             </div>
-        {% endif %}
-    </div>
-    </main>
+        </main>
+        
     </div>
 </div>
 {% endblock %}

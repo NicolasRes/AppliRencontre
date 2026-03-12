@@ -22,17 +22,22 @@ class ProfilRepository extends ServiceEntityRepository
      */
     public function findProfilsNonSwipes(Utilisateur $user): array
     {
-        return $this->createQueryBuilder('p')
-            // On essaie de joindre la table Rencontre uniquement pour l'utilisateur actuel
-            ->leftJoin('App\Entity\Rencontre', 'r', 'WITH', 'r.utilisateur2 = p.utilisateur AND r.utilisateur = :user')
+        $qb = $this->createQueryBuilder('p');
 
-            // 1. On exclut l'utilisateur connecté lui-même
+        // On prépare une sous-requête : "Existe-t-il une rencontre où je suis l'auteur et l'autre est la cible ?"
+        $subQuery = $this->getEntityManager()->createQueryBuilder()
+            ->select('r.id')
+            ->from('App\Entity\Rencontre', 'r')
+            ->where('r.utilisateur = :user')
+            ->andWhere('r.utilisateur2 = p.utilisateur'); // On fait le lien avec le profil p
+
+        return $qb
+            // 1. On s'exclut soi-même (on ne veut pas se swiper)
             ->where('p.utilisateur != :user')
-
-            // 2. On ne garde que les profils qui n'ont AUCUNE ligne correspondante dans Rencontre
-            // (Si r.id est NULL, c'est que le profil n'a pas été swipé)
-            ->andWhere('r.id IS NULL')
-
+            
+            // 2. On garde uniquement ceux pour qui la sous-requête ne renvoie RIEN (NOT EXISTS)
+            ->andWhere($qb->expr()->not($qb->expr()->exists($subQuery->getDQL())))
+            
             ->setParameter('user', $user)
             ->getQuery()
             ->getResult();
