@@ -1,4 +1,12 @@
-<input type="text" class="search-input" placeholder="Recherche...">
+{# Recherche de profil depuis la page d'accueil (avec pseudo) #}
+<form action="{{ path('app_profile_search') }}" method="get">
+    <input
+        type="text"
+        name="pseudo"
+        class="search-input"
+        placeholder="Recherche..."
+    >
+</form>
 
 <a href="#" class="sidebar-item">
     <img class="sidebar-icon" src="{{ asset('images/Messagerie.png') }}" alt="Msg">
@@ -30,4 +38,4 @@
         const list = document.getElementById("list");
         list.classList.toggle("show");
     }
-</script> 
+</script>
