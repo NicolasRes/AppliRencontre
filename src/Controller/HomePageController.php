@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Configuration;
 use App\Entity\Rencontre;
 use App\Entity\Utilisateur;
 use App\Repository\ProfilRepository;
@@ -13,21 +14,27 @@ use Symfony\Component\Routing\Attribute\Route;
 final class HomePageController extends AbstractController
 {
     #[Route('/home', name: 'app_home_page')]
-    public function index(ProfilRepository $profilRepository): Response
+    public function index(EntityManagerInterface $em, ProfilRepository $profilRepository): Response
     {
         // Récupération de l'utilisateur connecté
         $user = $this->getUser();
+        $config = $em->getRepository(Configuration::class)->findOneBy(['utilisateur' => $user]);
 
         // 1. Sécurité : pas connecté ? -> Login
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
 
+        // 2. Sécurité : Pas validé ? -> Redirection vers la route '/' (HomeController)
+        // C'est là que ton code de vérification GDPR actuel se trouve.
         if (!$user->isAccordGdpr()) {
             return $this->redirectToRoute('home');
         }
         // Utilisation de notre nouvelle méthode de filtrage
-        $profils = $profilRepository->findProfilsNonSwipes($user);
+        $profils = $profilRepository->findProfilsNonSwipes($config, $user);
+
+        // AJOUTE CECI : Cela va arrêter la page et afficher le nombre de profils trouvés
+        // dd(count($profils)); 
 
         // On mélange et on prend le premier
         $profilAffiche = !empty($profils) ? $profils[array_rand($profils)] : null;

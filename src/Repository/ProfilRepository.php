@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Configuration;
 use App\Entity\Profil;
 use App\Entity\Utilisateur;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -20,22 +21,40 @@ class ProfilRepository extends ServiceEntityRepository
     /**
      * Récupère les profils que l'utilisateur n'a pas encore swipés
      */
-    public function findProfilsNonSwipes(Utilisateur $user): array
-    {
-        return $this->createQueryBuilder('p')
-            // On essaie de joindre la table Rencontre uniquement pour l'utilisateur actuel
+    public function findProfilsNonSwipes(Configuration $config, Utilisateur $user): array
+    {   
+        $qb = $this->createQueryBuilder('p')
+            // Exclut les profils déjà swipés par cet utilisateur
             ->leftJoin('App\Entity\Rencontre', 'r', 'WITH', 'r.utilisateur2 = p.utilisateur AND r.utilisateur = :user')
+            ->where('p.utilisateur != :user') // On exclut l'utilisateur lui-même
+            ->andWhere('r.id IS NULL')        // Seulement ceux qui n'ont pas de ligne dans Rencontre
+            ->setParameter('user', $user);
 
-            // 1. On exclut l'utilisateur connecté lui-même
-            ->where('p.utilisateur != :user')
+        // Si l'utilisateur a une configuration, on applique les filtres
+        if ($config) {
+            
+            // Filtre : Âge Minimum
+            if ($config->getAgeMin() !== null) {
+                $qb->andWhere('p.age >= :ageMin')
+                   ->setParameter('ageMin', $config->getAgeMin());
+            }
 
-            // 2. On ne garde que les profils qui n'ont AUCUNE ligne correspondante dans Rencontre
-            // (Si r.id est NULL, c'est que le profil n'a pas été swipé)
-            ->andWhere('r.id IS NULL')
+            // Filtre : Âge Maximum
+            if ($config->getAgeMax() !== null) {
+                $qb->andWhere('p.age <= :ageMax')
+                   ->setParameter('ageMax', $config->getAgeMax());
+            }
 
-            ->setParameter('user', $user)
-            ->getQuery()
-            ->getResult();
+            // Filtre : Genres Visibles
+            $genres = $config->getGenresVisibles();
+            if (!empty($genres)) {
+                // Doctrine gère automatiquement les tableaux avec l'opérateur IN
+                $qb->andWhere('p.genre IN (:genres)')
+                   ->setParameter('genres', $genres);
+            }
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
