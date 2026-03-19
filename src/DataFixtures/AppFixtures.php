@@ -55,7 +55,7 @@ class AppFixtures extends Fixture
         
         $genres = ['H', 'F', 'A'];
 
-        for ($i = 0; $i < 30; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             
             $genreChoisi = $faker->randomElement($genres);
 
@@ -66,9 +66,7 @@ class AppFixtures extends Fixture
                 $photoPrincipale = 'Femme' . $faker->numberBetween(1, 9) . '.jpeg';
                 $prenom = $faker->firstNameFemale();
             } else {
-                // Pour Non-binaire, on pioche au hasard parmi les photos Homme ou Femme
-                $prefixe = $faker->randomElement(['Homme', 'Femme']);
-                $photoPrincipale = $prefixe . $faker->numberBetween(1, 9) . '.jpeg';
+                $photoPrincipale = 'Binaire' . $faker->numberBetween(1, 9) . '.jpeg';
                 $prenom = $faker->firstName();
             }
 
@@ -100,11 +98,10 @@ class AppFixtures extends Fixture
                 if ($genreChoisi === 'H') {
                     $photoSup = 'Homme' . $faker->numberBetween(1, 9) . '.jpeg';
                 } elseif ($genreChoisi === 'F') {
-                } elseif ($genreChoisi === 'F') {
                     $photoSup = 'Femme' . $faker->numberBetween(1, 9) . '.jpeg';
                 } else {
-                    $prefixe = $faker->randomElement(['Homme', 'Femme']);
-                    $photoSup = $prefixe . $faker->numberBetween(1, 9) . '.jpeg';
+                    $photoSup = 'Binaire' . $faker->numberBetween(1, 9) . '.jpeg';
+
                 }
 
                 $photo = new PhotoProfil();

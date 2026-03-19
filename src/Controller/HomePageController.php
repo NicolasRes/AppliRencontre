@@ -33,9 +33,6 @@ final class HomePageController extends AbstractController
         // Utilisation de notre nouvelle méthode de filtrage
         $profils = $profilRepository->findProfilsNonSwipes($config, $user);
 
-        // AJOUTE CECI : Cela va arrêter la page et afficher le nombre de profils trouvés
-        // dd(count($profils)); 
-
         // On mélange et on prend le premier
         $profilAffiche = !empty($profils) ? $profils[array_rand($profils)] : null;
 
