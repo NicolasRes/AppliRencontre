@@ -8,6 +8,11 @@
     >
 </form>
 
+<a href="home" class="sidebar-item">
+    <img class="sidebar-icon" src="{{ asset('images/Home.jpg') }}" alt="Home">
+    <span>Accueil</span>
+</a>
+
 <a href="#" class="sidebar-item">
     <img class="sidebar-icon" src="{{ asset('images/Messagerie.png') }}" alt="Msg">
     <span>Messages</span>
@@ -18,22 +23,23 @@
     <span>Notifications</span>
 </a>
 
-<a href="#" class="sidebar-item">
+<a href="#" class="sidebar-item" onclick="menu()">
     <img class="sidebar-icon" src="{{ asset('images/Configuration.webp') }}" alt="Cfg">
     <span>Paramètres</span>
 </a>
+<ul id="list">
+    <li><a href="">Mes informations</a></li>
+    <li><a href="configuration">Mes préférences</a></li>
+    <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
+</ul>
 
 <div style="margin-top: auto; border-top: 2px solid #180b0b; padding-top: 20px;">
-    <a href="#" class="sidebar-item" onclick="menu()">
+    <a href="#" class="sidebar-item">
     <img class="sidebar-icon" style="border-radius: 50%;" 
         src="{{ app.user and app.user.imageIdentite ? asset('images/' ~ app.user.imageIdentite) : asset('images/thispersondoesnotexist.jpeg') }}" 
         alt="Moi">        
         <span>Mon Profil</span>
     </a>
-    <ul id="list">
-        <li><a href="configuration">Mes préférences</a></li>
-        <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
-    </ul>
 </div>
 <script>
     function menu(){
