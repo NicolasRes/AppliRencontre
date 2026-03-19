@@ -87,7 +87,7 @@ class RegistrationController extends AbstractController
             $notification = new Notification();
             $notification->setUtilisateur($user); // On lie la notif à l'utilisateur fraîchement créé
             $notification->setContenu("Bienvenue ! Votre compte a été créé avec succès.");
-            $notification->setType(1); // Par exemple, 1 pour 'Information' ou 'Système'
+            $notification->setType(0); // On lui donne 0 car c'est le type pour la notification de bienvenue
             $notification->setLu(false); // La notification est non lue par défaut
 
             $entityManager->persist($notification);
