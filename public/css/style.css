@@ -54,12 +54,8 @@ button[type=submit] {
 
 .form-group { margin-bottom: 1.5rem; }
 .form-group input {
-    border-radius: 10px;
     border-width: 4px;
-    border-color: #ed3692;
-    background: #fff1f5;
     font-size: 15px;
-
 }
 
 .search-block {
