@@ -1,6 +1,10 @@
 /* public/css/app_design.css */
 
 /* On définit notre propre base pour ne pas dépendre du body de style.css */
+body{
+    margin: 0%;
+}
+
 .app-body-reset {
     margin: 0;
     padding: 0;
@@ -186,4 +190,28 @@ a.action-btn {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.auth-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+}
+
+.form-group { margin-bottom: 1.5rem; }
+.form-group input {
+    border-radius: 10px;
+    border-width: 4px;
+    border-color: #ed3692;
+    background: #fff1f5;
+    font-size: 15px;
+
+}
+
+.displayNotifs{
+    margin: auto;
 }

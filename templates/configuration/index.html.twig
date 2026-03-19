@@ -1,39 +1,49 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/app_design.css') }}">
+{% endblock %}
+
 {% block title %}Mes préférences{% endblock %}
 
 {% block body %}
-
-<div class="auth-container">
-    <h1>Configuration des préferences</h1>
-    {{ form_start(formulaire) }}
-        <div class="form-group">
-            {{ form_label(formulaire.ageMin) }}
-            {{ form_widget(formulaire.ageMin) }}
+<div class="app-body-reset">
+    <div id="date-app-container">
+        <aside class="sidebar">
+            <h1 class="tindr-logo">Tindr</h1>
+            {{ include('partials/_header_app.html.twig') }}
+        </aside>
+        <div class="auth-container">
+            <h1>Configuration des préferences</h1>
+            {{ form_start(formulaire) }}
+                <div class="form-group">
+                    {{ form_label(formulaire.ageMin) }}
+                    {{ form_widget(formulaire.ageMin) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(formulaire.ageMax) }}
+                    {{ form_widget(formulaire.ageMax) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(formulaire.rayon) }}
+                    {{ form_widget(formulaire.rayon) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(formulaire.genresVisibles) }}
+                    {% for child in formulaire.genresVisibles %}
+                        {{ form_widget(child) }}
+                        {{ form_label(child) }}
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    {{ form_label(formulaire.etatNotif) }}
+                    {{ form_widget(formulaire.etatNotif) }}
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Valider">
+                </div>
+            {{ form_end(formulaire) }}
         </div>
-        <div class="form-group">
-            {{ form_label(formulaire.ageMax) }}
-            {{ form_widget(formulaire.ageMax) }}
-        </div>
-        <div class="form-group">
-            {{ form_label(formulaire.rayon) }}
-            {{ form_widget(formulaire.rayon) }}
-        </div>
-        <div class="form-group">
-            {{ form_label(formulaire.genresVisibles) }}
-            {% for child in formulaire.genresVisibles %}
-                {{ form_widget(child) }}
-                {{ form_label(child) }}
-            {% endfor %}
-        </div>
-        <div class="form-group">
-            {{ form_label(formulaire.etatNotif) }}
-            {{ form_widget(formulaire.etatNotif) }}
-        </div>
-        <div class="form-group">
-            <input type="submit" value="Valider">
-            <input type="button" value="Retour" onclick="history.back()">
-        </div>
-    {{ form_end(formulaire) }}
+    </div>
 </div>
 {% endblock %}

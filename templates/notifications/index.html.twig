@@ -1,24 +1,35 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/app_design.css') }}">
+{% endblock %}
+
 {% block title %}Notifications{% endblock %}
 
 {% block body %}
-<div class="displayNotifs">
-    <h1>Notifications</h1>
-    {% for notif in notifs %}
-        {% if notif.type == 0 %}
-            <h3>Bienvenue sur Tindr !</h3>
-        {% elseif notif.type == 1 %}
-            <h3>Message reçu</h3>
-        {% elseif notif.type == 2 %}
-            <h3>Vous avez un match !</h3>
-        {% elseif notif.type == -1 %}
-            <h3>Vous avez été signalé</h3>
-        {% endif %}
-        <p>Message : {{notif.contenu}}</p>
-        {% else %}
-            <p>Vous n'avez aucune notifications</p>
-    {% endfor %}
-    <input type="button" value="Retour" onclick="history.back()"/>
+<div class="app-body-reset">
+    <div id="date-app-container">
+        <aside class="sidebar">
+            <h1 class="tindr-logo">Tindr</h1>
+            {{ include('partials/_header_app.html.twig') }}
+        </aside>
+        <div class="displayNotifs">
+            <h1>Notifications</h1>
+            {% for notif in notifs %}
+                {% if notif.type == 0 %}
+                    <h3>Bienvenue sur Tindr !</h3>
+                {% elseif notif.type == 1 %}
+                    <h3>Vous avez reçu un message</h3>
+                {% elseif notif.type == 2 %}
+                    <h3>Vous avez un match !</h3>
+                {% elseif notif.type == -1 %}
+                    <h3>Vous avez été signalé</h3>
+                {% endif %}
+                <p>Message : {{notif.contenu}}</p>
+                {% else %}
+                    <p>Vous n'avez aucune notifications</p>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 {% endblock %}
