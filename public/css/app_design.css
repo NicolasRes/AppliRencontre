@@ -215,3 +215,9 @@ a.action-btn {
 .displayNotifs{
     margin: auto;
 }
+
+textarea{
+    display: flex;
+    resize: none;
+    width: 100%;
+}

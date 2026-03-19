@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Profil;
+use App\Form\ModifInformationsType;
 use App\Repository\ProfilRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -87,6 +90,25 @@ final class ProfileController extends AbstractController
 
         return $this->render('profile/search.html.twig', [
             'profiles' => $profiles
+        ]);
+    }
+
+    #[Route('informations', name: 'app_informations')]
+    public function setInformations(EntityManagerInterface $em, Request $request): Response {
+        if(!$this->getUser()){
+            return $this->redirectToRoute('app_login');
+        }
+        $user = $this->getUser();
+        $infosUser = $em->getRepository(Profil::class)->findOneBy(['utilisateur' => $user]);
+        $form = $this->createForm(ModifInformationsType::class, $infosUser);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $em->persist($infosUser);
+            $em->flush();
+            return $this->redirectToRoute('app_home_page');
+        }
+        return $this->render('profile/informations.html.twig', [
+            'formulaire' => $form->createView(),
         ]);
     }
 }

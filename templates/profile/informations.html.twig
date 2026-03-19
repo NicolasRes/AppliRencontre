@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/app_design.css') }}">
+{% endblock %}
+
+{% block title %}Mes informations{% endblock %}
+
+{% block body %}
+<div class="app-body-reset">
+    <div id="date-app-container">
+        <aside class="sidebar">
+            <h1 class="tindr-logo">Tindr</h1>
+            {{ include('partials/_header_app.html.twig') }}
+        </aside>
+        <div class="auth-container">
+            <h1>Configuration des informations</h1>
+            {{ form_start(formulaire) }}
+                <div class="form-group">
+                    {{ form_label(formulaire.nom) }}
+                    {{ form_widget(formulaire.nom) }}
+                    {{ form_errors(formulaire.nom) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(formulaire.prenom) }}
+                    {{ form_widget(formulaire.prenom) }}
+                    {{ form_errors(formulaire.prenom) }}
+                    
+                </div>
+                <div class="form-group">
+                    {{ form_label(formulaire.age) }}
+                    {{ form_widget(formulaire.age) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(formulaire.genre) }}
+                    {{ form_widget(formulaire.genre) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(formulaire.ville) }}
+                    {{ form_widget(formulaire.ville) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(formulaire.presentation) }}
+                    {{ form_widget(formulaire.presentation) }}
+                    {{ form_errors(formulaire.presentation) }}
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Valider">
+                </div>
+            {{ form_end(formulaire) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
