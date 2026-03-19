@@ -83,6 +83,8 @@ class AppFixtures extends Fixture
             $manager->persist($user);
             $utilisateurs[] = $user;
 
+            $manager->flush(); // Obligatoire pour le Faker de hostinger
+
             // Le Profil associé
             $profil = new Profil();
             $profil->setNom($faker->lastName())
@@ -163,7 +165,12 @@ class AppFixtures extends Fixture
                     }
                 }
             }
+            if (($i % 5) === 0) {
+                $manager->flush();
+            }
+
         }
+        $manager->flush();
 
         // ==========================================
         // 4. CRÉATION DE SIGNALEMENTS POUR LE MODO
