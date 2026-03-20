@@ -14,6 +14,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordC
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use App\Entity\Utilisateur;
 
 class AppAuthentificatorAuthenticator extends AbstractLoginFormAuthenticator
 {
@@ -46,10 +47,20 @@ public function onAuthenticationSuccess(Request $request, TokenInterface $token,
 {
     $user = $token->getUser();
 
-    // S'il n'est pas validé par le modo, on le dégage vers la racine (HomeController)
-    // qui se chargera d'afficher la vue 'waiting_validation'
-    if (!$user->isAccordGdpr()) {
-        return new RedirectResponse($this->urlGenerator->generate('home'));
+    // Redirection en fonction du statut
+    if ($user instanceof Utilisateur) {
+        // En attente de validation
+        if ($user->isPending()) {
+            return new RedirectResponse($this->urlGenerator->generate('home'));
+        }
+        // Rejeté : doit corriger ses infos
+        elseif ($user->isRejected()) {
+            return new RedirectResponse($this->urlGenerator->generate('app_register'));
+        }
+        // Redirection vers la homepage si validé
+        elseif ($user->isApproved()) {
+            return new RedirectResponse($this->urlGenerator->generate('app_home_page'));
+        }
     }
 
     if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {

@@ -21,7 +21,7 @@ class ResetPasswordRequestTest extends KernelTestCase
             ->setEmail('reset.min@test.fr')
             ->setPseudo('UserReset')
             ->setMdp('password')
-            ->setAccordGdpr(true)
+            ->setStatus(Utilisateur::STATUS_APPROVED)
             ->setIsModo(false);
 
         $entityManager->persist($user);
@@ -29,9 +29,9 @@ class ResetPasswordRequestTest extends KernelTestCase
         // 2. Création de la demande avec DateTimeImmutable
         $expiresAt = new \DateTimeImmutable('+1 hour');
         $resetRequest = new ResetPasswordRequest(
-            $user, 
-            $expiresAt, 
-            'selector_abc123', 
+            $user,
+            $expiresAt,
+            'selector_abc123',
             'hashed_token_xyz789'
         );
 
@@ -52,7 +52,7 @@ class ResetPasswordRequestTest extends KernelTestCase
         self::bootKernel();
         $entityManager = static::getContainer()->get('doctrine')->getManager();
 
-        $user = (new Utilisateur())->setEmail('reset.max@test.fr')->setPseudo('Max')->setMdp('p')->setAccordGdpr(true)->setIsModo(false);
+        $user = (new Utilisateur())->setEmail('reset.max@test.fr')->setPseudo('Max')->setMdp('p')->setStatus(Utilisateur::STATUS_APPROVED)->setIsModo(false);
         $entityManager->persist($user);
 
         $expiresAt = new \DateTimeImmutable('+2 hours');
@@ -67,10 +67,10 @@ class ResetPasswordRequestTest extends KernelTestCase
         // Vérification de l'intégrité des données
         $this->assertEquals($user->getEmail(), $resetRequest->getUser()->getEmail());
         $this->assertInstanceOf(ResetPasswordRequest::class, $resetRequest);
-        
+
         // Vérification de la date d'expiration
         $this->assertEquals(
-            $expiresAt->format('Y-m-d H:i'), 
+            $expiresAt->format('Y-m-d H:i'),
             $resetRequest->getExpiresAt()->format('Y-m-d H:i')
         );
     }

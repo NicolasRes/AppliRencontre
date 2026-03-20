@@ -18,14 +18,14 @@ class SignalementTest extends KernelTestCase
             ->setEmail('auteur.min@test.fr')
             ->setPseudo('Auteur')
             ->setMdp('password')
-            ->setAccordGdpr(true)
+            ->setStatus(Utilisateur::STATUS_APPROVED)
             ->setIsModo(false);
 
         $cible = (new Utilisateur())
             ->setEmail('cible.min@test.fr')
             ->setPseudo('Cible')
             ->setMdp('password')
-            ->setAccordGdpr(true)
+            ->setStatus(Utilisateur::STATUS_APPROVED)
             ->setIsModo(false);
 
         $entityManager->persist($auteur);
@@ -52,8 +52,8 @@ class SignalementTest extends KernelTestCase
         self::bootKernel();
         $entityManager = static::getContainer()->get('doctrine')->getManager();
 
-        $auteur = (new Utilisateur())->setEmail('auteur.max@test.fr')->setPseudo('A')->setMdp('p')->setAccordGdpr(true)->setIsModo(false);
-        $cible = (new Utilisateur())->setEmail('cible.max@test.fr')->setPseudo('C')->setMdp('p')->setAccordGdpr(true)->setIsModo(false);
+        $auteur = (new Utilisateur())->setEmail('auteur.max@test.fr')->setPseudo('A')->setMdp('p')->setStatus(Utilisateur::STATUS_APPROVED)->setIsModo(false);
+        $cible = (new Utilisateur())->setEmail('cible.max@test.fr')->setPseudo('C')->setMdp('p')->setStatus(Utilisateur::STATUS_APPROVED)->setIsModo(false);
         $date = new \DateTime('2023-12-25');
         $motif = "Comportement inapproprié durant la rencontre";
         $statut = 2;
@@ -73,12 +73,12 @@ class SignalementTest extends KernelTestCase
 
         $this->assertEquals($motif, $signalement->getMotif());
         $this->assertIsString($signalement->getMotif());
-        
+
         $this->assertEquals($statut, $signalement->getStatut());
         $this->assertIsInt($signalement->getStatut());
 
         $this->assertEquals($date->format('Y-m-d'), $signalement->getDateS()->format('Y-m-d'));
-        
+
         $this->assertEquals($auteur->getEmail(), $signalement->getAuteur()->getEmail());
         $this->assertEquals($cible->getEmail(), $signalement->getCible()->getEmail());
     }

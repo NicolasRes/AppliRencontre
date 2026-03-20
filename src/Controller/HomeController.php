@@ -5,22 +5,27 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController; // Ajout requis
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\Utilisateur;
 
-class HomeController extends AbstractController 
+class HomeController extends AbstractController
 {
     #[Route('/', name: 'home')]
     public function index(): Response
     {
         $user = $this->getUser();
-        #dump($user->isAccordGdpr()); die;
 
-        // Si l'utilisateur est connecté mais n'a pas validé le GDPR (validation modo)
-        if ($user && !$user->isAccordGdpr()) {
-            // On le redirige ou on affiche le message d'attente
-            return $this->render('security/waiting_validation.html.twig');
-        }elseif ($user && $user->isAccordGdpr()) {
-            // Si l'utilisateur est connecté et a validé le GDPR
-            return $this->render('home_page/index.html.twig');
+        if ($user instanceof Utilisateur) {
+
+            // Empêche l'utilisateur d'aller sur /login alors qu'il est connecté
+            if ($user->isApproved()) {
+                return $this->render('app_home_page');  // Le twig de HomeController n'est jamais utilisé donc on redirige direct vers l'app une fois connecté
+            }
+            elseif ($user->isPending()) {
+                return $this->render('security/waiting_validation.html.twig');
+            }
+            elseif ($user->isRejected()) {
+                return $this->redirectToRoute('app_register');
+            }
         }
 
         return $this->render('home/index.html.twig');

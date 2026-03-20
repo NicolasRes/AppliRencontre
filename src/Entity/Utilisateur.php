@@ -12,6 +12,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_APPROVED = 'approved';
+    public const STATUS_REJECTED = 'rejected';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -30,10 +34,10 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $imageIdentite = null;
 
     #[ORM\Column]
-    private ?bool $accordGdpr = null;
-
-    #[ORM\Column]
     private ?bool $isModo = null;
+
+    #[ORM\Column(length: 20)]
+    private ?string $status = self::STATUS_PENDING;
 
     public function getId(): ?int
     {
@@ -88,18 +92,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isAccordGdpr(): ?bool
-    {
-        return $this->accordGdpr;
-    }
-
-    public function setAccordGdpr(bool $accordGdpr): static
-    {
-        $this->accordGdpr = $accordGdpr;
-
-        return $this;
-    }
-
     public function isModo(): ?bool
     {
         return $this->isModo;
@@ -130,5 +122,56 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function getPassword(): ?string
     {
         return $this->mdp;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        // On fait une liste des statuts autorisés
+        $allowedStatuses = [
+            self::STATUS_PENDING,
+            self::STATUS_APPROVED,
+            self::STATUS_REJECTED,
+        ];
+
+        // Exception si le statut ne fait pas parti des statuts autorisés
+        if (!in_array($status, $allowedStatuses, true)) {
+            throw new \InvalidArgumentException("Statut invalide : $status");
+        }
+
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Méthode qui indique si l'inscription d'un utilisateur est en attente de validation
+     * @return bool Vrai si en attente, faux sinon
+     */
+    public function isPending(): bool
+    {
+        return $this->status === self::STATUS_PENDING;
+    }
+
+    /**
+     * Méthode qui indique si l'inscription d'un utilisateur est acceptée
+     * @return bool Vrai si acceptée, faux sinon
+     */
+    public function isApproved(): bool
+    {
+        return $this->status === self::STATUS_APPROVED;
+    }
+
+    /**
+     * Méthode qui indique si l'inscription d'un utilisateur rejetée
+     * @return bool Vrai si rejetée, faux sinon
+     */
+    public function isRejected(): bool
+    {
+        return $this->status === self::STATUS_REJECTED;
     }
 }

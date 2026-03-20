@@ -21,7 +21,7 @@ class UtilisateurTest extends KernelTestCase{
 
         // On crée un faux fichier pour le test
         $filePath = $uploadPath . '/test_image.jpg';
-        
+
         // On s'assure que le dossier de test existe
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0777, true);
@@ -30,7 +30,7 @@ class UtilisateurTest extends KernelTestCase{
         file_put_contents($filePath, 'contenu factice');
 
         $this->assertFileExists($filePath);
-        
+
         // Nettoyage après le test
         unlink($filePath);
     }
@@ -44,7 +44,7 @@ class UtilisateurTest extends KernelTestCase{
         $user->setEmail('min@test.fr')
             ->setPseudo('MinUser')
             ->setMdp('password')
-            ->setAccordGdpr(true) // Vrai booléen
+            ->setStatus(Utilisateur::STATUS_APPROVED)
             ->setIsModo(false);
 
         $entityManager->persist($user);
@@ -53,7 +53,7 @@ class UtilisateurTest extends KernelTestCase{
         // Vérification de l'instanciation et des types
         $this->assertNotNull($user->getId());
         $this->assertIsInt($user->getId());
-        
+
         // Vérification des valeurs (Est-ce que le string est bien le bon string ?)
         $this->assertEquals('min@test.fr', $user->getEmail());
         $this->assertEquals('MinUser', $user->getPseudo());
@@ -74,7 +74,7 @@ class UtilisateurTest extends KernelTestCase{
         $user->setEmail($email)
             ->setPseudo($pseudo)
             ->setMdp('secret')
-            ->setAccordGdpr(true)
+            ->setStatus(Utilisateur::STATUS_APPROVED)
             ->setIsModo(true)
             ->setImageIdentite($image);
 
@@ -84,9 +84,9 @@ class UtilisateurTest extends KernelTestCase{
         // Vérification complète des données
         $this->assertEquals($email, $user->getEmail());
         $this->assertIsString($user->getEmail());
-        
+
         $this->assertEquals($pseudo, $user->getPseudo());
-        
+
         $this->assertEquals($image, $user->getImageIdentite());
         $this->assertIsString($user->getImageIdentite());
 

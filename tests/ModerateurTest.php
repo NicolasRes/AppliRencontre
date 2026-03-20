@@ -21,9 +21,9 @@ class ModerateurTest extends KernelTestCase
             ->setEmail('modo.min@test.fr')
             ->setPseudo('ModoMin')
             ->setMdp('password')
-            ->setAccordGdpr(true)
+            ->setStatus(Utilisateur::STATUS_APPROVED)
             ->setIsModo(true); // Logiquement true pour un modérateur
-        
+
         $entityManager->persist($user);
 
         // 2. Création du modérateur lié
@@ -52,9 +52,9 @@ class ModerateurTest extends KernelTestCase
             ->setEmail('modo.max@test.fr')
             ->setPseudo('ModoMax')
             ->setMdp('password')
-            ->setAccordGdpr(true)
+            ->setStatus(Utilisateur::STATUS_APPROVED)
             ->setIsModo(true);
-        
+
         $entityManager->persist($user);
 
         // 2. Création du modérateur
@@ -66,10 +66,10 @@ class ModerateurTest extends KernelTestCase
 
         // 3. Vérifications poussées
         $this->assertNotNull($moderateur->getId());
-        
+
         // Vérification de la liaison : l'email de l'utilisateur lié au modo est-il correct ?
         $this->assertEquals('modo.max@test.fr', $moderateur->getUtilisateur()->getEmail());
-        
+
         // Vérification de l'instance
         $this->assertInstanceOf(Moderateur::class, $moderateur);
         $this->assertInstanceOf(Utilisateur::class, $moderateur->getUtilisateur());

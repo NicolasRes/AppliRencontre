@@ -21,9 +21,9 @@ class ProfilTest extends KernelTestCase
             ->setEmail('profil.min@test.fr')
             ->setPseudo('UserMin')
             ->setMdp('password')
-            ->setAccordGdpr(true)
+            ->setStatus(Utilisateur::STATUS_APPROVED)
             ->setIsModo(false);
-        
+
         $entityManager->persist($user);
 
         // 2. Création du profil avec les champs NOT NULL (age, genre, ville)
@@ -54,13 +54,13 @@ class ProfilTest extends KernelTestCase
             ->setEmail('profil.max@test.fr')
             ->setPseudo('UserMax')
             ->setMdp('password')
-            ->setAccordGdpr(true)
+            ->setStatus(Utilisateur::STATUS_APPROVED)
             ->setIsModo(false);
-        
+
         $entityManager->persist($user);
 
         $presentation = "Bonjour, je suis ici pour faire de nouvelles rencontres passionnantes !";
-        
+
         $profil = new Profil();
         $profil->setAge(30)
                ->setGenre('Femme')
@@ -76,7 +76,7 @@ class ProfilTest extends KernelTestCase
         $this->assertEquals('Femme', $profil->getGenre());
         $this->assertEquals($presentation, $profil->getPresentation());
         $this->assertIsString($profil->getPresentation());
-        
+
         // Vérification de la liaison OneToOne
         $this->assertEquals($user->getEmail(), $profil->getUtilisateur()->getEmail());
     }

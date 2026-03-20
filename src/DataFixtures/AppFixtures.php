@@ -40,7 +40,7 @@ class AppFixtures extends Fixture
                   ->setEmail('admin@tindr.fr')
                   ->setMdp($this->hasher->hashPassword($adminUser, 'admin'))
                   ->setImageIdentite('PlaceHolderProfil.jpg')
-                  ->setAccordGdpr(true)
+                  ->setStatus(Utilisateur::STATUS_APPROVED)
                   ->setIsModo(true);
         $manager->persist($adminUser);
 
@@ -52,11 +52,11 @@ class AppFixtures extends Fixture
         // 2. CRÉATION DE 30 UTILISATEURS & PROFILS
         // ==========================================
         $genres = ['H', 'F', 'A'];
-        
+
         $genres = ['H', 'F', 'A'];
 
         for ($i = 0; $i < 100; $i++) {
-            
+
             $genreChoisi = $faker->randomElement($genres);
 
             if ($genreChoisi === 'H') {
@@ -76,10 +76,10 @@ class AppFixtures extends Fixture
             $user = new Utilisateur();
             $user->setPseudo($pseudo)
                  ->setEmail($faker->unique()->safeEmail())
-                 ->setMdp($this->hasher->hashPassword($user, 'password')) 
-                 ->setImageIdentite($photoPrincipale) 
-                 ->setAccordGdpr(true)
-                 ->setIsModo(false);
+                 ->setMdp($this->hasher->hashPassword($user, 'password'))
+                 ->setImageIdentite($photoPrincipale)
+                ->setStatus(Utilisateur::STATUS_APPROVED)
+                ->setIsModo(false);
             $manager->persist($user);
             $utilisateurs[] = $user;
 
@@ -120,7 +120,7 @@ class AppFixtures extends Fixture
                      ->setUtilisateur($user);
                 $manager->persist($lien);
             }
-            
+
             // Configuration de base pour l'utilisateur
             $config = new Configuration();
             $config->setAgeMin(18)
@@ -176,7 +176,7 @@ class AppFixtures extends Fixture
         // 4. CRÉATION DE SIGNALEMENTS POUR LE MODO
         // ==========================================
         $motifs = ['Faux profil', 'Harcèlement', 'Propos injurieux', 'Spam / Brouteur', 'Photos inappropriées'];
-        
+
         for ($i = 0; $i < 10; $i++) {
             $auteur = $faker->randomElement($utilisateurs);
             $cible = $faker->randomElement($utilisateurs);

@@ -20,16 +20,18 @@ final class HomePageController extends AbstractController
         $user = $this->getUser();
         $config = $em->getRepository(Configuration::class)->findOneBy(['utilisateur' => $user]);
 
-        // 1. Sécurité : pas connecté ? -> Login
-        if (!$user) {
+        $user = $this->getUser();
+
+        // Sécurité : on empêche les accès non autorisés
+        // Utilisateur non connecté : login
+        if (!$user instanceof Utilisateur) {
             return $this->redirectToRoute('app_login');
         }
-
-        // 2. Sécurité : Pas validé ? -> Redirection vers la route '/' (HomeController)
-        // C'est là que ton code de vérification GDPR actuel se trouve.
-        if (!$user->isAccordGdpr()) {
-            return $this->redirectToRoute('home');
+        // Rejeté : page de correction de formulaire disponible
+        elseif ($user->isRejected()) {
+            return $this->redirectToRoute('app_register');
         }
+
         // Utilisation de notre nouvelle méthode de filtrage
         $profils = $profilRepository->findProfilsNonSwipes($config, $user);
 
@@ -45,7 +47,7 @@ final class HomePageController extends AbstractController
     public function swipe(Utilisateur $cible, string $action, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
-        
+
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
@@ -54,7 +56,7 @@ final class HomePageController extends AbstractController
         $rencontre->setUtilisateur($user);
         $rencontre->setUtilisateur2($cible);
         $rencontre->setDateCreation(new \DateTime());
-        
+
         // 1 = Like, 0 = Dislike
         $rencontre->setStatut($action === 'like' ? 1 : 0);
 

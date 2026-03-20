@@ -18,11 +18,11 @@ class MessagesTest extends KernelTestCase
         $entityManager = static::getContainer()->get('doctrine')->getManager();
 
         // 1. Création de l'auteur
-        $auteur = (new Utilisateur())->setEmail('auteur.msg@test.fr')->setPseudo('Auteur')->setMdp('p')->setAccordGdpr(true)->setIsModo(false);
+        $auteur = (new Utilisateur())->setEmail('auteur.msg@test.fr')->setPseudo('Auteur')->setMdp('p')->setStatus(Utilisateur::STATUS_APPROVED)->setIsModo(false);
         $entityManager->persist($auteur);
 
         // 2. Création d'un second utilisateur pour la rencontre
-        $dest = (new Utilisateur())->setEmail('dest.msg@test.fr')->setPseudo('Dest')->setMdp('p')->setAccordGdpr(true)->setIsModo(false);
+        $dest = (new Utilisateur())->setEmail('dest.msg@test.fr')->setPseudo('Dest')->setMdp('p')->setStatus(Utilisateur::STATUS_APPROVED)->setIsModo(false);
         $entityManager->persist($dest);
 
         // 3. Création de la rencontre liée
@@ -55,8 +55,8 @@ class MessagesTest extends KernelTestCase
         $entityManager = static::getContainer()->get('doctrine')->getManager();
 
         // Réutilisation simplifiée pour les relations
-        $auteur = (new Utilisateur())->setEmail('max.auteur@test.fr')->setPseudo('Max')->setMdp('p')->setAccordGdpr(true)->setIsModo(false);
-        $dest = (new Utilisateur())->setEmail('max.dest@test.fr')->setPseudo('Dest')->setMdp('p')->setAccordGdpr(true)->setIsModo(false);
+        $auteur = (new Utilisateur())->setEmail('max.auteur@test.fr')->setPseudo('Max')->setMdp('p')->setStatus(Utilisateur::STATUS_APPROVED)->setIsModo(false);
+        $dest = (new Utilisateur())->setEmail('max.dest@test.fr')->setPseudo('Dest')->setMdp('p')->setStatus(Utilisateur::STATUS_APPROVED)->setIsModo(false);
         $entityManager->persist($auteur);
         $entityManager->persist($dest);
 
@@ -82,12 +82,12 @@ class MessagesTest extends KernelTestCase
         $this->assertNotNull($message->getId());
         $this->assertEquals($contenu, $message->getContenu());
         $this->assertIsString($message->getContenu());
-        
+
         $this->assertEquals($lienPhoto, $message->getLienPhoto());
         $this->assertTrue($message->isEstLu());
-        
+
         $this->assertEquals($date->format('Y-m-d H:i'), $message->getTemps()->format('Y-m-d H:i'));
-        
+
         // Vérification des relations
         $this->assertInstanceOf(Utilisateur::class, $message->getAuteur());
         $this->assertInstanceOf(Rencontre::class, $message->getRencontre());

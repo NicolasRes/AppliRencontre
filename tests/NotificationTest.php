@@ -21,9 +21,9 @@ class NotificationTest extends KernelTestCase
             ->setEmail('notif.min@test.fr')
             ->setPseudo('UserNotif')
             ->setMdp('password')
-            ->setAccordGdpr(true)
+            ->setStatus(Utilisateur::STATUS_APPROVED)
             ->setIsModo(false);
-        
+
         $entityManager->persist($user);
 
         // 2. Création de la notification avec les champs obligatoires
@@ -55,9 +55,9 @@ class NotificationTest extends KernelTestCase
             ->setEmail('notif.max@test.fr')
             ->setPseudo('MaxNotif')
             ->setMdp('password')
-            ->setAccordGdpr(true)
+            ->setStatus(Utilisateur::STATUS_APPROVED)
             ->setIsModo(false);
-        
+
         $entityManager->persist($user);
 
         $contenu = "Votre profil a été consulté par un autre membre !";
@@ -75,10 +75,10 @@ class NotificationTest extends KernelTestCase
         // Vérifications de l'intégrité
         $this->assertEquals($contenu, $notification->getContenu());
         $this->assertIsString($notification->getContenu());
-        
+
         $this->assertEquals($type, $notification->getType());
         $this->assertIsInt($notification->getType());
-        
+
         $this->assertTrue($notification->isLu());
         $this->assertIsBool($notification->isLu());
 

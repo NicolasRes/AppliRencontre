@@ -17,7 +17,7 @@ class LiensTest extends KernelTestCase
         $entityManager = static::getContainer()->get('doctrine')->getManager();
 
         // 1. Création utilisateur
-        $user = (new Utilisateur())->setEmail('lien.min@test.fr')->setPseudo('LienMin')->setMdp('p')->setAccordGdpr(true)->setIsModo(false);
+        $user = (new Utilisateur())->setEmail('lien.min@test.fr')->setPseudo('LienMin')->setMdp('p')->setStatus(Utilisateur::STATUS_APPROVED)->setIsModo(false);
         $entityManager->persist($user);
 
         // 2. Création du lien
@@ -41,7 +41,7 @@ class LiensTest extends KernelTestCase
         self::bootKernel();
         $entityManager = static::getContainer()->get('doctrine')->getManager();
 
-        $user = (new Utilisateur())->setEmail('lien.max@test.fr')->setPseudo('LienMax')->setMdp('p')->setAccordGdpr(true)->setIsModo(false);
+        $user = (new Utilisateur())->setEmail('lien.max@test.fr')->setPseudo('LienMax')->setMdp('p')->setStatus(Utilisateur::STATUS_APPROVED)->setIsModo(false);
         $entityManager->persist($user);
 
         $dateExp = new \DateTime('2026-12-31 23:59:59');
