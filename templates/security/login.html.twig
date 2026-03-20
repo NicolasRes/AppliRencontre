@@ -4,7 +4,15 @@
 {% block title %}Connexion{% endblock %}
 
 {% block body %}
+
 <div class="auth-container">
+    {# Affichage uniquement si connecté sur page login #}
+    {% if app.user %}
+    <div class="mb-3">
+        Vous êtes connecté en tant que {{ app.user.userIdentifier }}
+    </div>
+    {% else %} {# Ne pas afficher le formulaire en même temps #}
+
     <form method="post">
         {% if error %}
             <div class="alert alert-danger">
@@ -13,13 +21,6 @@
                 {% else %}
                     {{ error.messageKey|trans(error.messageData, 'security') }}
                 {% endif %}
-            </div>
-        {% endif %}
-
-        {% if app.user %}
-            <div class="mb-3">
-                Vous êtes connecté en tant que {{ app.user.userIdentifier }},
-                <a href="{{ logout_path() }}">Déconnexion</a>
             </div>
         {% endif %}
 
@@ -41,11 +42,19 @@
     </form>
 
     <div class="mt-3">
-        <p>Nouveau sur le site ? <a href="{{ path('app_register') }}">Créer un compte</a></p>
+        <p>
+            Nouveau sur le site ?
+            <a href="{{ path('app_register') }}">Créer un compte</a>
+        </p>
     </div>
+
+    {% endif %}
 
     <a href="{{ path('app_forgot_password_request') }}">
         Mot de passe oublié ?
     </a>
+    <div>
+        <a href="{{ logout_path() }}">Déconnexion</a>
+    </div>
 </div>
 {% endblock %}
