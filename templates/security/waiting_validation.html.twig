@@ -1,8 +1,31 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     <div style="text-align: center; margin-top: 50px;">
+
         <h1>Compte en attente</h1>
-        <p>Votre profil est en cours de validation par un modérateur.</p>
-        <a href="{{ path('app_logout') }}">Se déconnecter</a>
+
+        {#  <p>Email : {{ app.user.email }}</p>
+        <p>Status : {{ app.user.status }}</p>#}
+
+        {# Messages de validation #}
+        {% if app.request.get('success') == 'register' %}
+            {# Inscription réussie #}
+            <p style="color: green;">Votre compte a bien été créé.</p>
+        {% elseif app.request.get('success') == 'update' %}
+            {# Modification du formulaire réussie #}
+            <p style="color: green;">Votre profil a bien été mis à jour.</p>
+        {% endif %}
+
+        {# Messages de statut #}
+        {% if app.user.status == 'pending' %}
+            {# Cas profil en attente de validation par un modérateur #}
+            <p>Votre profil est en cours de validation par un modérateur.</p>
+            <a href="{{ path('app_logout') }}">Se déconnecter</a>
+        {% elseif app.user.status == 'rejected' %}
+            {# Cas profil à compléter (car rejeté par un modo) #}
+            <p>Votre profil a été rejeté par un modérateur. Veuillez modifier vos informations.</p>
+            <a href="{{ path('app_register') }}">Compléter le formulaire</a>
+        {% endif %}
+
     </div>
 {% endblock %}
