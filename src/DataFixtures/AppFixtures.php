@@ -5,7 +5,6 @@ namespace App\DataFixtures;
 use App\Entity\Configuration;
 use App\Entity\Liens;
 use App\Entity\Message;
-use App\Entity\Moderateur;
 use App\Entity\Notification;
 use App\Entity\PhotoProfil;
 use App\Entity\Profil;
@@ -32,7 +31,7 @@ class AppFixtures extends Fixture
         $faker = Factory::create('fr_FR');
         $utilisateurs = [];
 
-        // ==========================================
+// ==========================================
         // 1. CRÉATION D'UN MODÉRATEUR DE TEST
         // ==========================================
         $adminUser = new Utilisateur();
@@ -44,50 +43,104 @@ class AppFixtures extends Fixture
                   ->setIsModo(true);
         $manager->persist($adminUser);
 
-        $moderateur = new Moderateur();
-        $moderateur->setUtilisateur($adminUser);
-        $manager->persist($moderateur);
+        // ==========================================
+        // 2. CRÉATION DES COMPTES DE TEST FIXES
+        // ==========================================
+        
+        // --- COMPTE 1 : Le signaleur (Auteur) ---
+        $testUser1 = new Utilisateur();
+        $testUser1->setPseudo('Testeur1')
+                 ->setEmail('test1@tindr.fr') // <-- EMAIL 1
+                 ->setMdp($this->hasher->hashPassword($testUser1, 'password')) // <-- MDP : password
+                 ->setImageIdentite('Homme1.jpeg')
+                 ->setStatus(Utilisateur::STATUS_APPROVED)
+                 ->setIsModo(false);
+        $manager->persist($testUser1);
+        $utilisateurs[] = $testUser1;
+
+        $testProfil1 = new Profil();
+        $testProfil1->setNom('Test')
+                   ->setPrenom('Jean')
+                   ->setAge(25)
+                   ->setGenre('Homme')
+                   ->setVille('Paris')
+                   ->setPresentation('Je suis le compte de test gentil !')
+                   ->setUtilisateur($testUser1);
+        $manager->persist($testProfil1);
+
+        $testConfig1 = new Configuration();
+        $testConfig1->setAgeMin(18)->setAgeMax(99)->setRayon(50)
+                   ->setGenresVisibles(['Homme', 'Femme', 'Non-binaire'])
+                   ->setEtatNotif(true)->setUtilisateur($testUser1);
+        $manager->persist($testConfig1);
+
+        // --- COMPTE 2 : Le signalé (Cible) ---
+        $testUser2 = new Utilisateur();
+        $testUser2->setPseudo('BadGuy99')
+                 ->setEmail('badguy@tindr.fr') // <-- EMAIL 2
+                 ->setMdp($this->hasher->hashPassword($testUser2, 'password')) // <-- MDP : password
+                 ->setImageIdentite('Homme2.jpeg')
+                 ->setStatus(Utilisateur::STATUS_APPROVED)
+                 ->setIsModo(false);
+        $manager->persist($testUser2);
+        $utilisateurs[] = $testUser2;
+
+        $testProfil2 = new Profil();
+        $testProfil2->setNom('Toxic')
+                   ->setPrenom('Marc')
+                   ->setAge(30)
+                   ->setGenre('Homme')
+                   ->setVille('Lyon')
+                   ->setPresentation('Je suis le profil toxique qui va être banni !')
+                   ->setUtilisateur($testUser2);
+        $manager->persist($testProfil2);
+
+        $testConfig2 = new Configuration();
+        $testConfig2->setAgeMin(18)->setAgeMax(99)->setRayon(50)
+                   ->setGenresVisibles(['Homme', 'Femme', 'Non-binaire'])
+                   ->setEtatNotif(true)->setUtilisateur($testUser2);
+        $manager->persist($testConfig2);
+
+        $manager->flush(); // 1er envoi pour la BDD
 
         // ==========================================
-        // 2. CRÉATION DE 30 UTILISATEURS & PROFILS
+        // 3. CRÉATION DE 30 UTILISATEURS & PROFILS
         // ==========================================
-        $genres = ['H', 'F', 'A'];
-
-        $genres = ['H', 'F', 'A'];
-
-        for ($i = 0; $i < 100; $i++) {
-
+        $genres = ['Homme', 'Femme', 'Non-binaire'];
+        
+        for ($i = 0; $i < 30; $i++) {
             $genreChoisi = $faker->randomElement($genres);
+            
+            $prenom = '';
+            $nom = $faker->lastName();
 
-            if ($genreChoisi === 'H') {
+            if ($genreChoisi === 'Homme') {
                 $photoPrincipale = 'Homme' . $faker->numberBetween(1, 9) . '.jpeg';
                 $prenom = $faker->firstNameMale();
-            } elseif ($genreChoisi === 'F') {
+            } elseif ($genreChoisi === 'Femme') {
                 $photoPrincipale = 'Femme' . $faker->numberBetween(1, 9) . '.jpeg';
                 $prenom = $faker->firstNameFemale();
             } else {
-                $photoPrincipale = 'Binaire' . $faker->numberBetween(1, 9) . '.jpeg';
+                $prefixe = $faker->randomElement(['Homme', 'Femme']);
+                $photoPrincipale = $prefixe . $faker->numberBetween(1, 9) . '.jpeg';
                 $prenom = $faker->firstName();
             }
 
-            $prenomPropre = strtolower(str_replace([' ', '-'], '', $prenom)); // Enleve espace
-            $pseudo = $prenomPropre . $faker->numberBetween(10, 999); // randint
+            $prenomPropre = strtolower(str_replace([' ', '-'], '', $prenom));
+            $pseudo = $prenomPropre . $faker->numberBetween(10, 999);
 
             $user = new Utilisateur();
             $user->setPseudo($pseudo)
                  ->setEmail($faker->unique()->safeEmail())
                  ->setMdp($this->hasher->hashPassword($user, 'password'))
                  ->setImageIdentite($photoPrincipale)
-                ->setStatus(Utilisateur::STATUS_APPROVED)
-                ->setIsModo(false);
+                 ->setStatus(Utilisateur::STATUS_APPROVED)
+                 ->setIsModo(false);
             $manager->persist($user);
             $utilisateurs[] = $user;
 
-            $manager->flush(); // Obligatoire pour le Faker de hostinger
-
-            // Le Profil associé
             $profil = new Profil();
-            $profil->setNom($faker->lastName())
+            $profil->setNom($nom)
                    ->setPrenom($prenom)
                    ->setAge($faker->numberBetween(18, 60))
                    ->setGenre($genreChoisi)
@@ -96,45 +149,54 @@ class AppFixtures extends Fixture
                    ->setUtilisateur($user);
             $manager->persist($profil);
 
-            for ($j = 0; $j < 2; $j++) {
-                if ($genreChoisi === 'H') {
-                    $photoSup = 'Homme' . $faker->numberBetween(1, 9) . '.jpeg';
-                } elseif ($genreChoisi === 'F') {
-                    $photoSup = 'Femme' . $faker->numberBetween(1, 9) . '.jpeg';
-                } else {
-                    $photoSup = 'Binaire' . $faker->numberBetween(1, 9) . '.jpeg';
-
-                }
-
-                $photo = new PhotoProfil();
-                $photo->setLienPhoto($photoSup)
-                      ->setProfil($profil);
-                $manager->persist($photo);
-            }
-
-            // Génération d'un lien Premium fictif (1 chance sur 3)
-            if ($faker->boolean(30)) {
-                $lien = new Liens();
-                $lien->setExpDate($faker->dateTimeBetween('now', '+1 year'))
-                     ->setUtilise($faker->boolean())
-                     ->setUtilisateur($user);
-                $manager->persist($lien);
-            }
-
-            // Configuration de base pour l'utilisateur
             $config = new Configuration();
             $config->setAgeMin(18)
                    ->setAgeMax(99)
                    ->setRayon(50)
-                   ->setGenresVisibles(['H', 'F'])
-                   ->setGenresVisibles(['H', 'F'])
+                   ->setGenresVisibles(['Homme', 'Femme'])
                    ->setEtatNotif(true)
                    ->setUtilisateur($user);
             $manager->persist($config);
+
+            if (($i % 10) === 0) {
+                $manager->flush();
+            }
         }
+        $manager->flush();
 
         // ==========================================
-        // 3. CRÉATION DE MATCHS (RENCONTRES) & MESSAGES
+        // 4. CRÉATION DE SIGNALEMENTS POUR LE MODO
+        // ==========================================
+        $motifs = ['Faux profil', 'Harcèlement', 'Propos injurieux', 'Spam / Brouteur', 'Photos inappropriées'];
+        
+        // 💡 LE SIGNALEMENT FIXE ENTRE NOS DEUX COMPTES DE TEST
+        $signalementFixe = new Signalement();
+        $signalementFixe->setAuteur($testUser1) // test1@tindr.fr dénonce...
+                        ->setCible($testUser2)  // ... badguy@tindr.fr
+                        ->setMotif('Propos injurieux')
+                        ->setDateS(new \DateTime()) // Date d'aujourd'hui
+                        ->setStatut(0); // 0 = En attente
+        $manager->persist($signalementFixe);
+
+        // Les signalements aléatoires
+        for ($i = 0; $i < 10; $i++) {
+            $auteur = $faker->randomElement($utilisateurs);
+            $cible = $faker->randomElement($utilisateurs);
+
+            if ($auteur !== $cible) {
+                $signalement = new Signalement();
+                $signalement->setAuteur($auteur)
+                            ->setCible($cible)
+                            ->setMotif($faker->randomElement($motifs))
+                            ->setDateS($faker->dateTimeThisMonth())
+                            ->setStatut(0); // 0 = En attente
+                $manager->persist($signalement);
+            }
+        }
+        $manager->flush();
+
+        // ==========================================
+        // 5. CRÉATION DE MATCHS (RENCONTRES) & MESSAGES
         // ==========================================
         $rencontres = [];
         for ($i = 0; $i < 15; $i++) {
@@ -173,27 +235,7 @@ class AppFixtures extends Fixture
         $manager->flush();
 
         // ==========================================
-        // 4. CRÉATION DE SIGNALEMENTS POUR LE MODO
-        // ==========================================
-        $motifs = ['Faux profil', 'Harcèlement', 'Propos injurieux', 'Spam / Brouteur', 'Photos inappropriées'];
-
-        for ($i = 0; $i < 10; $i++) {
-            $auteur = $faker->randomElement($utilisateurs);
-            $cible = $faker->randomElement($utilisateurs);
-
-            if ($auteur !== $cible) {
-                $signalement = new Signalement();
-                $signalement->setAuteur($auteur)
-                            ->setCible($cible)
-                            ->setMotif($faker->randomElement($motifs))
-                            ->setDateS($faker->dateTimeThisMonth())
-                            ->setStatut(0); // 0 = En attente
-                $manager->persist($signalement);
-            }
-        }
-
-        // ==========================================
-        // 5. CRÉATION DE NOTIFICATIONS
+        // 6. CRÉATION DE NOTIFICATIONS
         // ==========================================
         for ($i = 0; $i < 20; $i++) {
             $notif = new Notification();
