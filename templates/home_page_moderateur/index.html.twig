@@ -4,6 +4,14 @@
     <link rel="stylesheet" href="{{ asset('css/app_design.css') }}">
 {% endblock %}
 
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="flash-popup flash-{{ label }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
 {% block body %}
 <div class="app-body-reset">
     <div id="date-app-container">
