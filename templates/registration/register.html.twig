@@ -1,133 +1,143 @@
+{# templates/registration/register.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Créer un compte{% endblock %}
+{% block title %}Créer un compte - Tindr{% endblock %}
 
 {% block body %}
-<div class="app-body-reset" style="display: flex; align-items: center; justify-content: center; height: 100vh; overflow-y: auto; padding: 40px 0;">
+<div class="app-body-reset" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 40px 0; overflow-y: auto;">
     <div style="width: 100%; max-width: 500px; padding: 20px;">
         
-        <h2 style="text-align: center; color: #2d2d2d; margin-bottom: 30px; font-weight: 800; font-size: 2.2rem; letter-spacing: -1px;">
+        <h2 style="text-align: center; color: white; margin-bottom: 30px; font-weight: 800; font-size: 2.2rem; letter-spacing: -1px;">
             Créer un compte
         </h2>
 
-        {# Affichage des erreurs flash #}
-        {% for type, messages in app.flashes %}
-            {% for message in messages %}
-                <div style="background: rgba(214, 48, 49, 0.1); color: #d63031; padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: center; font-weight: bold; font-size: 0.9rem;">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endfor %}
-
-        {{ form_start(registrationForm, {'attr': {'style': 'display: flex; flex-direction: column; gap: 15px;'}}) }}
+        <div class="auth-container" style="background: rgba(255, 255, 255, 0.95); border-radius: 25px; padding: 35px; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
             
-            {# Erreurs de formulaire #}
-            <div style="color: #d63031; font-size: 0.8rem; font-weight: bold;">
-                {{ form_errors(registrationForm) }}
-            </div>
+            {# Affichage des erreurs flash #}
+            {% for type, messages in app.flashes %}
+                {% for message in messages %}
+                    <div style="background: #fff1f5; color: #ed3692; padding: 12px; border-radius: 12px; margin-bottom: 20px; text-align: center; font-weight: bold; font-size: 0.9rem; border: 1px solid #ed3692;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
 
-            {# Champ Pseudo #}
-            <div class="custom-form-group">
-                {{ form_widget(registrationForm.pseudo, {'attr': {'placeholder': 'Votre pseudo', 'class': 'input-clean'}}) }}
-                {{ form_errors(registrationForm.pseudo) }}
-            </div>
-
-            {# Champ Email #}
-            <div class="custom-form-group">
-                {{ form_widget(registrationForm.email, {'attr': {'placeholder': 'Email', 'class': 'input-clean'}}) }}
-                {{ form_errors(registrationForm.email) }}
-            </div>
-
-            {# Ligne Prénom / Nom #}
-            <div style="display: flex; gap: 15px;">
-                <div style="flex: 1;">
-                    {{ form_widget(registrationForm.prenom, {'attr': {'placeholder': 'Prénom', 'class': 'input-clean'}}) }}
+            {{ form_start(registrationForm, {'attr': {'style': 'display: flex; flex-direction: column; gap: 15px;'}}) }}
+                
+                {# Erreurs globales #}
+                <div style="color: #d63031; font-size: 0.85rem;">
+                    {{ form_errors(registrationForm) }}
                 </div>
-                <div style="flex: 1;">
-                    {{ form_widget(registrationForm.nom, {'attr': {'placeholder': 'Nom', 'class': 'input-clean'}}) }}
+
+                <div class="form-row">
+                    {{ form_widget(registrationForm.pseudo, {'attr': {'placeholder': 'Votre pseudo', 'class': 'input-modern'}}) }}
+                    <div class="error-text">{{ form_errors(registrationForm.pseudo) }}</div>
                 </div>
-            </div>
 
-            {# Ligne Âge / Genre #}
-            <div style="display: flex; gap: 15px; align-items: center;">
-                <div style="flex: 1;">
-                    {{ form_widget(registrationForm.age, {'attr': {'placeholder': 'Âge', 'class': 'input-clean'}}) }}
+                <div class="form-row">
+                    {{ form_widget(registrationForm.email, {'attr': {'placeholder': 'Email', 'class': 'input-modern'}}) }}
+                    <div class="error-text">{{ form_errors(registrationForm.email) }}</div>
                 </div>
-                <div style="flex: 1;">
-                    {{ form_widget(registrationForm.genre, {'attr': {'class': 'input-clean select-clean'}}) }}
+
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        {{ form_widget(registrationForm.prenom, {'attr': {'placeholder': 'Prénom', 'class': 'input-modern'}}) }}
+                    </div>
+                    <div style="flex: 1;">
+                        {{ form_widget(registrationForm.nom, {'attr': {'placeholder': 'Nom', 'class': 'input-modern'}}) }}
+                    </div>
                 </div>
+
+                <div style="display: flex; gap: 10px; align-items: flex-start;">
+                    <div style="flex: 1;">
+                        {{ form_label(registrationForm.age, 'Âge', {'label_attr': {'style': 'font-size: 0.8rem; color: #666; margin-left: 10px;'}}) }}
+                        {{ form_widget(registrationForm.age, {'attr': {'class': 'input-modern'}}) }}
+                        <div class="error-text">{{ form_errors(registrationForm.age) }}</div>
+                    </div>
+                    <div style="flex: 1;">
+                        {{ form_label(registrationForm.genre, 'Genre', {'label_attr': {'style': 'font-size: 0.8rem; color: #666; margin-left: 10px;'}}) }}
+                        {{ form_widget(registrationForm.genre, {'attr': {'class': 'input-modern'}}) }}
+                        <div class="error-text">{{ form_errors(registrationForm.genre) }}</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    {{ form_widget(registrationForm.plainPassword, {'attr': {'placeholder': 'Mot de passe', 'class': 'input-modern'}}) }}
+                    <div class="error-text">{{ form_errors(registrationForm.plainPassword) }}</div>
+                </div>
+
+                <div style="background: #f8f8f8; padding: 15px; border-radius: 15px; border: 2px dashed #ddd; margin-top: 5px;">
+                    <label style="display: block; font-size: 0.85rem; color: #555; font-weight: bold; margin-bottom: 8px;">
+                        📸 Photo d'identité (Vérification)
+                    </label>
+                    {{ form_widget(registrationForm.imageIdentite, {'attr': {'style': 'font-size: 0.8rem;'}}) }}
+                    <div class="error-text">{{ form_errors(registrationForm.imageIdentite) }}</div>
+                </div>
+
+                <button type="submit" class="btn-modern-submit">
+                    S'INSCRIRE
+                </button>
+            {{ form_end(registrationForm) }}
+
+            <div style="text-align: center; margin-top: 25px;">
+                <a href="{{ path('app_login') }}" style="color: #666; text-decoration: none; font-size: 0.9rem; font-weight: 700;">
+                    Déjà membre ? <span style="color: #ed3692;">Se connecter</span>
+                </a>
             </div>
-
-            {# Mot de passe #}
-            <div class="custom-form-group">
-                {{ form_widget(registrationForm.plainPassword, {'attr': {'placeholder': 'Mot de passe', 'class': 'input-clean'}}) }}
-            </div>
-
-            {# Photo / Identité #}
-            <div style="background: rgba(255, 255, 255, 0.4); padding: 15px; border-radius: 15px; border: 2px dashed #ed3692;">
-                <label style="display: block; color: #ed3692; font-weight: bold; margin-bottom: 8px; font-size: 0.9rem;">Photo d'identité (vérification)</label>
-                {{ form_widget(registrationForm.imageIdentite, {'attr': {'style': 'font-size: 0.8rem; color: #444;'}}) }}
-            </div>
-
-            <button type="submit" class="btn-modern-submit">
-                S'inscrire
-            </button>
-
-        {{ form_end(registrationForm) }}
-
-        <div style="text-align: center; margin-top: 30px;">
-            <a href="{{ path('app_login') }}" style="color: #444; text-decoration: none; font-size: 0.9rem; font-weight: 800;">
-                Déjà inscrit ? <span style="color: #ed3692;">Se connecter</span>
-            </a>
         </div>
     </div>
 </div>
 
 <style>
-    /* Style des inputs flottants */
-    .input-clean {
+    /* Inputs stylisés */
+    .input-modern {
         width: 100%;
-        background: white !important;
-        border: none !important;
-        padding: 16px !important;
-        border-radius: 15px !important;
-        box-sizing: border-box !important;
-        font-size: 0.95rem !important;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
-        color: #2d2d2d !important;
+        background: #f0f2f5;
+        border: 2px solid transparent;
+        padding: 14px 18px;
+        border-radius: 15px;
+        box-sizing: border-box;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        outline: none;
     }
 
-    /* Style spécifique pour le select du genre */
-    .select-clean {
-        cursor: pointer;
-        height: 52px;
+    .input-modern:focus {
+        background: white;
+        border-color: #ed3692;
+        box-shadow: 0 0 0 4px rgba(237, 54, 146, 0.1);
     }
 
     /* Bouton d'inscription */
     .btn-modern-submit {
+        margin-top: 10px;
         width: 100%;
-        background: #ed3692;
+        background: linear-gradient(to right, #ff6b6b, #ed3692);
         color: white;
         border: none;
-        padding: 18px;
+        padding: 16px;
         border-radius: 50px;
         font-weight: 900;
         font-size: 1.1rem;
+        letter-spacing: 1px;
         box-shadow: 0 10px 20px rgba(237, 54, 146, 0.3);
         cursor: pointer;
         transition: all 0.3s ease;
-        margin-top: 10px;
     }
 
     .btn-modern-submit:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 15px 30px rgba(237, 54, 146, 0.4);
-        filter: brightness(1.1);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(237, 54, 146, 0.4);
+        filter: brightness(1.05);
     }
 
-    /* Supprime les labels par défaut de Symfony car on utilise des placeholders */
-    label { display: none; }
-    /* Exception pour le champ fichier */
-    div > label { display: block; }
+    .error-text ul {
+        list-style: none;
+        padding: 0;
+        margin: 5px 0 0 10px;
+        color: #d63031;
+        font-size: 0.75rem;
+        font-weight: bold;
+    }
 </style>
 {% endblock %}
