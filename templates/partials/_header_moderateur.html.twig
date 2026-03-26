@@ -1,16 +1,27 @@
-<a href="#" class="sidebar-item" style="background: #fff1f5;">
-    {# Tu pourras remplacer l'image par une icône d'alerte plus tard #}
+{# On récupère le nom de la route actuelle #}
+{% set current_route = app.request.attributes.get('_route') %}
+
+<a href="{{ path('app_moderateur_signalements') }}" class="sidebar-item" 
+   {% if current_route == 'app_moderateur_signalements' %}style="background: #fff1f5;"{% endif %}>
+    
     <img class="sidebar-icon" src="{{ asset('images/Notification.webp') }}" alt="Signalements">
-    <span style="font-weight: bold; color: #ed3692;">Signalements</span>
+    <span {% if current_route == 'app_moderateur_signalements' %}style="font-weight: bold; color: #ed3692;"{% endif %}>
+        Signalements
+    </span>
 </a>
 
-<a href="#" class="sidebar-item">
+<a href="{{ path('app_moderateur_validations') }}" class="sidebar-item"
+   {% if current_route == 'app_moderateur_validations' %}style="background: #fff1f5;"{% endif %}>
+    
     <img class="sidebar-icon" src="{{ asset('images/valid.webp') }}" alt="Validations">
-    <span>Validations Profils</span>
+    <span {% if current_route == 'app_moderateur_validations' %}style="font-weight: bold; color: #ed3692;"{% endif %}>
+        Validations Profils
+    </span>
 </a>
 
 <div style="margin-top: auto; border-top: 2px solid #180b0b; padding-top: 20px;">
-    <a href="#" class="sidebar-item">
+    {# Si tu as le système de sécurité classique de Symfony, la route de déconnexion s'appelle souvent 'app_logout' #}
+    <a href="{{ path('app_logout') }}" class="sidebar-item">
         <img class="sidebar-icon" style="border-radius: 50%;" src="{{ asset('images/Denied.jpg') }}" alt="Déconnexion">
         <span>Déconnexion</span>
     </a>
