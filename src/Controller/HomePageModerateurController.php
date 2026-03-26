@@ -8,7 +8,6 @@ use App\Repository\UtilisateurRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Entity\Utilisateur;
 use App\Repository\ProfilRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
