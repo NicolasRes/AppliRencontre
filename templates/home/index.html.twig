@@ -1,15 +1,90 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil{% endblock %}
+{% block title %}Bienvenue sur Tindr{% endblock %}
 
 {% block body %}
-    <div class="auth-container">
-        <h1>Bienvenue sur l'application de rencontre !</h1>
-        {% if app.user %}
-            <p>Bonjour {{ app.user.pseudo }}, vous êtes connecté.</p>
-            <a href="{{ path('app_search') }}">Recherche de profil</a>
-        {% else %}
-            <p><a href="{{ path('app_login') }}">Connectez-vous</a> pour voir les profils.</p>
-        {% endif %}
+<div class="app-body-reset" style="display: flex; align-items: center; justify-content: center; height: 100vh; width: 100vw;">
+
+    <div style="text-align: center; width: 100%; max-width: 500px; padding: 20px;">
+        
+        {# Logo : On utilise le rose signature avec un contour blanc très fin pour le faire ressortir #}
+        <h1 class="tindr-logo" style="font-size: 6rem; margin-bottom: 0; color: white; text-shadow: 2px 4px 10px rgba(237, 54, 146, 0.3); letter-spacing: -3px;">
+            Tindr
+        </h1>
+        
+        {# Phrase d'accroche : Noir charbon (Anthracite) pour une lisibilité parfaite #}
+        <p style="font-size: 1.4rem; color: #2d2d2d; font-weight: 800; margin-bottom: 50px; line-height: 1.3; letter-spacing: -0.5px;">
+            Trouvez la personne qui vous <span style="color: #ed3692;">correspond</span> vraiment.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 20px; align-items: center;">
+            {% if app.user %}
+                <p style="color: #444; font-weight: bold; font-size: 1.1rem;">
+                    Ravi de vous revoir, <span style="color: #000;">{{ app.user.pseudo }}</span> !
+                </p>
+                <a href="{{ path('app_search') }}" class="btn-modern">
+                    Découvrir des profils
+                </a>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="btn-modern">
+                    Se connecter
+                </a>
+                
+                {# Lien inscription : Gris foncé, devient rose au survol #}
+                <a href="{{ path('app_register') }}" class="link-register">
+                    CRÉER UN COMPTE
+                </a>
+            {% endif %}
+        </div>
     </div>
+</div>
+
+<style>
+    /* Bouton principal : Rose Tindr, texte blanc */
+    .btn-modern {
+        background: #ed3692;
+        color: white;
+        padding: 18px 0;
+        border-radius: 100px;
+        text-decoration: none;
+        font-weight: 900;
+        font-size: 1.1rem;
+        box-shadow: 0 10px 20px rgba(237, 54, 146, 0.3);
+        transition: all 0.3s ease;
+        border: none;
+        width: 100%;
+        max-width: 280px;
+        display: block;
+    }
+    
+    .btn-modern:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(237, 54, 146, 0.4);
+        filter: brightness(1.1);
+    }
+
+    /* Lien secondaire */
+    .link-register {
+        color: #444; 
+        font-weight: 800; 
+        text-decoration: none; 
+        font-size: 0.9rem; 
+        letter-spacing: 1px;
+        transition: color 0.3s;
+    }
+
+    .link-register:hover {
+        color: #ed3692;
+    }
+
+    /* Animation d'entrée */
+    .app-body-reset > div {
+        animation: slideUp 0.8s ease-out;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 {% endblock %}

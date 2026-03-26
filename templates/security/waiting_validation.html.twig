@@ -1,31 +1,37 @@
 {% extends 'base.html.twig' %}
+
+{% block title %}Vérification{% endblock %}
+
 {% block body %}
-    <div style="text-align: center; margin-top: 50px;">
-
-        <h1>Compte en attente</h1>
-
-        {#  <p>Email : {{ app.user.email }}</p>
-        <p>Status : {{ app.user.status }}</p>#}
-
-        {# Messages de validation #}
-        {% if app.request.get('success') == 'register' %}
-            {# Inscription réussie #}
-            <p style="color: green;">Votre compte a bien été créé.</p>
-        {% elseif app.request.get('success') == 'update' %}
-            {# Modification du formulaire réussie #}
-            <p style="color: green;">Votre profil a bien été mis à jour.</p>
-        {% endif %}
-
-        {# Messages de statut #}
+<div class="app-body-reset" style="display: flex; align-items: center; justify-content: center; text-align: center; height: 100vh;">
+    <div style="max-width: 450px; padding: 20px;">
+        
+        <div style="font-size: 100px; margin-bottom: 20px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));">🛡️</div>
+        
+        <h1 style="color: #2d2d2d; font-size: 2.2rem; margin-bottom: 15px; font-weight: 800; letter-spacing: -1px;">
+            Vérification en cours
+        </h1>
+        
         {% if app.user.status == 'pending' %}
-            {# Cas profil en attente de validation par un modérateur #}
-            <p>Votre profil est en cours de validation par un modérateur.</p>
-            <a href="{{ path('app_logout') }}">Se déconnecter</a>
-        {% elseif app.user.status == 'rejected' %}
-            {# Cas profil à compléter (car rejeté par un modo) #}
-            <p>Votre profil a été rejeté par un modérateur. Veuillez modifier vos informations.</p>
-            <a href="{{ path('app_register') }}">Compléter le formulaire</a>
+            <p style="color: #444; font-size: 1.2rem; line-height: 1.5; font-weight: 600; margin-bottom: 40px;">
+                Patience, <span style="color: #ed3692;">{{ app.user.pseudo }}</span> !<br> 
+                Nos modérateurs valident votre profil pour garantir une expérience de qualité.
+            </p>
+            
+            <a href="{{ path('app_logout') }}" 
+               style="color: #666; font-weight: 800; text-decoration: none; border: 2px solid #666; padding: 12px 30px; border-radius: 50px; font-size: 0.9rem; transition: all 0.3s;">
+                SE DÉCONNECTER
+            </a>
         {% endif %}
 
+        {% if app.user.status == 'rejected' %}
+             <p style="color: #d63031; font-size: 1.2rem; font-weight: 600;">
+                Votre profil a été rejeté. Veuillez modifier vos informations.
+            </p>
+            <a href="{{ path('app_register') }}" class="btn-modern" style="display: inline-block; margin-top: 20px;">
+                Modifier mon profil
+            </a>
+        {% endif %}
     </div>
+</div>
 {% endblock %}
