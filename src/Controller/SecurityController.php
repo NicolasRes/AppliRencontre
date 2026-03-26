@@ -25,6 +25,12 @@ class SecurityController extends AbstractController
 
         // Si l'utilisateur est connecté
         if ($user instanceof Utilisateur) {
+
+            // Redirection spécifique pour les modérateurs
+            if ($user->isModo()) {
+                return $this->redirectToRoute('app_moderateur_signalements');
+            }
+
             // Redirection vers la homepage si validé
             if ($user->isApproved()) {
                 return $this->redirectToRoute('app_home_page');

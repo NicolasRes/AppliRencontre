@@ -49,6 +49,12 @@ public function onAuthenticationSuccess(Request $request, TokenInterface $token,
 
     // Redirection en fonction du statut
     if ($user instanceof Utilisateur) {
+
+        //Si c'est un modérateur, on l'envoie directement sur les signalements
+        if ($user->isModo()) {
+            return new RedirectResponse($this->urlGenerator->generate('app_moderateur_signalements'));
+        }
+    
         // En attente de validation
         if ($user->isPending()) {
             return new RedirectResponse($this->urlGenerator->generate('home'));
