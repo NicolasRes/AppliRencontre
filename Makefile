@@ -1,0 +1,34 @@
+UNAME_S := $(shell uname -s)
+
+MERCURE_JWT=patate123 # Le code doit correspondre à celui dans le .env
+MERCURE_CMD=./bin/mercure
+CADDYFILE=./bin/dev.Caddyfile
+
+start:
+	@echo "🚀 Starting Symfony..."
+	symfony server:start --no-tls -d
+
+	@echo "🟡 Starting Mercure..."
+
+ifeq ($(OS),Windows_NT)	# Commande Windows
+	set MERCURE_PUBLISHER_JWT_KEY=$(MERCURE_JWT) && \
+	set MERCURE_SUBSCRIBER_JWT_KEY=$(MERCURE_JWT) && \
+	$(MERCURE_CMD) run --config $(CADDYFILE)
+else
+	MERCURE_PUBLISHER_JWT_KEY=$(MERCURE_JWT) MERCURE_SUBSCRIBER_JWT_KEY=$(MERCURE_JWT) $(MERCURE_CMD) run --config $(CADDYFILE) > mercure.log 2>&1 &
+endif
+
+stop:
+	symfony server:stop
+	pkill -f mercure || true # Si la commande échoue, makefile ignore l'erreur et ne s'arrête pas
+
+check:
+	@echo "━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "🔍 STATUS CHECK"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━"
+
+	@echo "Symfony:"
+	@symfony server:status > /dev/null 2>&1 && echo "  ✅ Running" || echo "  ❌ Not running"
+
+	@echo "Mercure:"
+	@ps aux | grep mercure | grep -v grep > /dev/null && echo "  ✅ Running" || echo "  ❌ Not running"
