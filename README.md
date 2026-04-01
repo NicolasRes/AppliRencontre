@@ -125,7 +125,7 @@ Remplacez bien dev_secret par la clé que vous avez choisi.
 
 ---
 
-## Windows
+## Windows (Powershell)
 
 ```bash
 set MERCURE_PUBLISHER_JWT_KEY=dev_secret
@@ -173,3 +173,15 @@ make start
 symfony server:stop
 pkill -f mercure
 ```
+
+---
+
+## ⚙️ 8. Utilisation du Makefile
+
+Pour simplifier le lancement du projet, un **Makefile** est disponible.
+
+---
+
+`make start`: lance Symfony et Mercure
+`make stop`: arrête Symfony et Mercure
+`make check`: vérifie l'état des deux outils (en cours d'exécution ou non)
