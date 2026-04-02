@@ -50,8 +50,8 @@ class AppFixtures extends Fixture
         // --- COMPTE 1 : Le signaleur (Auteur) ---
         $testUser1 = new Utilisateur();
         $testUser1->setPseudo('Testeur1')
-                 ->setEmail('test1@tindr.fr') // <-- EMAIL 1
-                 ->setMdp($this->hasher->hashPassword($testUser1, 'password')) // <-- MDP : password
+                 ->setEmail('test1@tindr.fr')
+                 ->setMdp($this->hasher->hashPassword($testUser1, 'password'))
                  ->setImageIdentite('Homme1.jpeg')
                  ->setStatus(Utilisateur::STATUS_APPROVED)
                  ->setIsModo(false);
@@ -77,8 +77,8 @@ class AppFixtures extends Fixture
         // --- COMPTE 2 : Le signalé (Cible) ---
         $testUser2 = new Utilisateur();
         $testUser2->setPseudo('BadGuy99')
-                 ->setEmail('badguy@tindr.fr') // <-- EMAIL 2
-                 ->setMdp($this->hasher->hashPassword($testUser2, 'password')) // <-- MDP : password
+                 ->setEmail('badguy@tindr.fr')
+                 ->setMdp($this->hasher->hashPassword($testUser2, 'password'))
                  ->setImageIdentite('Homme2.jpeg')
                  ->setStatus(Utilisateur::STATUS_APPROVED)
                  ->setIsModo(false);
@@ -101,14 +101,15 @@ class AppFixtures extends Fixture
                    ->setEtatNotif(true)->setUtilisateur($testUser2);
         $manager->persist($testConfig2);
 
-        $manager->flush(); // 1er envoi pour la BDD
+        $manager->flush();
 
         // ==========================================
         // 3. CRÉATION DE 30 UTILISATEURS & PROFILS
         // ==========================================
+    
         $genres = ['Homme', 'Femme', 'Non-binaire'];
         
-        for ($i = 0; $i < 30; $i++) {
+        for ($i = 0; $i < 150; $i++) {
             $genreChoisi = $faker->randomElement($genres);
             
             $prenom = '';
@@ -121,9 +122,9 @@ class AppFixtures extends Fixture
                 $photoPrincipale = 'Femme' . $faker->numberBetween(1, 9) . '.jpeg';
                 $prenom = $faker->firstNameFemale();
             } else {
-                $prefixe = $faker->randomElement(['Homme', 'Femme']);
+                $prefixe = 'Binaire';
                 $photoPrincipale = $prefixe . $faker->numberBetween(1, 9) . '.jpeg';
-                $prenom = $faker->firstName();
+                $prenom = $faker->firstName(); 
             }
 
             $prenomPropre = strtolower(str_replace([' ', '-'], '', $prenom));
@@ -153,7 +154,7 @@ class AppFixtures extends Fixture
             $config->setAgeMin(18)
                    ->setAgeMax(99)
                    ->setRayon(50)
-                   ->setGenresVisibles(['Homme', 'Femme'])
+                   ->setGenresVisibles(['Homme', 'Femme', 'Non-binaire']) 
                    ->setEtatNotif(true)
                    ->setUtilisateur($user);
             $manager->persist($config);
@@ -169,16 +170,14 @@ class AppFixtures extends Fixture
         // ==========================================
         $motifs = ['Faux profil', 'Harcèlement', 'Propos injurieux', 'Spam / Brouteur', 'Photos inappropriées'];
         
-        // 💡 LE SIGNALEMENT FIXE ENTRE NOS DEUX COMPTES DE TEST
         $signalementFixe = new Signalement();
-        $signalementFixe->setAuteur($testUser1) // test1@tindr.fr dénonce...
-                        ->setCible($testUser2)  // ... badguy@tindr.fr
+        $signalementFixe->setAuteur($testUser1)
+                        ->setCible($testUser2)
                         ->setMotif('Propos injurieux')
-                        ->setDateS(new \DateTime()) // Date d'aujourd'hui
-                        ->setStatut(0); // 0 = En attente
+                        ->setDateS(new \DateTime())
+                        ->setStatut(0);
         $manager->persist($signalementFixe);
 
-        // Les signalements aléatoires
         for ($i = 0; $i < 10; $i++) {
             $auteur = $faker->randomElement($utilisateurs);
             $cible = $faker->randomElement($utilisateurs);
@@ -189,7 +188,7 @@ class AppFixtures extends Fixture
                             ->setCible($cible)
                             ->setMotif($faker->randomElement($motifs))
                             ->setDateS($faker->dateTimeThisMonth())
-                            ->setStatut(0); // 0 = En attente
+                            ->setStatut(0);
                 $manager->persist($signalement);
             }
         }
@@ -200,7 +199,6 @@ class AppFixtures extends Fixture
         // ==========================================
         $rencontres = [];
         for ($i = 0; $i < 15; $i++) {
-            // On prend 2 utilisateurs au hasard
             $u1 = $faker->randomElement($utilisateurs);
             $u2 = $faker->randomElement($utilisateurs);
 
@@ -208,12 +206,11 @@ class AppFixtures extends Fixture
                 $rencontre = new Rencontre();
                 $rencontre->setUtilisateur($u1)
                           ->setUtilisateur2($u2)
-                          ->setStatut($faker->numberBetween(0, 1)) // 0: en attente, 1: validé
+                          ->setStatut($faker->numberBetween(0, 1))
                           ->setDateCreation($faker->dateTimeThisYear());
                 $manager->persist($rencontre);
                 $rencontres[] = $rencontre;
 
-                // Création de messages si le match est validé
                 if ($rencontre->getStatut() === 1) {
                     for ($m = 0; $m < $faker->numberBetween(2, 6); $m++) {
                         $message = new Message();
@@ -230,7 +227,6 @@ class AppFixtures extends Fixture
             if (($i % 5) === 0) {
                 $manager->flush();
             }
-
         }
         $manager->flush();
 
@@ -246,7 +242,6 @@ class AppFixtures extends Fixture
             $manager->persist($notif);
         }
 
-        // ON SAUVEGARDE TOUT EN BASE DE DONNÉES
         $manager->flush();
     }
 }
