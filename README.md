@@ -82,7 +82,8 @@ MERCURE_JWT_SECRET=dev_secret
 ```
 
 ⚠️ La clé sera utilisée que celle utilisée pour lancer Mercure
-Mettez ce que vous voulez dans JWT_SECRET à la place de `dev_secret`. 
+Mettez ce que vous voulez dans JWT_SECRET à la place de `dev_secret`.
+Mettre la même clé dans le makefile également.
 Remplacez bien `https` par `http`.
 
 ---
@@ -159,14 +160,11 @@ Missing "topic" parameter
 
 ---
 
-# 🧠 6. Lancer tout le projet
+# 🧠 6. Lancer Symfony
 
 ```bash
 # Symfony
 symfony server:start --no-tls -d
-
-# Mercure (dans un autre terminal)
-make start
 ```
 
 ---
