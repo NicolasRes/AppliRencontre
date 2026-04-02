@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UtilisateurRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -38,6 +40,24 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 20)]
     private ?string $status = self::STATUS_PENDING;
+
+    /**
+     * @var Collection<int, Conversation>
+     */
+    #[ORM\ManyToMany(targetEntity: Conversation::class, mappedBy: 'participants')]
+    private Collection $conversations;
+
+    /**
+     * @var Collection<int, Message>
+     */
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'author')]
+    private Collection $messages;
+
+    public function __construct()
+    {
+        $this->conversations = new ArrayCollection();
+        $this->messages = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -173,5 +193,62 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function isRejected(): bool
     {
         return $this->status === self::STATUS_REJECTED;
+    }
+
+    /**
+     * @return Collection<int, Conversation>
+     */
+    public function getConversations(): Collection
+    {
+        return $this->conversations;
+    }
+
+    public function addConversation(Conversation $conversation): static
+    {
+        if (!$this->conversations->contains($conversation)) {
+            $this->conversations->add($conversation);
+            $conversation->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConversation(Conversation $conversation): static
+    {
+        if ($this->conversations->removeElement($conversation)) {
+            $conversation->removeParticipant($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): static
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
+            $message->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): static
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getAuthor() === $this) {
+                $message->setAuthor(null);
+            }
+        }
+
+        return $this;
     }
 }
