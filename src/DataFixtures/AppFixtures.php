@@ -31,7 +31,7 @@ class AppFixtures extends Fixture
         $faker = Factory::create('fr_FR');
         $utilisateurs = [];
 
-// ==========================================
+        // ==========================================
         // 1. CRÉATION D'UN MODÉRATEUR DE TEST
         // ==========================================
         $adminUser = new Utilisateur();
