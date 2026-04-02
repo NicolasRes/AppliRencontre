@@ -117,9 +117,13 @@ http://localhost:3000
 
 ## macOS / Linux
 
-```bash
-MERCURE_PUBLISHER_JWT_KEY=dev_secret MERCURE_SUBSCRIBER_JWT_KEY=dev_secret ./bin/mercure run --config ./bin/dev.Caddyfile
-```
+Utiliser cette commande :
+$ mkdir -p ~/.local/share/caddy
+
+Puis celle-ci, en une seule ligne :
+MERCURE_PUBLISHER_JWT_KEY=patate123 MERCURE_SUBSCRIBER_JWT_KEY=patate123 ./bin/mercure run --config ./bin/dev.Caddyfile
+
+Attention : sur Linux, il ne faut pas la lancer dans le terminal de VS Code (s'il a été installé avec Snap), mais dans un terminal standard à la racine du projet.
 
 Remplacez bien dev_secret par la clé que vous avez choisi.
 
