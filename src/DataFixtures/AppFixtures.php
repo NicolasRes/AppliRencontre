@@ -3,7 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Configuration;
-use App\Entity\Conversation; // 💡 Remplacement de Rencontre par Conversation
+use App\Entity\Conversation;
 use App\Entity\Message;
 use App\Entity\Notification;
 use App\Entity\Profil;
@@ -106,7 +106,7 @@ class AppFixtures extends Fixture
         // ==========================================
         $genres = ['Homme', 'Femme', 'Non-binaire'];
         
-        for ($i = 0; $i < 30; $i++) {
+        for ($i = 0; $i < 300; $i++) {
             $genreChoisi = $faker->randomElement($genres);
             
             $prenom = '';
@@ -119,7 +119,7 @@ class AppFixtures extends Fixture
                 $photoPrincipale = 'Femme' . $faker->numberBetween(1, 9) . '.jpeg';
                 $prenom = $faker->firstNameFemale();
             } else {
-                $prefixe = $faker->randomElement(['Homme', 'Femme']);
+                $prefixe = $faker->randomElement(['Binaire']);
                 $photoPrincipale = $prefixe . $faker->numberBetween(1, 9) . '.jpeg';
                 $prenom = $faker->firstName();
             }

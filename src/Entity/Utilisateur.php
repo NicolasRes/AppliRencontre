@@ -17,6 +17,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public const STATUS_PENDING = 'pending';
     public const STATUS_APPROVED = 'approved';
     public const STATUS_REJECTED = 'rejected';
+    public const STATUS_BANNED = 'banned';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -156,6 +157,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
             self::STATUS_PENDING,
             self::STATUS_APPROVED,
             self::STATUS_REJECTED,
+            self::STATUS_BANNED,
         ];
 
         // Exception si le statut ne fait pas parti des statuts autorisés
@@ -250,5 +252,10 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function isBanned(): bool
+    {
+        return $this->status === self::STATUS_BANNED;
     }
 }
