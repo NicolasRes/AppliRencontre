@@ -3,12 +3,10 @@
 namespace App\DataFixtures;
 
 use App\Entity\Configuration;
-use App\Entity\Liens;
+use App\Entity\Conversation; // 💡 Remplacement de Rencontre par Conversation
 use App\Entity\Message;
 use App\Entity\Notification;
-use App\Entity\PhotoProfil;
 use App\Entity\Profil;
-use App\Entity\Rencontre;
 use App\Entity\Signalement;
 use App\Entity\Utilisateur;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -104,12 +102,11 @@ class AppFixtures extends Fixture
         $manager->flush();
 
         // ==========================================
-        // 3. CRÉATION DE 150 UTILISATEURS & PROFILS
+        // 3. CRÉATION DE 30 UTILISATEURS & PROFILS
         // ==========================================
-    
         $genres = ['Homme', 'Femme', 'Non-binaire'];
         
-        for ($i = 0; $i < 150; $i++) {
+        for ($i = 0; $i < 30; $i++) {
             $genreChoisi = $faker->randomElement($genres);
             
             $prenom = '';
@@ -122,9 +119,9 @@ class AppFixtures extends Fixture
                 $photoPrincipale = 'Femme' . $faker->numberBetween(1, 9) . '.jpeg';
                 $prenom = $faker->firstNameFemale();
             } else {
-                $prefixe = 'Binaire';
+                $prefixe = $faker->randomElement(['Homme', 'Femme']);
                 $photoPrincipale = $prefixe . $faker->numberBetween(1, 9) . '.jpeg';
-                $prenom = $faker->firstName(); 
+                $prenom = $faker->firstName();
             }
 
             $prenomPropre = strtolower(str_replace([' ', '-'], '', $prenom));
@@ -195,33 +192,34 @@ class AppFixtures extends Fixture
         $manager->flush();
 
         // ==========================================
-        // 5. CRÉATION DE MATCHS (RENCONTRES) & MESSAGES
+        // 5. CRÉATION DE CONVERSATIONS & MESSAGES
         // ==========================================
-        $rencontres = [];
         for ($i = 0; $i < 15; $i++) {
             $u1 = $faker->randomElement($utilisateurs);
             $u2 = $faker->randomElement($utilisateurs);
 
             if ($u1 !== $u2) {
-                $rencontre = new Rencontre();
-                $rencontre->setUtilisateur($u1)
-                          ->setUtilisateur2($u2)
-                          ->setStatut($faker->numberBetween(0, 1))
-                          ->setDateCreation($faker->dateTimeThisYear());
-                $manager->persist($rencontre);
-                $rencontres[] = $rencontre;
+                // 💡 On crée une Conversation et on y ajoute les participants
+                $conversation = new Conversation();
+                $conversation->addParticipant($u1);
+                $conversation->addParticipant($u2);
+                
+                $manager->persist($conversation);
 
-                if ($rencontre->getStatut() === 1) {
-                    for ($m = 0; $m < $faker->numberBetween(2, 6); $m++) {
-                        $message = new Message();
-                        $auteurMsg = $faker->boolean() ? $u1 : $u2;
-                        $message->setAuteur($auteurMsg)
-                                ->setRencontre($rencontre)
-                                ->setContenu($faker->sentence())
-                                ->setTemps($faker->dateTimeBetween($rencontre->getDateCreation(), 'now'))
-                                ->setEstLu($faker->boolean());
-                        $manager->persist($message);
-                    }
+                // On génère des messages pour cette conversation
+                for ($m = 0; $m < $faker->numberBetween(2, 6); $m++) {
+                    $message = new Message();
+                    $auteurMsg = $faker->boolean() ? $u1 : $u2;
+                    
+                    // 💡 Conversion du DateTime de Faker en DateTimeImmutable
+                    $dateCreation = \DateTimeImmutable::createFromMutable($faker->dateTimeThisYear());
+
+                    $message->setAuthor($auteurMsg)
+                            ->setConversation($conversation)
+                            ->setContent($faker->sentence())
+                            ->setCreatedAt($dateCreation);
+                            
+                    $manager->persist($message);
                 }
             }
             if (($i % 5) === 0) {
