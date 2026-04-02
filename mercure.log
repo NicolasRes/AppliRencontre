@@ -1,0 +1,9 @@
+{"level":"info","ts":1775110313.2664235,"msg":"maxprocs: Leaving GOMAXPROCS=12: CPU quota undefined"}
+{"level":"info","ts":1775110313.2665095,"msg":"GOMEMLIMIT is updated","GOMEMLIMIT":14456365056,"previous":9223372036854775807}
+{"level":"info","ts":1775110313.2665193,"msg":"using config from file","file":"./bin/dev.Caddyfile"}
+{"level":"info","ts":1775110313.2665246,"msg":"adapted config to JSON","adapter":"caddyfile"}
+{"level":"info","ts":1775110313.2682438,"logger":"admin","msg":"admin endpoint started","address":"localhost:2019","enforce_origin":false,"origins":["//[::1]:2019","//127.0.0.1:2019","//localhost:2019"]}
+{"level":"info","ts":1775110313.2686808,"logger":"tls.cache.maintenance","msg":"started background certificate maintenance","cache":"0x2ee3b790a400"}
+{"level":"info","ts":1775110313.270591,"logger":"http","msg":"servers shutting down with eternal grace period"}
+{"level":"info","ts":1775110313.2706492,"logger":"tls.cache.maintenance","msg":"stopped background certificate maintenance","cache":"0x2ee3b790a400"}
+Error: loading initial config: loading new config: loading http app module: provision http: server srv0: setting up route handlers: route 0: loading handler modules: position 0: loading module 'subroute': provision http.handlers.subroute: setting up subroutes: route 1: loading handler modules: position 1: loading module 'mercure': provision http.handlers.mercure: provision http.handlers.mercure.bolt: "": invalid transport: open /home/adam/snap/code/214/.local/share/caddy/mercure.db: no such file or directory
