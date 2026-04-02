@@ -49,23 +49,18 @@
                                 </p>
                             </div>
                         </div>
-
-                        {# --- 💡 MISE À JOUR ICI : UTILISATION DES IMAGES DE LIKE/DISLIKE --- #}
-                        <div style="display: flex; gap: 20px; margin-top: 10px;">
-                            {# Bouton IGNORER (reprend le visuel du LIKE/VALIDER) #}
-                            <a href="{{ path('app_moderateur_ignorer', {'id': s.id}) }}" class="action-btn" title="Ignorer (Faux signalement)">
+                            <div style="display: flex; gap: 20px; margin-top: 10px;">
+                            {# Bouton VERT (Gauche) : Valider la plainte = BANNIR #}
+                            <a href="{{ path('app_moderateur_bannir', {'id': s.id}) }}" class="action-btn" title="Valider la plainte (Bannir l'utilisateur)">
                                 <img class="bg" src="{{ asset('images/green.webp') }}" alt="Vert">
                                 <img class="icon" src="{{ asset('images/valid.webp') }}" alt="Valider">
                             </a>
-                            
-                            {# Bouton BANNIR (reprend le visuel du DISLIKE/REFUSER) #}
-                            <a href="{{ path('app_moderateur_bannir', {'id': s.id}) }}" class="action-btn" title="Bannir le profil">
+                            {# Bouton ROUGE (Droite) : Refuser la plainte = IGNORER #}
+                            <a href="{{ path('app_moderateur_ignorer', {'id': s.id}) }}" class="action-btn" title="Refuser la plainte (Ignorer et sauver l'utilisateur)">
                                 <img class="bg" src="{{ asset('images/Red.jpg') }}" alt="Rouge">
                                 <img class="icon" src="{{ asset('images/Denied.jpg') }}" alt="Refuser">
                             </a>
                         </div>
-                        {# ------------------------------------------------------------------ #}
-
                     </div>
 
                     <div style="flex: 1; background: white; border-radius: 20px; height: 600px; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow: hidden;">
