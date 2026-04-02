@@ -18,7 +18,7 @@ class HomeController extends AbstractController
 
             // Empêche l'utilisateur d'aller sur /login alors qu'il est connecté
             if ($user->isApproved()) {
-                return $this->render('app_home_page');  // Le twig de HomeController n'est jamais utilisé donc on redirige direct vers l'app une fois connecté
+                return $this->redirectToRoute('app_home_page');  // Le twig de HomeController n'est jamais utilisé donc on redirige direct vers l'app une fois connecté
             }
             elseif ($user->isPending()) {
                 return $this->render('security/waiting_validation.html.twig');
