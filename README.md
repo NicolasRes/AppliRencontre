@@ -82,7 +82,8 @@ MERCURE_JWT_SECRET=dev_secret
 ```
 
 ⚠️ La clé sera utilisée que celle utilisée pour lancer Mercure
-Mettez ce que vous voulez dans JWT_SECRET à la place de `dev_secret`. 
+Mettez ce que vous voulez dans JWT_SECRET à la place de `dev_secret`.
+Mettre la même clé dans le makefile également.
 Remplacez bien `https` par `http`.
 
 ---
@@ -108,7 +109,8 @@ Remplacer :
 par :
 
 ```caddy
-http://localhost:3000
+{$SERVER_NAME:http://localhost:3000}
+
 ```
 
 ---
@@ -117,9 +119,13 @@ http://localhost:3000
 
 ## macOS / Linux
 
-```bash
-MERCURE_PUBLISHER_JWT_KEY=dev_secret MERCURE_SUBSCRIBER_JWT_KEY=dev_secret ./bin/mercure run --config ./bin/dev.Caddyfile
-```
+Utiliser cette commande :
+$ mkdir -p ~/.local/share/caddy
+
+Puis celle-ci, en une seule ligne :
+MERCURE_PUBLISHER_JWT_KEY=patate123 MERCURE_SUBSCRIBER_JWT_KEY=patate123 ./bin/mercure run --config ./bin/dev.Caddyfile
+
+Attention : sur Linux, il ne faut pas la lancer dans le terminal de VS Code (s'il a été installé avec Snap), mais dans un terminal standard à la racine du projet.
 
 Remplacez bien dev_secret par la clé que vous avez choisi.
 
@@ -155,14 +161,11 @@ Missing "topic" parameter
 
 ---
 
-# 🧠 6. Lancer tout le projet
+# 🧠 6. Lancer Symfony
 
 ```bash
 # Symfony
 symfony server:start --no-tls -d
-
-# Mercure (dans un autre terminal)
-make start
 ```
 
 ---
