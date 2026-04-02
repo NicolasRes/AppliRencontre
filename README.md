@@ -109,7 +109,8 @@ Remplacer :
 par :
 
 ```caddy
-http://localhost:3000
+{$SERVER_NAME:http://localhost:3000}
+
 ```
 
 ---
