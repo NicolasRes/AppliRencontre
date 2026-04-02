@@ -104,7 +104,7 @@ class AppFixtures extends Fixture
         $manager->flush();
 
         // ==========================================
-        // 3. CRÉATION DE 30 UTILISATEURS & PROFILS
+        // 3. CRÉATION DE 150 UTILISATEURS & PROFILS
         // ==========================================
     
         $genres = ['Homme', 'Femme', 'Non-binaire'];
