@@ -26,3 +26,7 @@
 /bin/mercure
 /bin/dev.Caddyfile
 /mercure.log
+
+
+### Ignorer bootstrap car tout le monde va l'avoir
+importmap.php 
