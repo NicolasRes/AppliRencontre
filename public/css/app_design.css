@@ -221,3 +221,14 @@ textarea{
     resize: none;
     width: 100%;
 }
+
+#date-app-container .profile-card .report{
+    position: absolute;
+    top: 15px;
+    right : 15px;
+}
+
+#date-app-container .profile-card .report img{
+    width: 70px;
+    height: auto;
+}

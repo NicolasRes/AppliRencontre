@@ -21,6 +21,12 @@
                          src="{{ profil.utilisateur.imageIdentite ? asset('images/' ~ profil.utilisateur.imageIdentite) : asset('images/PlaceHolderProfil.jpg') }}" 
                          alt="Profil de {{ profil.prenom | default("l'utilisateur") }}">
 
+                    <div class="report">
+                        <a href="{{ path('app_report', {'id': profil.utilisateur.id, 'from': 'home'}) }}">
+                            <img src="{{ asset('images/report.png') }}" alt="Bouton report profil">
+                        </a>
+                    </div>
+
                     <div class="profile-info-overlay">
                         <h2 class="profile-name">{{ profil.utilisateur.pseudo }}, {{ profil.age }} ans</h2>
                         <p class="profile-location">📍 {{ profil.ville }}</p>

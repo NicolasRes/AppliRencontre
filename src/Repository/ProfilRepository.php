@@ -26,8 +26,10 @@ class ProfilRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('p')
             // Exclut les profils déjà swipés par cet utilisateur
             ->leftJoin('App\Entity\Rencontre', 'r', 'WITH', 'r.utilisateur2 = p.utilisateur AND r.utilisateur = :user')
+            ->leftJoin('App\Entity\Signalement', 's', 'WITH', 's.auteur = :user AND s.cible = p.utilisateur')
             ->where('p.utilisateur != :user') // On exclut l'utilisateur lui-même
             ->andWhere('r.id IS NULL')        // Seulement ceux qui n'ont pas de ligne dans Rencontre
+            ->andWhere('s.id IS NULL')        // Et ceux qui n'ont pas de ligne dans Signalement
             ->setParameter('user', $user);
 
         // Si l'utilisateur a une configuration, on applique les filtres

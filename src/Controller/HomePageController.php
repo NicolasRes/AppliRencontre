@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Configuration;
 use App\Entity\Rencontre;
+use App\Entity\Signalement;
 use App\Entity\Utilisateur;
 use App\Repository\ProfilRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -63,6 +65,38 @@ final class HomePageController extends AbstractController
         $em->persist($rencontre);
         $em->flush();
 
+        return $this->redirectToRoute('app_home_page');
+    }
+
+    #[Route('/report/{id}', name: 'app_report')]
+    public function report(Utilisateur $cible, EntityManagerInterface $em, Request $request): Response
+    {
+        $user = $this->getUser();
+        if(!$user){
+            return $this->redirectToRoute('app_login');
+        }
+
+        // On regarde si le signalement a déjà été fait
+        $report_exist = $em->getRepository(Signalement::class)->findOneBy(['auteur' => $user, 'cible' => $cible]);
+
+        if($report_exist){
+            $this->addFlash("abort","Vous l'avez déjà signalé");
+        } else {
+            // On crée le signalement 
+            $signalement = new Signalement();
+            $signalement->setAuteur($user);
+            $signalement->setMotif("Profil offensant");
+            $signalement->setCible($cible);
+            $signalement->setStatut(0);
+            $signalement->setDateS(new \DateTime());
+            // On le met dans la BDD
+            $em->persist($signalement);
+            $em->flush();
+        }
+        // On récupére le paramètre 'form' et on vérifie sa valeur (qui va nous dire depuis ou on a report un profil)
+        if($request->query->get('from') === 'profil'){
+            return $this->redirectToRoute('app_profile_search');
+        }
         return $this->redirectToRoute('app_home_page');
     }
 }
