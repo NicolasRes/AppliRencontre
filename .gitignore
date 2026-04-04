@@ -25,3 +25,4 @@
 ### Ignorer mercure (puisque propre à l'architecture utilisée)
 /bin/mercure
 /bin/dev.Caddyfile
+/mercure.log
