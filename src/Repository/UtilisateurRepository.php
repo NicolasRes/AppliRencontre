@@ -12,4 +12,19 @@ class UtilisateurRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Utilisateur::class);
     }
+
+    /**
+     * Méthode qui renvoie tous les utilisateurs sauf nous même
+     * @param Utilisateur $currentUser Utilisateur courant
+     * @return array Utilisateurs
+     */
+    public function findOtherUsers(Utilisateur $currentUser): array
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u != :currentUser')
+            ->setParameter('currentUser', $currentUser)
+            ->orderBy('u.pseudo', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
