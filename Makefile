@@ -1,6 +1,6 @@
 UNAME_S := $(shell uname -s)
 
-MERCURE_JWT=patate123 # Le code doit correspondre à celui dans le .env
+MERCURE_JWT_SECRET=abcdefghijklmnopqrstuvwxyz123456 # Le code doit correspondre à celui dans le .env et doit être suffisamment long (256 bits : >= 32 caractères)
 MERCURE_CMD=./bin/mercure
 CADDYFILE=./bin/dev.Caddyfile
 
@@ -11,11 +11,11 @@ start:
 	@echo "🟡 Starting Mercure..."
 
 ifeq ($(OS),Windows_NT)	# Commande Windows
-	set MERCURE_PUBLISHER_JWT_KEY=$(MERCURE_JWT) && \
-	set MERCURE_SUBSCRIBER_JWT_KEY=$(MERCURE_JWT) && \
+	set MERCURE_PUBLISHER_JWT_KEY=$(MERCURE_JWT_SECRET) && \
+	set MERCURE_SUBSCRIBER_JWT_KEY=$(MERCURE_JWT_SECRET) && \
 	$(MERCURE_CMD) run --config $(CADDYFILE)
 else
-	MERCURE_PUBLISHER_JWT_KEY=$(MERCURE_JWT) MERCURE_SUBSCRIBER_JWT_KEY=$(MERCURE_JWT) $(MERCURE_CMD) run --config $(CADDYFILE) > mercure.log 2>&1 &
+	MERCURE_PUBLISHER_JWT_KEY=$(MERCURE_JWT_SECRET) MERCURE_SUBSCRIBER_JWT_KEY=$(MERCURE_JWT_SECRET) $(MERCURE_CMD) run --config $(CADDYFILE) > mercure.log 2>&1 &
 endif
 
 stop:
