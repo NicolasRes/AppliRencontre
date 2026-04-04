@@ -13,7 +13,6 @@ body {
     /*background-color: #f1c0cd;*/
     background: linear-gradient(to bottom right, #fbd3ae, #f3b1c3);
     font-family: Lucida, sans-serif;
-    display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
