@@ -8,7 +8,7 @@ use App\Entity\Message;
 use App\Entity\Utilisateur;
 
 /**
- * @method User|null getUser()
+ * @method Utilisateur|null getUser()
  */
 class MessageFactory {
     public function __construct(private readonly EntityManagerInterface $em) {
