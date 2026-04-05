@@ -5,7 +5,7 @@
 
 {$CADDY_EXTRA_CONFIG}
 
-{$SERVER_NAME:http://localhost:3000} {
+{$SERVER_NAME:https:mercure.projetpso.fr} {
 	log {
 		format filter {
 			fields {
@@ -26,7 +26,6 @@
 		# Permissive configuration for the development environment
 		cors_origins https://projetpso.fr
 		publish_origins https://projetpso.fr
-		demo
 		anonymous
 		subscriptions
 		# Extra directives
