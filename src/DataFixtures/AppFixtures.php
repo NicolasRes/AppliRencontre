@@ -25,88 +25,104 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        // On initialise Faker pour avoir des données en Français
         $faker = Factory::create('fr_FR');
         $utilisateurs = [];
 
         // ==========================================
-        // 1. CRÉATION D'UN MODÉRATEUR DE TEST
+        // 1. CRÉATION DE 5 MODÉRATEURS DE TEST
         // ==========================================
-        $adminUser = new Utilisateur();
-        $adminUser->setPseudo('AdminModo')
-                  ->setEmail('admin@tindr.fr')
-                  ->setMdp($this->hasher->hashPassword($adminUser, 'admin'))
-                  ->setImageIdentite('PlaceHolderProfil.jpg')
-                  ->setStatus(Utilisateur::STATUS_APPROVED)
-                  ->setIsModo(true);
-        $manager->persist($adminUser);
+        for ($i = 1; $i <= 5; $i++) {
+            $adminUser = new Utilisateur();
+            $adminUser->setPseudo('admin' . $i)
+                      ->setEmail('admin' . $i . '@tindr.fr')
+                      ->setMdp($this->hasher->hashPassword($adminUser, 'admin' . $i))
+                      ->setImageIdentite('PlaceHolderProfil.jpg')
+                      ->setStatus(Utilisateur::STATUS_APPROVED)
+                      ->setIsModo(true);
+            $manager->persist($adminUser);
+        }
 
         // ==========================================
-        // 2. CRÉATION DES COMPTES DE TEST FIXES
+        // 2. CRÉATION DES 5 UTILISATEURS DE TEST 
         // ==========================================
-        
-        // --- COMPTE 1 : Le signaleur (Auteur) ---
-        $testUser1 = new Utilisateur();
-        $testUser1->setPseudo('Testeur1')
-                 ->setEmail('test1@tindr.fr')
-                 ->setMdp($this->hasher->hashPassword($testUser1, 'password'))
-                 ->setImageIdentite('Homme1.jpeg')
+        $simpleUsers = [];
+        $motifs = ['Faux profil', 'Harcèlement', 'Propos injurieux', 'Spam / Brouteur', 'Photos inappropriées'];
+
+        for ($i = 1; $i <= 5; $i++) {
+            $user = new Utilisateur();
+            $user->setPseudo('user' . $i)
+                 ->setEmail('user' . $i . '@tindr.fr')
+                 ->setMdp($this->hasher->hashPassword($user, 'user' . $i))
+                 ->setImageIdentite('Homme' . $i . '.jpeg')
                  ->setStatus(Utilisateur::STATUS_APPROVED)
                  ->setIsModo(false);
-        $manager->persist($testUser1);
-        $utilisateurs[] = $testUser1;
+            $manager->persist($user);
+            $utilisateurs[] = $user;
+            $simpleUsers[] = $user; // On les isole dans un tableau spécifique
 
-        $testProfil1 = new Profil();
-        $testProfil1->setNom('Test')
-                   ->setPrenom('Jean')
-                   ->setAge(25)
+            $profil = new Profil();
+            $profil->setNom('NomUser' . $i)
+                   ->setPrenom('PrenomUser' . $i)
+                   ->setAge(20 + $i)
                    ->setGenre('Homme')
-                   ->setVille('Paris')
-                   ->setPresentation('Je suis le compte de test gentil !')
-                   ->setUtilisateur($testUser1);
-        $manager->persist($testProfil1);
+                   ->setVille('Ville' . $i)
+                   ->setPresentation('Je suis le testeur normal numéro ' . $i)
+                   ->setUtilisateur($user);
+            $manager->persist($profil);
 
-        $testConfig1 = new Configuration();
-        $testConfig1->setAgeMin(18)->setAgeMax(99)->setRayon(50)
+            $config = new Configuration();
+            $config->setAgeMin(18)->setAgeMax(99)->setRayon(50)
                    ->setGenresVisibles(['Homme', 'Femme', 'Non-binaire'])
-                   ->setEtatNotif(true)->setUtilisateur($testUser1);
-        $manager->persist($testConfig1);
+                   ->setEtatNotif(true)->setUtilisateur($user);
+            $manager->persist($config);
+        }
 
-        // --- COMPTE 2 : Le signalé (Cible) ---
-        $testUser2 = new Utilisateur();
-        $testUser2->setPseudo('BadGuy99')
-                 ->setEmail('badguy@tindr.fr')
-                 ->setMdp($this->hasher->hashPassword($testUser2, 'password'))
-                 ->setImageIdentite('Homme2.jpeg')
-                 ->setStatus(Utilisateur::STATUS_APPROVED)
-                 ->setIsModo(false);
-        $manager->persist($testUser2);
-        $utilisateurs[] = $testUser2;
+        // ==========================================
+        // 3. INTERACTIONS ET SIGNALEMENTS (EXCLUSIVEMENT ENTRE LES 5 TESTS)
+        // ==========================================
+        for ($i = 0; $i < 5; $i++) {
+            $auteur = $simpleUsers[$i];
+            $cible = $simpleUsers[($i + 1) % 5]; // user1 avec user2, user2 avec user3, etc.
 
-        $testProfil2 = new Profil();
-        $testProfil2->setNom('Toxic')
-                   ->setPrenom('Marc')
-                   ->setAge(30)
-                   ->setGenre('Homme')
-                   ->setVille('Lyon')
-                   ->setPresentation('Je suis le profil toxique qui va être banni !')
-                   ->setUtilisateur($testUser2);
-        $manager->persist($testProfil2);
+            // 1. Ils se signalent
+            $signalement = new Signalement();
+            $signalement->setAuteur($auteur)
+                        ->setCible($cible)
+                        ->setMotif($motifs[$i])
+                        ->setDateS(new \DateTime())
+                        ->setStatut(0);
+            $manager->persist($signalement);
 
-        $testConfig2 = new Configuration();
-        $testConfig2->setAgeMin(18)->setAgeMax(99)->setRayon(50)
-                   ->setGenresVisibles(['Homme', 'Femme', 'Non-binaire'])
-                   ->setEtatNotif(true)->setUtilisateur($testUser2);
-        $manager->persist($testConfig2);
+            // 2. Ils discutent
+            $conversation = new Conversation();
+            $conversation->addParticipant($auteur);
+            $conversation->addParticipant($cible);
+            $manager->persist($conversation);
+
+            $message1 = new Message();
+            $message1->setAuthor($auteur)
+                     ->setConversation($conversation)
+                     ->setContent("Salut, tu m'énerves " . $cible->getPseudo() . " !")
+                     ->setCreatedAt(new \DateTimeImmutable());
+            $manager->persist($message1);
+
+            $message2 = new Message();
+            $message2->setAuthor($cible)
+                     ->setConversation($conversation)
+                     ->setContent("C'est pour ça que je t'ai signalé " . $auteur->getPseudo() . ".")
+                     ->setCreatedAt((new \DateTimeImmutable())->modify('+1 minute'));
+            $manager->persist($message2);
+        }
 
         $manager->flush();
 
         // ==========================================
-        // 3. CRÉATION DE 30 UTILISATEURS & PROFILS
+        // 4. CRÉATION D'UTILISATEURS FAKER (SANS INTERACTIONS)
         // ==========================================
+        // Ils servent uniquement à remplir la base (recherche, swipe, etc.)
         $genres = ['Homme', 'Femme', 'Non-binaire'];
         
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 30; $i++) { 
             $genreChoisi = $faker->randomElement($genres);
             
             $prenom = '';
@@ -155,81 +171,55 @@ class AppFixtures extends Fixture
                    ->setEtatNotif(true)
                    ->setUtilisateur($user);
             $manager->persist($config);
-
-            if (($i % 10) === 0) {
-                $manager->flush();
-            }
         }
         $manager->flush();
 
         // ==========================================
-        // 4. CRÉATION DE SIGNALEMENTS POUR LE MODO
+        // 5. CRÉATION DES COMPTES AUX STATUTS SPÉCIFIQUES
         // ==========================================
-        $motifs = ['Faux profil', 'Harcèlement', 'Propos injurieux', 'Spam / Brouteur', 'Photos inappropriées'];
-        
-        $signalementFixe = new Signalement();
-        $signalementFixe->setAuteur($testUser1)
-                        ->setCible($testUser2)
-                        ->setMotif('Propos injurieux')
-                        ->setDateS(new \DateTime())
-                        ->setStatut(0);
-        $manager->persist($signalementFixe);
+        // On utilise les constantes définies dans l'entité Utilisateur
+        $statutsSpecifiques = [
+            'pending' => Utilisateur::STATUS_PENDING,
+            'rejected' => Utilisateur::STATUS_REJECTED,
+            'banned' => Utilisateur::STATUS_BANNED,
+        ];
 
-        for ($i = 0; $i < 10; $i++) {
-            $auteur = $faker->randomElement($utilisateurs);
-            $cible = $faker->randomElement($utilisateurs);
-
-            if ($auteur !== $cible) {
-                $signalement = new Signalement();
-                $signalement->setAuteur($auteur)
-                            ->setCible($cible)
-                            ->setMotif($faker->randomElement($motifs))
-                            ->setDateS($faker->dateTimeThisMonth())
-                            ->setStatut(0);
-                $manager->persist($signalement);
-            }
-        }
-        $manager->flush();
-
-        // ==========================================
-        // 5. CRÉATION DE CONVERSATIONS & MESSAGES
-        // ==========================================
-        for ($i = 0; $i < 15; $i++) {
-            $u1 = $faker->randomElement($utilisateurs);
-            $u2 = $faker->randomElement($utilisateurs);
-
-            if ($u1 !== $u2) {
-                // 💡 On crée une Conversation et on y ajoute les participants
-                $conversation = new Conversation();
-                $conversation->addParticipant($u1);
-                $conversation->addParticipant($u2);
+        foreach ($statutsSpecifiques as $prefix => $status) {
+            for ($i = 1; $i <= 5; $i++) {
+                $userSpecifique = new Utilisateur();
+                $pseudo = $prefix . $i;
                 
-                $manager->persist($conversation);
+                $userSpecifique->setPseudo($pseudo)
+                     ->setEmail($pseudo . '@tindr.fr')
+                     ->setMdp($this->hasher->hashPassword($userSpecifique, $pseudo)) // Mot de passe = pseudo
+                     ->setImageIdentite('PlaceHolderProfil.jpg')
+                     ->setStatus($status)
+                     ->setIsModo(false);
+                $manager->persist($userSpecifique);
+                $utilisateurs[] = $userSpecifique;
 
-                // On génère des messages pour cette conversation
-                for ($m = 0; $m < $faker->numberBetween(2, 6); $m++) {
-                    $message = new Message();
-                    $auteurMsg = $faker->boolean() ? $u1 : $u2;
-                    
-                    // 💡 Conversion du DateTime de Faker en DateTimeImmutable
-                    $dateCreation = \DateTimeImmutable::createFromMutable($faker->dateTimeThisYear());
+                // On leur crée un profil et une configuration pour éviter les erreurs d'affichage
+                $profil = new Profil();
+                $profil->setNom(ucfirst($prefix))
+                       ->setPrenom('Testeur ' . $i)
+                       ->setAge(25)
+                       ->setGenre('Homme')
+                       ->setVille('Paris')
+                       ->setPresentation('Je suis un compte de test pour le statut : ' . strtoupper($prefix))
+                       ->setUtilisateur($userSpecifique);
+                $manager->persist($profil);
 
-                    $message->setAuthor($auteurMsg)
-                            ->setConversation($conversation)
-                            ->setContent($faker->sentence())
-                            ->setCreatedAt($dateCreation);
-                            
-                    $manager->persist($message);
-                }
-            }
-            if (($i % 5) === 0) {
-                $manager->flush();
+                $config = new Configuration();
+                $config->setAgeMin(18)->setAgeMax(99)->setRayon(50)
+                       ->setGenresVisibles(['Homme', 'Femme', 'Non-binaire'])
+                       ->setEtatNotif(true)->setUtilisateur($userSpecifique);
+                $manager->persist($config);
             }
         }
         $manager->flush();
 
         // ==========================================
-        // 6. CRÉATION DE NOTIFICATIONS
+        // 6. CRÉATION DE NOTIFICATIONS (FAKER)
         // ==========================================
         for ($i = 0; $i < 20; $i++) {
             $notif = new Notification();
