@@ -152,7 +152,7 @@ body{
     background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 60%, rgba(0, 0, 0, 0) 100%);
     color: white;
     /* On augmente le padding du bas pour ne pas que le texte touche les boutons */
-    padding: 60px 20px 90px 20px; 
+    padding: 60px 20px 90px 20px;
     box-sizing: border-box;
     pointer-events: none; /* Le clic passe à travers pour atteindre les boutons */
 }
@@ -231,4 +231,14 @@ textarea{
 #date-app-container .profile-card .report img{
     width: 70px;
     height: auto;
+}
+
+.profiles-list {
+    max-height: 60vh;   /* hauteur dynamique (60% écran) */
+    overflow-y: auto;
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff1f5;
 }
