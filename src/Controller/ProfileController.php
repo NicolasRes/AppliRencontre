@@ -14,31 +14,12 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ProfileController extends AbstractController
 {
 
-    /* Cool pour debug
-    #[Route('/profiles-test', name: 'app_profiles_test')]
-    public function list(ProfilRepository $profilRepository): Response
-    {
-        $profiles = $profilRepository->findAll();
-
-        $lines = [];
-
-        foreach ($profiles as $profile) {
-            $lines[] = sprintf(
-                'id=%d | %s %s | %d ans | %s | %s',
-                $profile->getId(),
-                $profile->getPrenom() ?? '',
-                $profile->getNom() ?? '',
-                $profile->getAge() ?? 0,
-                $profile->getGenre() ?? '',
-                $profile->getVille() ?? ''
-            );
-        }
-
-        return new Response(
-            '<pre>' . htmlspecialchars(implode("\n", $lines)) . '</pre>'
-        );
-    }*/
-
+    /**
+     * Méthode qui affiche un profil en particulier (sous forme de carte)
+     * @param int $id Identifiant du profil
+     * @param ProfilRepository $profilRepository Le repository des profils
+     * @return Response Page HTML du profil
+     */
     #[Route('/profile/{id}', name: 'app_profile_show', requirements: ['id' => '\d+'])]
     public function show(int $id, ProfilRepository $profilRepository): Response
     {
@@ -48,7 +29,7 @@ final class ProfileController extends AbstractController
             throw $this->createNotFoundException('Profil introuvable.');
         }
 
-        return $this->render('profile/index.html.twig', [
+        return $this->render('partials/_card.html.twig', [
             'profile' => $profile,
         ]);
     }
