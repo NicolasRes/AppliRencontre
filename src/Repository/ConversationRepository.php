@@ -17,8 +17,8 @@ class ConversationRepository extends ServiceEntityRepository {
     public function findByUsers(Utilisateur $sender, Utilisateur $recipient): ?Conversation
     {
         return $this->createQueryBuilder('c')
-        ->where(':sender MEMBER OF c.users')
-        ->andWhere(':recipient MEMBER OF c.users')
+        ->where(':sender MEMBER OF c.participants')
+        ->andWhere(':recipient MEMBER OF c.participants')
         ->setParameter('sender', $sender)
         ->setParameter('recipient', $recipient)
         ->getQuery()
@@ -31,4 +31,3 @@ class ConversationRepository extends ServiceEntityRepository {
     }
 }
 
-?>

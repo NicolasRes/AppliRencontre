@@ -1,54 +1,73 @@
+{# Page de recherche filtrée de profils #}
+
 {% extends 'base.html.twig' %}
 
 {% block title %}Recherche de profils{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/app_design.css') }}">
+{% endblock %}
+
 {% block body %}
+    <div class="app-body-reset">
+        <div id="date-app-container">
+            <aside class="sidebar">
+                {# Ajout du header à gauche de la page de recherche #}
+                {{ include('partials/_header_app.html.twig') }}
+            </aside>
 
-    <h1>Recherche de profils</h1>
+            <main class="main_content">
 
-    <form method="get">
+                <h1>Recherche de profils</h1>
 
-        {# Filtre par pseudo #}
-        <input type="text" name="pseudo" placeholder="Pseudo">
+                <form method="get">
 
-        {# Filtre de genre #}
-        <select name="genre">
-            <option value="">Tous</option>
-            <option value="H">Homme</option>
-            <option value="F">Femme</option>
-            <option value="A">Autre</option>
-        </select>
+                    {# Filtre par pseudo #}
+                    <input type="text" name="pseudo" placeholder="Pseudo">
 
-        {# Filtres âge minimum et maximum #}
-        <label>Age min</label>
-        <input type="number" name="age_min" min="18" max="113">
+                    {# Filtre de genre #}
+                    <select name="genre">
+                        <option value="">Tous</option>
+                        <option value="H">Homme</option>
+                        <option value="F">Femme</option>
+                        <option value="A">Autre</option>
+                    </select>
 
-        <label>Age max</label>
+                    {# Filtres âge minimum et maximum #}
+                    <label>Age min</label>
+                    <input type="number" name="age_min" min="18" max="113">
 
-        <input type="number" name="age_max" min="18" max="113">
-        <button type="submit">🔍</button> {# La loupe est le bouton pour lancer la recherche #}
+                    <label>Age max</label>
 
-    </form>
+                    <input type="number" name="age_max" min="18" max="113">
+                    <button type="submit">🔍</button> {# La loupe est le bouton pour lancer la recherche #}
 
-    <hr>
+                </form>
 
-    {# Affichage des profils sous forme de tuiles (en ligne) #}
-    <div class="profiles-list">
+                <hr>
 
-        {% for profile in profiles %}
+                {# Affichage des profils sous forme de tuiles (en ligne) #}
+                <div class="profiles-list">
 
-            <div class="profile-lile">
-                <a href="{{ path('app_profile_show', {id: profile.id}) }}" class="profile-line">
-                    {{ profile.prenom }} {{ profile.nom }} {{ profile.age }} ans {# {{ profile.ville ?? 'Ville non renseignée' }} #} {# Pour + tard #}
-                </a>
-            </div>
+                    {# Affichage de chaque profil en colonne sous le format : pseudo âge (ex: jeff6 34 ans #}
+                    {% for profile in profiles %}
 
-        {% else %}
+                        <div class="profile-lile">
+                            <a href="{{ path('app_profile_show', {id: profile.id}) }}" class="profile-line">
+                                {{ profile.utilisateur.pseudo }} {{ profile.age }} ans {# {{ profile.ville ?? 'Ville non renseignée' }} #} {# Pour + tard #}
+                            </a>
+                        </div>
 
-            <p>Aucun profil trouvé</p>
+                    {% else %}
 
-        {% endfor %}
+                        <p>Aucun profil trouvé</p>
 
+                    {% endfor %}
+
+                </div>
+            </main>
+        </div>
     </div>
+
 
 {% endblock %}

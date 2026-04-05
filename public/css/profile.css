@@ -23,3 +23,14 @@
     padding: 12px;
     border-radius: 10px;
 }
+
+.profile-card .report_search{
+    position: absolute;
+    top: 15px;
+    right : 15px;
+}
+
+.report_search img{
+    width: 70px;
+    height: auto;
+}

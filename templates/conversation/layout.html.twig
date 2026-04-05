@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block navbar %}
+    {% include 'conversation/navbar.html.twig' %}
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        Messages
+                    </div>
+
+                    <div class="card-body">
+                        <div class="overflow-y-auto" {# Scroll automatique quand trop de messages sont affichés #}
+                             id="messages"
+                             hx-ext="sse"
+                             sse-connect="{{ mercure(topic) }}"
+                             sse-swap="message"
+                             style="height: 500px;">
+                            {# Affichage des messages #}
+                            {% include 'conversation/messages.html.twig' %}
+                        </div>
+
+                        <hr>
+
+                        {# Formulaire pour le chat #}
+                        {# Le hx-post : Crée une requête post et assigne toutes les valeurs qui ont un nom à la requête #}
+                        {% if conversation %}
+                            <form class="d-flex gap-3 mt-3" hx-post="{{ path('message.create') }}" hx-swap="none">
+
+                                <input aria-label="Message"
+                                       class="form-control"
+                                       name="content"
+                                       placeholder="Message"
+                                       id="content"
+                                       type="text">
+
+                                <input type="hidden"
+                                       name="conversationId"
+                                       value="{{ conversation.id }}">
+
+                                <button class="btn btn-primary">
+                                    Envoyer
+                                </button>
+                            </form>
+                        {% else %}
+                            <p class="text-muted">Sélectionne une conversation</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{# Affichage en temps réel #}
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        const messages = document.querySelector('#messages');
+        const userId = {{ app.user.id }}
+
+        // Scroll automatiquement vers le bas de l'écran quand la chatbox est pleine et fait apparaitre une barre de défilement
+        document.addEventListener('DOMContentLoaded', () => {
+            scrollToBottom(messages)
+        });
+
+
+        document.body.addEventListener('htmx:sseBeforeMessage', function (e) {
+            e.preventDefault(); // Évite d'afficher le message en json dans la chatbox
+
+            const json = JSON.parse(e.detail.data);
+            const authorId = json['authorId'];
+            const content = json['content'];
+
+            // Le message se supprime de la zone de texte s'il est bien envoyé
+            if (authorId === userId) {
+                document.querySelector('#content').value = '';
+            }
+
+            // On crée un message-element qui contient author-id, user-id et le contenu
+            // Le beforeend fait apparaitre le message avant la fin de la div (du conteneur)
+            htmx.swap('#messages', `<message-element author-id="${authorId}" user-id="${userId}" content="${content}"></message-element>`, {
+                swapStyle: 'beforeend'
+            });
+
+            scrollToBottom(messages);
+        });
+
+        /**
+         * Scroll vers le bas de la page
+         * @param container la chatbox
+         */
+        function scrollToBottom(container) {
+            container.scrollTo({
+                top: container.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+{% endblock %}
