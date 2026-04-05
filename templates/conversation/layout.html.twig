@@ -17,7 +17,9 @@
                         <div class="overflow-y-auto" {# Scroll automatique quand trop de messages sont affichés #}
                              id="messages"
                              hx-ext="sse"
-                             sse-connect="{{ mercure(topic) }}"
+                             {% if topic is defined %}
+                                sse-connect="{{ mercure(topic) }}"
+                             {% endif %}
                              sse-swap="message"
                              style="height: 500px;">
                             {# Affichage des messages #}
