@@ -44,19 +44,25 @@ final class HomePageModerateurController extends AbstractController
     #[Route('/moderateur/signalement/{id}/ignorer', name: 'app_moderateur_ignorer')]
     public function ignorer(Signalement $signalement, EntityManagerInterface $em): Response
     {
-        $signalement->setStatut(1);
+        // On supprime directement la ligne du signalement de la BDD
+        $em->remove($signalement);
         $em->flush();
 
-        $this->addFlash('success', 'Le signalement a été ignoré.');
+        $this->addFlash('success', 'Le signalement a été ignoré et supprimé de la base.');
         return $this->redirectToRoute('app_moderateur_signalements');
     }
 
     #[Route('/moderateur/signalement/{id}/bannir', name: 'app_moderateur_bannir')]
     public function bannir(Signalement $signalement, EntityManagerInterface $em): Response
     {
+        // 1. On récupère la personne signalée
         $cible = $signalement->getCible();
-        $cible->setStatus(Utilisateur::STATUS_REJECTED);
-        $signalement->setStatut(1);
+        
+        // 2. On change son statut pour le nouveau statut BANNED
+        $cible->setStatus(Utilisateur::STATUS_BANNED);
+        
+        // 3. On supprime la ligne du signalement puisqu'il a été traité
+        $em->remove($signalement);
 
         $em->flush();
 

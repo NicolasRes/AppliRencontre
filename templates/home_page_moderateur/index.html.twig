@@ -50,12 +50,12 @@
                             </div>
                         </div>
                             <div style="display: flex; gap: 20px; margin-top: 10px;">
-                            {# Bouton VERT (Gauche) : Valider la plainte = BANNIR #}
+                            {# Bouton VERT (Gauche) #}
                             <a href="{{ path('app_moderateur_bannir', {'id': s.id}) }}" class="action-btn" title="Valider la plainte (Bannir l'utilisateur)">
                                 <img class="bg" src="{{ asset('images/green.webp') }}" alt="Vert">
                                 <img class="icon" src="{{ asset('images/valid.webp') }}" alt="Valider">
                             </a>
-                            {# Bouton ROUGE (Droite) : Refuser la plainte = IGNORER #}
+                            {# Bouton ROUGE (Droite) #}
                             <a href="{{ path('app_moderateur_ignorer', {'id': s.id}) }}" class="action-btn" title="Refuser la plainte (Ignorer et sauver l'utilisateur)">
                                 <img class="bg" src="{{ asset('images/Red.jpg') }}" alt="Rouge">
                                 <img class="icon" src="{{ asset('images/Denied.jpg') }}" alt="Refuser">

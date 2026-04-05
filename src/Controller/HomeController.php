@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController; // Ajout requis
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Utilisateur;
@@ -14,11 +14,12 @@ class HomeController extends AbstractController
     {
         $user = $this->getUser();
 
+        // 1. Si l'utilisateur EST connecté, on gère son cas selon son statut
         if ($user instanceof Utilisateur) {
 
-            // Empêche l'utilisateur d'aller sur /login alors qu'il est connecté
             if ($user->isApproved()) {
-                return $this->render('app_home_page');  // Le twig de HomeController n'est jamais utilisé donc on redirige direct vers l'app une fois connecté
+                // 💡 CORRECTION ICI : redirectToRoute au lieu de render
+                return $this->redirectToRoute('app_home_page');  
             }
             elseif ($user->isPending()) {
                 return $this->render('security/waiting_validation.html.twig');
@@ -26,8 +27,12 @@ class HomeController extends AbstractController
             elseif ($user->isRejected()) {
                 return $this->redirectToRoute('app_register');
             }
+            elseif ($user->isBanned()) {
+                return $this->render('security/banned.html.twig');
+            }
         }
 
+        // Si l'utilisateur N'EST PAS connecté (visiteur), on affiche la page d'accueil publique
         return $this->render('home/index.html.twig');
     }
 }

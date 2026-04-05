@@ -106,7 +106,7 @@ class AppFixtures extends Fixture
         // ==========================================
         $genres = ['Homme', 'Femme', 'Non-binaire'];
         
-        for ($i = 0; $i < 300; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             $genreChoisi = $faker->randomElement($genres);
             
             $prenom = '';
