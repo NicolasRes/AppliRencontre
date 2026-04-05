@@ -40,12 +40,12 @@
 </ul>
 
 <div style="margin-top: auto; border-top: 2px solid #180b0b; padding-top: 20px;">
-    <a href="#" class="sidebar-item">
-    <img class="sidebar-icon" style="border-radius: 50%;"
-        src="{{ app.user and app.user.imageIdentite ? asset('images/' ~ app.user.imageIdentite) : asset('images/thispersondoesnotexist.jpeg') }}"
-        alt="Moi">
+    <div class="sidebar-item">
+        <img class="sidebar-icon" style="border-radius: 50%;"
+            src="{{ app.user and app.user.imageIdentite ? asset('uploads/identites/' ~ app.user.imageIdentite) : asset('images/thispersondoesnotexist.jpeg') }}"
+            alt="Moi">
         <span>Mon Profil</span>
-    </a>
+    </div>
 </div>
 <script>
     function menu(){
