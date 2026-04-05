@@ -32,6 +32,8 @@ final class HomePageController extends AbstractController
         // Rejeté : page de correction de formulaire disponible
         elseif ($user->isRejected()) {
             return $this->redirectToRoute('app_register');
+        } elseif ($user->isBanned()){
+            return $this->redirectToRoute('app_banned') ; 
         }
 
         // Utilisation de notre nouvelle méthode de filtrage

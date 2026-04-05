@@ -52,4 +52,17 @@ class SecurityController extends AbstractController
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
+
+    #[Route(path: '/banned', name: 'app_banned')]
+    public function banned(): Response
+    {
+        // On vérifie tout de même que la personne est bien connectée et bannie
+        $user = $this->getUser();
+        if (!$user || !$user->isBanned()) {
+            return $this->redirectToRoute('home');
+        }
+
+        return $this->render('security/banned.html.twig');
+    }
+
 }
