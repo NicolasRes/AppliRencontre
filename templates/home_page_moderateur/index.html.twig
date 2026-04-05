@@ -71,9 +71,35 @@
                         <div style="flex: 1; padding: 20px; background: #fff1f5; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;">
                             <div style="text-align: center; color: #999; font-size: 0.8em;">-- Début de la discussion --</div>
                             
-                            <div style="align-self: flex-start; background: white; padding: 10px 15px; border-radius: 15px; color: #555;">
-                                [Placeholder] Les messages seront récupérés ici via une relation.
-                            </div>
+                            {% if conversation is defined and conversation is not null and conversation.messages is not empty %}
+                                {% for message in conversation.messages %}
+                                    
+                                    {# On vérifie si c'est la personne signalée (la cible) qui parle #}
+                                    {% set isCible = (message.author.id == s.cible.id) %}
+                                    
+                                    <div style="
+                                        align-self: {{ isCible ? 'flex-start' : 'flex-end' }}; 
+                                        background: {{ isCible ? 'white' : '#ed3692' }}; 
+                                        color: {{ isCible ? '#555' : 'white' }}; 
+                                        padding: 10px 15px; 
+                                        border-radius: 15px; 
+                                        max-width: 75%;
+                                        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+                                    ">
+                                        <div style="font-size: 0.75em; margin-bottom: 5px; opacity: 0.8;">
+                                            <strong>{{ message.author.pseudo }}</strong> • {{ message.createdAt|date('d/m/Y à H:i') }}
+                                        </div>
+                                        <div style="line-height: 1.4;">
+                                            {{ message.content }}
+                                        </div>
+                                    </div>
+
+                                {% endfor %}
+                            {% else %}
+                                <div style="text-align: center; color: #999; font-style: italic; margin-top: 20px;">
+                                    Aucune discussion n'a été trouvée entre ces deux membres.
+                                </div>
+                            {% endif %}
                         </div>
 
                         <div style="padding: 15px; background: white; border-top: 1px solid #ddd; text-align: center; color: #999; font-style: italic; font-size: 0.9em;">

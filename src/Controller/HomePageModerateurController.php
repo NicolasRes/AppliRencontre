@@ -36,8 +36,24 @@ final class HomePageModerateurController extends AbstractController
             ['dateS' => 'ASC']
         );
 
+        $conversationCommune = null;
+        if (!empty($signalements)) {
+            $premierSignalement = $signalements[0];
+            $auteur = $premierSignalement->getAuteur();
+            $cible = $premierSignalement->getCible();
+
+            // On cherche la conversation commune aux deux participants
+            foreach ($auteur->getConversations() as $conv) {
+                if ($conv->getParticipants()->contains($cible)) {
+                    $conversationCommune = $conv;
+                    break;
+                }
+            }
+        }
+
         return $this->render('home_page_moderateur/index.html.twig', [
             'signalements' => $signalements,
+            'conversation' => $conversationCommune,
         ]);
     }
 
