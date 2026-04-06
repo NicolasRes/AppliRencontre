@@ -48,12 +48,15 @@
                     {{ form_widget(formulaire.photoProfils) }}
                     {{ form_errors(formulaire.photoProfils) }}
                 </div>
-                {% for photo in profil.photoProfils %}
-                    <div class="photo">
-                        <img src="{{ asset('uploads/identites/' ~ photo.lienPhoto) }}" width="100">
-                        <a href="{{ path('app_photo_delete', {id: photo.id}) }}" onclick="return confirm('Supprimer cette photo ?')">❌</a>
-                    </div>
-                {% endfor %}
+                {% if profil.photoProfils is not empty %}
+                    <h4>Mes photos :</h4>
+                    {% for photo in profil.photoProfils %}
+                        <div class="photo">
+                            <img src="{{ asset('uploads/identites/' ~ photo.lienPhoto) }}" width="100">
+                            <a href="{{ path('app_photo_delete', {id: photo.id}) }}" onclick="return confirm('Supprimer cette photo ?')">❌</a>
+                        </div>
+                    {% endfor %}
+                {% endif %}
                 <div class="form-group">
                     <input type="submit" value="Valider">
                 </div>
