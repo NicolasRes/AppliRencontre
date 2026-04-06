@@ -87,7 +87,10 @@ button[type=submit] {
 .search-block input {
     margin-left: 10px;
     margin-right: 10px;
+}
 
+.flash-message {
+    animation: slideIn 0.3s ease-out;
 }
 
 .form-control { width: 90%; padding: 8px; margin-top: 5px; }

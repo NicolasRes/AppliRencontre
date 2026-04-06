@@ -24,11 +24,14 @@ class ProfilRepository extends ServiceEntityRepository
     public function findProfilsNonSwipes(Configuration $config, Utilisateur $user): array
     {   
         $qb = $this->createQueryBuilder('p')
-            // Exclut les profils déjà swipés par cet utilisateur
-            ->leftJoin('App\Entity\Rencontre', 'r', 'WITH', 'r.utilisateur2 = p.utilisateur AND r.utilisateur = :user')
+            // NOUVEAU LEFT JOIN : on prend en compte les 2 sens d'interaction !
+            ->leftJoin('App\Entity\Rencontre', 'r', 'WITH', 
+                '(r.utilisateur = :user AND r.utilisateur2 = p.utilisateur) OR ' .
+                '(r.utilisateur = p.utilisateur AND r.utilisateur2 = :user AND r.statut != 1)'
+            )
             ->leftJoin('App\Entity\Signalement', 's', 'WITH', 's.auteur = :user AND s.cible = p.utilisateur')
             ->where('p.utilisateur != :user') // On exclut l'utilisateur lui-même
-            ->andWhere('r.id IS NULL')        // Seulement ceux qui n'ont pas de ligne dans Rencontre
+            ->andWhere('r.id IS NULL')        // Seulement ceux qui n'ont pas de ligne dans Rencontre (ou dont le leftJoin a échoué)
             ->andWhere('s.id IS NULL')        // Et ceux qui n'ont pas de ligne dans Signalement
             ->setParameter('user', $user);
 
@@ -50,7 +53,6 @@ class ProfilRepository extends ServiceEntityRepository
             // Filtre : Genres Visibles
             $genres = $config->getGenresVisibles();
             if (!empty($genres)) {
-                // Doctrine gère automatiquement les tableaux avec l'opérateur IN
                 $qb->andWhere('p.genre IN (:genres)')
                    ->setParameter('genres', $genres);
             }

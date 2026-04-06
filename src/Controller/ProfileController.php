@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\PhotoProfil;
 use App\Entity\Profil;
 use App\Form\ModifInformationsType;
 use App\Repository\ProfilRepository;
@@ -14,31 +15,12 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ProfileController extends AbstractController
 {
 
-    /* Cool pour debug
-    #[Route('/profiles-test', name: 'app_profiles_test')]
-    public function list(ProfilRepository $profilRepository): Response
-    {
-        $profiles = $profilRepository->findAll();
-
-        $lines = [];
-
-        foreach ($profiles as $profile) {
-            $lines[] = sprintf(
-                'id=%d | %s %s | %d ans | %s | %s',
-                $profile->getId(),
-                $profile->getPrenom() ?? '',
-                $profile->getNom() ?? '',
-                $profile->getAge() ?? 0,
-                $profile->getGenre() ?? '',
-                $profile->getVille() ?? ''
-            );
-        }
-
-        return new Response(
-            '<pre>' . htmlspecialchars(implode("\n", $lines)) . '</pre>'
-        );
-    }*/
-
+    /**
+     * Méthode qui affiche un profil en particulier (sous forme de carte)
+     * @param int $id Identifiant du profil
+     * @param ProfilRepository $profilRepository Le repository des profils
+     * @return Response Page HTML du profil
+     */
     #[Route('/profile/{id}', name: 'app_profile_show', requirements: ['id' => '\d+'])]
     public function show(int $id, ProfilRepository $profilRepository): Response
     {
@@ -48,7 +30,7 @@ final class ProfileController extends AbstractController
             throw $this->createNotFoundException('Profil introuvable.');
         }
 
-        return $this->render('profile/index.html.twig', [
+        return $this->render('partials/_card.html.twig', [
             'profile' => $profile,
         ]);
     }
@@ -103,12 +85,42 @@ final class ProfileController extends AbstractController
         $form = $this->createForm(ModifInformationsType::class, $infosUser);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
+            // On récupere les photos insérés
+            $listePhotos = $form->get('photoProfils')->getData();
+            if($listePhotos){
+                foreach ($listePhotos as $photo) {
+                    // On fait un nom unique pour chaque photo dans la liste
+                    $nomPhoto = uniqid(). '.' . $photo->guessExtension();
+                    // On la déplace dans le dossier avec toutes les autres images, avec le nom fabriqué
+                    $photo->move($this->getParameter('identite_directory'), $nomPhoto);
+                    // On créer la PhotoProfil associé
+                    $photoProfil = new PhotoProfil();
+                    $photoProfil->setLienPhoto($nomPhoto);
+                    $photoProfil->setProfil($infosUser);
+                    $em->persist($photoProfil);
+                }
+            }
             $em->persist($infosUser);
             $em->flush();
             return $this->redirectToRoute('app_home_page');
         }
         return $this->render('profile/informations.html.twig', [
             'formulaire' => $form->createView(),
+            'profil' => $infosUser
         ]);
+    }
+
+    #[Route('delete/{id}', name: 'app_photo_delete')]
+    public function deletePhoto(EntityManagerInterface $em, PhotoProfil $photo): Response {
+        if($photo->getProfil()->getUtilisateur() !== $this->getUser()){
+            throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer cette photo.');
+        }
+        $cheminFichier = $this->getParameter('identite_directory') . '/' . $photo->getLienPhoto();
+        if(file_exists($cheminFichier)){
+            unlink($cheminFichier);
+        }
+        $em->remove($photo);
+        $em->flush();
+        return $this->redirectToRoute('app_informations');
     }
 }

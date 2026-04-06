@@ -1,5 +1,12 @@
 {% extends 'base.html.twig' %}
 
+{# Si on inclut le header
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/app_design.css') }}">
+{% endblock %}
+ #}
+
 {% block navbar %}
     {% include 'conversation/navbar.html.twig' %}
 {% endblock %}
@@ -17,7 +24,9 @@
                         <div class="overflow-y-auto" {# Scroll automatique quand trop de messages sont affichés #}
                              id="messages"
                              hx-ext="sse"
-                             sse-connect="{{ mercure(topic) }}"
+                             {% if topic is defined %}
+                                sse-connect="{{ mercure(topic) }}"
+                             {% endif %}
                              sse-swap="message"
                              style="height: 500px;">
                             {# Affichage des messages #}

@@ -5,7 +5,9 @@
 {% block title %}Recherche de profils{% endblock %}
 
 {% block stylesheets %}
+    {{ parent() }}
     <link rel="stylesheet" href="{{ asset('css/app_design.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/profile.css') }}"
 {% endblock %}
 
 {% block body %}
@@ -16,7 +18,7 @@
                 {{ include('partials/_header_app.html.twig') }}
             </aside>
 
-            <main class="main_content">
+            <main class="main-content">
 
                 <h1>Recherche de profils</h1>
 
@@ -28,9 +30,9 @@
                     {# Filtre de genre #}
                     <select name="genre">
                         <option value="">Tous</option>
-                        <option value="H">Homme</option>
-                        <option value="F">Femme</option>
-                        <option value="A">Autre</option>
+                        <option value="Homme">Homme</option>
+                        <option value="Femme">Femme</option>
+                        <option value="Non-binaire">Autre</option>
                     </select>
 
                     {# Filtres âge minimum et maximum #}
@@ -53,8 +55,16 @@
                     {% for profile in profiles %}
 
                         <div class="profile-lile">
-                            <a href="{{ path('app_profile_show', {id: profile.id}) }}" class="profile-line">
-                                {{ profile.utilisateur.pseudo }} {{ profile.age }} ans {# {{ profile.ville ?? 'Ville non renseignée' }} #} {# Pour + tard #}
+                            <a
+                                hx-get="{{ path('app_profile_show', {id: profile.id}) }}"
+                                hx-target="#profile-overlay"
+                                hx-swap="innerHTML"
+                                hx-trigger="click"
+                                href="#"
+                                data-turbo="false"
+                                class="profile-line">
+
+                                {{ profile.utilisateur.pseudo }} {{ profile.age }} ans
                             </a>
                         </div>
 
@@ -68,6 +78,5 @@
             </main>
         </div>
     </div>
-
 
 {% endblock %}

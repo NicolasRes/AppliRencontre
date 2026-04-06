@@ -21,7 +21,7 @@
 
         {{ form_start(registrationForm, {'attr': {'style': 'display: flex; flex-direction: column; gap: 15px;'}}) }}
             
-            {# Erreurs de formulaire #}
+            {# Erreurs globales du formulaire #}
             <div style="color: #d63031; font-size: 0.8rem; font-weight: bold;">
                 {{ form_errors(registrationForm) }}
             </div>
@@ -29,22 +29,24 @@
             {# Champ Pseudo #}
             <div class="custom-form-group">
                 {{ form_widget(registrationForm.pseudo, {'attr': {'placeholder': 'Votre pseudo', 'class': 'input-clean'}}) }}
-                {{ form_errors(registrationForm.pseudo) }}
+                <div class="form-error-text">{{ form_errors(registrationForm.pseudo) }}</div>
             </div>
 
             {# Champ Email #}
             <div class="custom-form-group">
                 {{ form_widget(registrationForm.email, {'attr': {'placeholder': 'Email', 'class': 'input-clean'}}) }}
-                {{ form_errors(registrationForm.email) }}
+                <div class="form-error-text">{{ form_errors(registrationForm.email) }}</div>
             </div>
 
             {# Ligne Prénom / Nom #}
             <div style="display: flex; gap: 15px;">
                 <div style="flex: 1;">
                     {{ form_widget(registrationForm.prenom, {'attr': {'placeholder': 'Prénom', 'class': 'input-clean'}}) }}
+                    <div class="form-error-text">{{ form_errors(registrationForm.prenom) }}</div>
                 </div>
                 <div style="flex: 1;">
                     {{ form_widget(registrationForm.nom, {'attr': {'placeholder': 'Nom', 'class': 'input-clean'}}) }}
+                    <div class="form-error-text">{{ form_errors(registrationForm.nom) }}</div>
                 </div>
             </div>
 
@@ -52,21 +54,25 @@
             <div style="display: flex; gap: 15px; align-items: center;">
                 <div style="flex: 1;">
                     {{ form_widget(registrationForm.age, {'attr': {'placeholder': 'Âge', 'class': 'input-clean'}}) }}
+                    <div class="form-error-text">{{ form_errors(registrationForm.age) }}</div>
                 </div>
                 <div style="flex: 1;">
                     {{ form_widget(registrationForm.genre, {'attr': {'class': 'input-clean select-clean'}}) }}
+                    <div class="form-error-text">{{ form_errors(registrationForm.genre) }}</div>
                 </div>
             </div>
 
             {# Mot de passe #}
             <div class="custom-form-group">
                 {{ form_widget(registrationForm.plainPassword, {'attr': {'placeholder': 'Mot de passe', 'class': 'input-clean'}}) }}
+                <div class="form-error-text">{{ form_errors(registrationForm.plainPassword) }}</div>
             </div>
 
             {# Photo / Identité #}
             <div style="background: rgba(255, 255, 255, 0.4); padding: 15px; border-radius: 15px; border: 2px dashed #ed3692;">
                 <label style="display: block; color: #ed3692; font-weight: bold; margin-bottom: 8px; font-size: 0.9rem;">Photo d'identité (vérification)</label>
                 {{ form_widget(registrationForm.imageIdentite, {'attr': {'style': 'font-size: 0.8rem; color: #444;'}}) }}
+                <div class="form-error-text">{{ form_errors(registrationForm.imageIdentite) }}</div>
             </div>
 
             <button type="submit" class="btn-modern-submit">
@@ -101,6 +107,15 @@
     .select-clean {
         cursor: pointer;
         height: 52px;
+    }
+
+    /* Style pour les messages d'erreur des champs */
+    .form-error-text {
+        color: #d63031;
+        font-size: 0.8rem;
+        font-weight: bold;
+        margin-top: 5px;
+        margin-left: 5px;
     }
 
     /* Bouton d'inscription */

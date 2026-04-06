@@ -144,12 +144,17 @@ class RegistrationController extends AbstractController
             // Le flush() final va tout enregistrer en une seule fois (User, Profil, Config, Notification)
             $entityManager->flush();
 
-            // Message de validation (géré dans le twig selon inscription ou modification)
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);
         }
 
+        // On vérifie si le formulaire a été soumis mais a échoué à la validation
+        $status = ($form->isSubmitted() && !$form->isValid()) 
+            ? Response::HTTP_UNPROCESSABLE_ENTITY 
+            : Response::HTTP_OK;
+
+        // On passe le statut 422 (Unprocessable Entity) si erreur, sinon 200 (OK)
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
-        ]);
+        ], new Response(null, $status));
     }
 }

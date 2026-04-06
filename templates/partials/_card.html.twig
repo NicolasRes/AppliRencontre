@@ -1,0 +1,40 @@
+<div class="profile-modal-card" onclick="event.stopPropagation();">
+
+    <button onclick="
+        const overlay = document.getElementById('profile-overlay');
+        overlay.innerHTML='';
+        overlay.classList.remove('active');
+    "
+            style="position:absolute; top:10px; left:10px;">
+        ✖
+    </button>
+
+    <img class="profile-avatar"
+         src="{{ profile.utilisateur.imageIdentite
+         ? asset('images/' ~ profile.utilisateur.imageIdentite)
+         : asset('images/PlaceHolderProfil.jpg') }}"
+         alt="Photo">
+
+    <h1>{{ profile.utilisateur.pseudo }}</h1>
+
+    <div class="report_search">
+        <a href="{{ path('app_report', {'id': profile.utilisateur.id, 'from': 'profil'}) }}">
+            <img src="{{ asset('images/report.png') }}" alt="Report">
+        </a>
+    </div>
+
+    <h2 class="profile-header">
+        {{ profile.age }} ans, {{ profile.genre }}
+    </h2>
+
+    <p class="profile-location">
+        📍 {{ profile.ville ?? 'Non renseignée' }}
+    </p>
+
+    <div class="profile-bio">
+        <p>
+            {{ profile.presentation ?? 'Aucune présentation pour le moment.' }}
+        </p>
+    </div>
+
+</div>
