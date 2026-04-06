@@ -53,6 +53,10 @@ body{
 
 #date-app-container .sidebar-item:hover { background: #fff1f5; }
 
+#date-app-container #myProfile {
+    background: #ffffff;
+}
+
 #date-app-container .sidebar-icon {
     width: 25px;
     height: 25px;

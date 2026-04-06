@@ -40,7 +40,7 @@
 </ul>
 
 <div style="margin-top: auto; border-top: 2px solid #180b0b; padding-top: 20px;">
-    <div class="sidebar-item">
+    <div id="myProfile" class="sidebar-item">
         <img class="sidebar-icon" style="border-radius: 50%;"
             src="{{ app.user and app.user.imageIdentite ? asset('uploads/identites/' ~ app.user.imageIdentite) : asset('images/PlaceHolderProfil.jpeg') }}"
             alt="Moi">
