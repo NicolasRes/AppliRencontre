@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Profil;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -83,6 +84,11 @@ class ModifInformationsType extends AbstractType
                         'maxMessage' => 'La présentation ne doit pas dépasser 500 caractères',
                     ])
                 ]
+            ])
+            ->add('photoProfils', FileType::class, [
+                'label' => 'Ajouter des photos : ',
+                'mapped' => false,
+                'multiple' => true
             ])
         ;
     }

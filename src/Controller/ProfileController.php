@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\PhotoProfil;
 use App\Entity\Profil;
 use App\Form\ModifInformationsType;
 use App\Repository\ProfilRepository;
@@ -84,12 +85,42 @@ final class ProfileController extends AbstractController
         $form = $this->createForm(ModifInformationsType::class, $infosUser);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
+            // On récupere les photos insérés
+            $listePhotos = $form->get('photoProfils')->getData();
+            if($listePhotos){
+                foreach ($listePhotos as $photo) {
+                    // On fait un nom unique pour chaque photo dans la liste
+                    $nomPhoto = uniqid(). '.' . $photo->guessExtension();
+                    // On la déplace dans le dossier avec toutes les autres images, avec le nom fabriqué
+                    $photo->move($this->getParameter('identite_directory'), $nomPhoto);
+                    // On créer la PhotoProfil associé
+                    $photoProfil = new PhotoProfil();
+                    $photoProfil->setLienPhoto($nomPhoto);
+                    $photoProfil->setProfil($infosUser);
+                    $em->persist($photoProfil);
+                }
+            }
             $em->persist($infosUser);
             $em->flush();
             return $this->redirectToRoute('app_home_page');
         }
         return $this->render('profile/informations.html.twig', [
             'formulaire' => $form->createView(),
+            'profil' => $infosUser
         ]);
+    }
+
+    #[Route('delete/{id}', name: 'app_photo_delete')]
+    public function deletePhoto(EntityManagerInterface $em, PhotoProfil $photo): Response {
+        if($photo->getProfil()->getUtilisateur() !== $this->getUser()){
+            throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer cette photo.');
+        }
+        $cheminFichier = $this->getParameter('identite_directory') . '/' . $photo->getLienPhoto();
+        if(file_exists($cheminFichier)){
+            unlink($cheminFichier);
+        }
+        $em->remove($photo);
+        $em->flush();
+        return $this->redirectToRoute('app_informations');
     }
 }
