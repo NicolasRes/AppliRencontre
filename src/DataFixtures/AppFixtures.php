@@ -122,7 +122,7 @@ class AppFixtures extends Fixture
         // Ils servent uniquement à remplir la base (recherche, swipe, etc.)
         $genres = ['Homme', 'Femme', 'Non-binaire'];
         
-        for ($i = 0; $i < 30; $i++) { 
+        for ($i = 0; $i < 400; $i++) { 
             $genreChoisi = $faker->randomElement($genres);
             
             $prenom = '';
