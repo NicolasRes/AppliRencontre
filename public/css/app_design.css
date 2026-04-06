@@ -246,3 +246,7 @@ textarea{
     border-radius: 10px;
     background: #fff1f5;
 }
+
+#date-app-container .photo{
+    display: inline;
+}
