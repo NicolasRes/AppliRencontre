@@ -35,7 +35,7 @@ final class ConversationController extends AbstractController {
         $user = $this->getUser();
 
         $conversations = $user->getConversations();
-        $users = $this->utilisateurRepository->findOtherUsers($user);
+        $users = $this->utilisateurRepository->findMatchedUsers($user);;
 
         return $this->render('conversation/chat.html.twig', [
             'users' => $users,
@@ -47,14 +47,21 @@ final class ConversationController extends AbstractController {
     #[Route('/conversation/users/{recipient}', name: 'conversation.show')]
     public function index(?Utilisateur $recipient, Request $request): Response
     {
+        if (!$recipient) { // Vérification de l'existence du destinataire
+            // S'il est introuvable, on redirige vers la liste des conversations
+            return $this->redirectToRoute('conversation.index');
+        }
+
         /** @var Utilisateur $sender */
         $sender = $this->getUser();
-        $users = $this->utilisateurRepository->findOtherUsers($sender);
+        
+        $users = $this->utilisateurRepository->findMatchedUsers($sender);
         $conversation = $this->conversationRepository->findByUsers($sender, $recipient);
 
         if (!$conversation) {
             $conversation = $this->factory->create($sender, $recipient);
         }
+        
         $conversations = $sender->getConversations();
         $topic = $this->topicService->getTopicUrl($conversation);
 
@@ -63,9 +70,10 @@ final class ConversationController extends AbstractController {
 
         return $this->render('conversation/chat.html.twig', [
             'users' => $users,
-            'conversation'=>$conversation,
-            'topic'=>$topic,
-            'conversations' => $conversations]);
+            'conversation' => $conversation,
+            'topic' => $topic,
+            'conversations' => $conversations
+        ]);
     }
 
 }

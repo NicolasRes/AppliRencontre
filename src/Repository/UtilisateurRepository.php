@@ -27,4 +27,26 @@ class UtilisateurRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Méthode qui renvoie les utilisateurs avec lesquels l'utilisateur courant a un match
+     * @param Utilisateur $currentUser Utilisateur courant
+     * @return array Utilisateurs
+     */
+    public function findMatchedUsers(Utilisateur $currentUser): array
+    {
+        return $this->createQueryBuilder('u')
+            // On fait une jointure sur l'entité Rencontre où l'utilisateur courant et l'utilisateur 'u' sont impliqués
+            ->innerJoin(
+                \App\Entity\Rencontre::class, 
+                'r', 
+                'WITH', 
+                '(r.utilisateur = :user AND r.utilisateur2 = u) OR (r.utilisateur = u AND r.utilisateur2 = :user)'
+            )
+            ->andWhere('r.statut = 2') // si le match est validé, statut 2
+            ->setParameter('user', $currentUser)
+            ->orderBy('u.pseudo', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
