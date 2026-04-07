@@ -1,7 +1,31 @@
-Avancement  : https://docs.google.com/document/d/1u32_x2NByHAUZhRkqmQCCkhgpQBoKV2wL1orQeiDycY/edit?pli=1&tab=t.0#heading=h.6jynaot9cbnq
+# Tableau d'avancement
+https://docs.google.com/document/d/1u32_x2NByHAUZhRkqmQCCkhgpQBoKV2wL1orQeiDycY/edit?pli=1&tab=t.0#heading=h.6jynaot9cbnq
 
-Lien : https://projetpso.fr
+# Site en ligne
+https://projetpso.fr
 
+
+# Guide d'installation du projet
+
+## Prérequis
+- PHP ≥ 8.2
+- Composer
+- MySQL / MariaDB
+
+## Installation
+Dans un terminal :
+- git clone https://github.com/MinaroliCorentin/AppliRencontre.git
+- cd AppliRencontre
+
+## Fichier .env
+- modifier / décommenter la ligne **DATABASE_URL=...** qui correspond à votre BBD, éventuellement ajouter votre lien
+
+## Base de données
+- Création : `php bin/console doctrine:database:create`
+- Appliquer les migrations pour obtenir les tables : `php bin/console doctrine:migrations:migrate` (impossible en l'état, importer un **dump** est la seule solution)
+
+## Assets (JS/CSS)
+`php bin/console importmap:require bootstrap`
 
 # 🔴 Installation de Mercure (temps réel) – Projet Symfony
 
@@ -81,7 +105,7 @@ MERCURE_PUBLIC_URL=http://localhost:3000/.well-known/mercure
 MERCURE_JWT_SECRET=dev_secret
 ```
 
-⚠️ La clé sera utilisée que celle utilisée pour lancer Mercure
+⚠️ La clé sera la même que celle utilisée pour lancer Mercure
 Mettez ce que vous voulez dans JWT_SECRET à la place de `dev_secret`.
 Mettre la même clé dans le makefile également.
 Remplacez bien `https` par `http`.
@@ -93,6 +117,8 @@ Remplacez bien `https` par `http`.
 On force Mercure à démarrer en HTTP pour éviter les erreurs en local.
 
 ### 🔧 Modification à faire
+
+Mercure a besoin de son propre serveur.
 
 Dans le fichier :
 
@@ -123,7 +149,7 @@ Utiliser cette commande :
 $ mkdir -p ~/.local/share/caddy
 
 Puis celle-ci, en une seule ligne :
-MERCURE_PUBLISHER_JWT_KEY=patate123 MERCURE_SUBSCRIBER_JWT_KEY=patate123 ./bin/mercure run --config ./bin/dev.Caddyfile
+MERCURE_PUBLISHER_JWT_KEY=dev_secret MERCURE_SUBSCRIBER_JWT_KEY=dev_secret ./bin/mercure run --config ./bin/dev.Caddyfile
 
 Attention : sur Linux, il ne faut pas la lancer dans le terminal de VS Code (s'il a été installé avec Snap), mais dans un terminal standard à la racine du projet.
 
@@ -179,12 +205,12 @@ pkill -f mercure
 
 ---
 
-## ⚙️ 8. Utilisation du Makefile
+# ⚙️ 8. Utilisation du Makefile
 
 Pour simplifier le lancement du projet, un **Makefile** est disponible.
 
 ---
 
-`make start`: lance Symfony et Mercure
-`make stop`: arrête Symfony et Mercure
-`make check`: vérifie l'état des deux outils (en cours d'exécution ou non)
+- `make start` : lance Symfony et Mercure
+- `make stop` : arrête Symfony et Mercure
+- `make check` : vérifie l'état des deux outils
