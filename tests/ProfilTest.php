@@ -9,75 +9,73 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 class ProfilTest extends KernelTestCase
 {
     /**
-     * Test avec le strict minimum : champs obligatoires uniquement.
+     * Test de création d'un profil avec les informations de base.
      */
     public function testCreationProfilMinimal(): void
     {
         self::bootKernel();
         $entityManager = static::getContainer()->get('doctrine')->getManager();
 
-        // 1. Création de l'utilisateur lié (obligatoire pour le OneToOne)
-        $user = (new Utilisateur())
-            ->setEmail('profil.min@test.fr')
-            ->setPseudo('UserMin')
-            ->setMdp('password')
-            ->setStatus(Utilisateur::STATUS_APPROVED)
-            ->setIsModo(false);
+        // 1. Création de l'utilisateur obligatoire pour le lien
+        $user = new Utilisateur();
+        $user->setPseudo('UserProfil')
+             ->setEmail('profil.test@test.com')
+             ->setMdp('password123')
+             ->setIsModo(false);
 
-        $entityManager->persist($user);
-
-        // 2. Création du profil avec les champs NOT NULL (age, genre, ville)
+        // 2. Création du Profil
         $profil = new Profil();
         $profil->setAge(25)
-               ->setGenre('Non-binaire')
-               ->setVille('Nancy')
+               ->setGenre('Homme')
+               ->setVille('Paris')
+               ->setNom('Dupont')
+               ->setPrenom('Jean')
                ->setUtilisateur($user);
 
+        // Grâce au cascade: ['persist'], on a juste besoin de persister le profil
         $entityManager->persist($profil);
         $entityManager->flush();
 
         // 3. Assertions
         $this->assertNotNull($profil->getId());
         $this->assertEquals(25, $profil->getAge());
-        $this->assertNull($profil->getPresentation()); // Champ optionnel doit être null
+        $this->assertEquals('Paris', $profil->getVille());
+        $this->assertEquals('Dupont', $profil->getNom());
+        
+        // Vérification de la relation OneToOne
+        $this->assertNotNull($profil->getUtilisateur());
+        $this->assertEquals('UserProfil', $profil->getUtilisateur()->getPseudo());
     }
 
     /**
-     * Test avec tous les champs possibles (complet).
+     * Test avec le champ optionnel 'presentation'.
      */
-    public function testCreationProfilMaximal(): void
+    public function testCreationProfilComplet(): void
     {
         self::bootKernel();
         $entityManager = static::getContainer()->get('doctrine')->getManager();
 
-        $user = (new Utilisateur())
-            ->setEmail('profil.max@test.fr')
-            ->setPseudo('UserMax')
-            ->setMdp('password')
-            ->setStatus(Utilisateur::STATUS_APPROVED)
-            ->setIsModo(false);
-
-        $entityManager->persist($user);
-
-        $presentation = "Bonjour, je suis ici pour faire de nouvelles rencontres passionnantes !";
+        $user = new Utilisateur();
+        $user->setPseudo('JaneDoe')
+             ->setEmail('jane.profil@test.com')
+             ->setMdp('securepass')
+             ->setIsModo(false);
 
         $profil = new Profil();
         $profil->setAge(30)
                ->setGenre('Femme')
-               ->setVille('Paris')
-               ->setPresentation($presentation)
+               ->setVille('Lyon')
+               ->setNom('Doe')
+               ->setPrenom('Jane')
+               ->setPresentation('Bonjour, je suis ici pour faire de nouvelles rencontres.')
                ->setUtilisateur($user);
 
         $entityManager->persist($profil);
         $entityManager->flush();
 
-        // Vérifications de l'intégrité des données
-        $this->assertNotNull($profil->getId());
-        $this->assertEquals('Femme', $profil->getGenre());
-        $this->assertEquals($presentation, $profil->getPresentation());
-        $this->assertIsString($profil->getPresentation());
-
-        // Vérification de la liaison OneToOne
-        $this->assertEquals($user->getEmail(), $profil->getUtilisateur()->getEmail());
+        // Assertions
+        $this->assertEquals('Lyon', $profil->getVille());
+        $this->assertEquals('Bonjour, je suis ici pour faire de nouvelles rencontres.', $profil->getPresentation());
+        $this->assertInstanceOf(Utilisateur::class, $profil->getUtilisateur());
     }
 }

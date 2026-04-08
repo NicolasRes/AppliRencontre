@@ -9,27 +9,25 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 class NotificationTest extends KernelTestCase
 {
     /**
-     * Test minimal : Uniquement les champs obligatoires.
+     * Test de création d'une notification pour un utilisateur.
      */
-    public function testCreationNotificationMinimale(): void
+    public function testCreationNotification(): void
     {
         self::bootKernel();
         $entityManager = static::getContainer()->get('doctrine')->getManager();
 
-        // 1. Création de l'utilisateur lié (obligatoire)
-        $user = (new Utilisateur())
-            ->setEmail('notif.min@test.fr')
-            ->setPseudo('UserNotif')
-            ->setMdp('password')
-            ->setStatus(Utilisateur::STATUS_APPROVED)
-            ->setIsModo(false);
-
+        // 1. Création et persistance de l'Utilisateur (obligatoire pour le lien)
+        $user = new Utilisateur();
+        $user->setPseudo('NotifUser')
+             ->setEmail('notif.test@test.com')
+             ->setMdp('password123')
+             ->setIsModo(false);
         $entityManager->persist($user);
 
-        // 2. Création de la notification avec les champs obligatoires
+        // 2. Création de la Notification
         $notification = new Notification();
-        $notification->setContenu("Nouvelle alerte")
-                     ->setType(1)
+        $notification->setContenu('Vous avez reçu un nouveau match !')
+                     ->setType(1) // Par exemple : 1 pour les alertes de rencontre
                      ->setLu(false)
                      ->setUtilisateur($user);
 
@@ -38,51 +36,12 @@ class NotificationTest extends KernelTestCase
 
         // 3. Assertions
         $this->assertNotNull($notification->getId());
-        $this->assertIsInt($notification->getId());
+        $this->assertEquals('Vous avez reçu un nouveau match !', $notification->getContenu());
+        $this->assertEquals(1, $notification->getType());
         $this->assertFalse($notification->isLu());
-        $this->assertEquals($user, $notification->getUtilisateur());
-    }
 
-    /**
-     * Test maximal : Vérification complète des données et types.
-     */
-    public function testCreationNotificationMaximale(): void
-    {
-        self::bootKernel();
-        $entityManager = static::getContainer()->get('doctrine')->getManager();
-
-        $user = (new Utilisateur())
-            ->setEmail('notif.max@test.fr')
-            ->setPseudo('MaxNotif')
-            ->setMdp('password')
-            ->setStatus(Utilisateur::STATUS_APPROVED)
-            ->setIsModo(false);
-
-        $entityManager->persist($user);
-
-        $contenu = "Votre profil a été consulté par un autre membre !";
-        $type = 99;
-
-        $notification = new Notification();
-        $notification->setContenu($contenu)
-                     ->setType($type)
-                     ->setLu(true)
-                     ->setUtilisateur($user);
-
-        $entityManager->persist($notification);
-        $entityManager->flush();
-
-        // Vérifications de l'intégrité
-        $this->assertEquals($contenu, $notification->getContenu());
-        $this->assertIsString($notification->getContenu());
-
-        $this->assertEquals($type, $notification->getType());
-        $this->assertIsInt($notification->getType());
-
-        $this->assertTrue($notification->isLu());
-        $this->assertIsBool($notification->isLu());
-
-        // Vérification du lien utilisateur
-        $this->assertEquals($user->getEmail(), $notification->getUtilisateur()->getEmail());
+        // Vérification du lien avec l'utilisateur
+        $this->assertSame($user, $notification->getUtilisateur());
+        $this->assertEquals('NotifUser', $notification->getUtilisateur()->getPseudo());
     }
 }

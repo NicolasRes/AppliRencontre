@@ -9,69 +9,51 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 class ResetPasswordRequestTest extends KernelTestCase
 {
     /**
-     * Test de création minimale avec les paramètres obligatoires du constructeur.
+     * Test de création d'une demande de réinitialisation de mot de passe.
      */
-    public function testCreationResetRequestMinimale(): void
+    public function testCreationResetPasswordRequest(): void
     {
         self::bootKernel();
         $entityManager = static::getContainer()->get('doctrine')->getManager();
 
-        // 1. Création de l'utilisateur obligatoire
-        $user = (new Utilisateur())
-            ->setEmail('reset.min@test.fr')
-            ->setPseudo('UserReset')
-            ->setMdp('password')
-            ->setStatus(Utilisateur::STATUS_APPROVED)
-            ->setIsModo(false);
-
+        // 1. Création et persistance de l'Utilisateur
+        // ResetPasswordRequest n'a pas de cascade persist, l'user doit exister en base.
+        $user = new Utilisateur();
+        $user->setPseudo('UserReset')
+             ->setEmail('reset@test.com')
+             ->setMdp('password123')
+             ->setIsModo(false);
+        
         $entityManager->persist($user);
 
-        // 2. Création de la demande avec DateTimeImmutable
+        // 2. Préparation des données pour le constructeur
         $expiresAt = new \DateTimeImmutable('+1 hour');
+        $selector = 'a1b2c3d4e5f6';
+        $hashedToken = 'hashed_token_example';
+
+        // 3. Création de la requête
         $resetRequest = new ResetPasswordRequest(
             $user,
             $expiresAt,
-            'selector_abc123',
-            'hashed_token_xyz789'
+            $selector,
+            $hashedToken
         );
 
         $entityManager->persist($resetRequest);
         $entityManager->flush();
 
-        // 3. Assertions de base
+        // 4. Assertions
         $this->assertNotNull($resetRequest->getId());
-        $this->assertEquals($user, $resetRequest->getUser());
-        $this->assertIsInt($resetRequest->getId());
-    }
+        
+        // Vérification de l'utilisateur lié
+        $this->assertSame($user, $resetRequest->getUser());
+        $this->assertEquals('reset@test.com', $resetRequest->getUser()->getEmail());
 
-    /**
-     * Test complet vérifiant l'exactitude des données persistées.
-     */
-    public function testCreationResetRequestMaximale(): void
-    {
-        self::bootKernel();
-        $entityManager = static::getContainer()->get('doctrine')->getManager();
-
-        $user = (new Utilisateur())->setEmail('reset.max@test.fr')->setPseudo('Max')->setMdp('p')->setStatus(Utilisateur::STATUS_APPROVED)->setIsModo(false);
-        $entityManager->persist($user);
-
-        $expiresAt = new \DateTimeImmutable('+2 hours');
-        $selector = 'unique_selector_456';
-        $token = 'very_secure_hashed_token';
-
-        $resetRequest = new ResetPasswordRequest($user, $expiresAt, $selector, $token);
-
-        $entityManager->persist($resetRequest);
-        $entityManager->flush();
-
-        // Vérification de l'intégrité des données
-        $this->assertEquals($user->getEmail(), $resetRequest->getUser()->getEmail());
-        $this->assertInstanceOf(ResetPasswordRequest::class, $resetRequest);
-
-        // Vérification de la date d'expiration
-        $this->assertEquals(
-            $expiresAt->format('Y-m-d H:i'),
-            $resetRequest->getExpiresAt()->format('Y-m-d H:i')
-        );
+        // Vérification des données issues du Trait (fourni par le bundle)
+        $this->assertEquals($expiresAt, $resetRequest->getExpiresAt());
+        $this->assertEquals($hashedToken, $resetRequest->getHashedToken());
+        
+        // Vérifie que la date de demande a été initialisée (automatique via le trait)
+        $this->assertInstanceOf(\DateTimeInterface::class, $resetRequest->getRequestedAt());
     }
 }

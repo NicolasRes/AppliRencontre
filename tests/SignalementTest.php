@@ -8,78 +8,55 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SignalementTest extends KernelTestCase
 {
-
-    public function testCreationSignalementMinimal(): void
+    /**
+     * Test complet : Vérifie qu'un signalement est bien créé avec son auteur et sa cible.
+     */
+    public function testCreationSignalementReussie(): void
     {
         self::bootKernel();
         $entityManager = static::getContainer()->get('doctrine')->getManager();
 
-        $auteur = (new Utilisateur())
-            ->setEmail('auteur.min@test.fr')
-            ->setPseudo('Auteur')
-            ->setMdp('password')
-            ->setStatus(Utilisateur::STATUS_APPROVED)
-            ->setIsModo(false);
-
-        $cible = (new Utilisateur())
-            ->setEmail('cible.min@test.fr')
-            ->setPseudo('Cible')
-            ->setMdp('password')
-            ->setStatus(Utilisateur::STATUS_APPROVED)
-            ->setIsModo(false);
-
+        // 1. Création et persistance de l'Auteur
+        $auteur = new Utilisateur();
+        $auteur->setPseudo('AuteurSignalement')
+               ->setEmail('auteur.sig@test.com')
+               ->setMdp('mdp123')
+               ->setIsModo(false);
+        // Indispensable car Signalement n'a pas cascade: ['persist']
         $entityManager->persist($auteur);
+
+        // 2. Création et persistance de la Cible
+        $cible = new Utilisateur();
+        $cible->setPseudo('CibleSignalement')
+              ->setEmail('cible.sig@test.com')
+              ->setMdp('mdp456')
+              ->setIsModo(false);
+        // Indispensable également
         $entityManager->persist($cible);
 
+        // 3. Création du Signalement
         $signalement = new Signalement();
-        $signalement->setAuteur($auteur)
-                    ->setCible($cible)
-                    ->setDateS(new \DateTime())
-                    ->setMotif('Motif minimal')
-                    ->setStatut(0);
+        $dateSignalement = new \DateTime('now');
+        
+        $signalement->setDateS($dateSignalement)
+                    ->setStatut(0) // Supposons que 0 = en attente
+                    ->setMotif('Propos injurieux')
+                    ->setAuteur($auteur)
+                    ->setCible($cible);
 
         $entityManager->persist($signalement);
         $entityManager->flush();
 
+        // 4. Assertions (Vérifications)
         $this->assertNotNull($signalement->getId());
-        $this->assertIsInt($signalement->getId());
-        $this->assertInstanceOf(Utilisateur::class, $signalement->getAuteur());
-        $this->assertInstanceOf(\DateTimeInterface::class, $signalement->getDateS());
-    }
-
-    public function testCreationSignalementMaximal(): void
-    {
-        self::bootKernel();
-        $entityManager = static::getContainer()->get('doctrine')->getManager();
-
-        $auteur = (new Utilisateur())->setEmail('auteur.max@test.fr')->setPseudo('A')->setMdp('p')->setStatus(Utilisateur::STATUS_APPROVED)->setIsModo(false);
-        $cible = (new Utilisateur())->setEmail('cible.max@test.fr')->setPseudo('C')->setMdp('p')->setStatus(Utilisateur::STATUS_APPROVED)->setIsModo(false);
-        $date = new \DateTime('2023-12-25');
-        $motif = "Comportement inapproprié durant la rencontre";
-        $statut = 2;
-
-        $entityManager->persist($auteur);
-        $entityManager->persist($cible);
-
-        $signalement = new Signalement();
-        $signalement->setAuteur($auteur)
-                    ->setCible($cible)
-                    ->setDateS($date)
-                    ->setMotif($motif)
-                    ->setStatut($statut);
-
-        $entityManager->persist($signalement);
-        $entityManager->flush();
-
-        $this->assertEquals($motif, $signalement->getMotif());
-        $this->assertIsString($signalement->getMotif());
-
-        $this->assertEquals($statut, $signalement->getStatut());
-        $this->assertIsInt($signalement->getStatut());
-
-        $this->assertEquals($date->format('Y-m-d'), $signalement->getDateS()->format('Y-m-d'));
-
-        $this->assertEquals($auteur->getEmail(), $signalement->getAuteur()->getEmail());
-        $this->assertEquals($cible->getEmail(), $signalement->getCible()->getEmail());
+        $this->assertEquals($dateSignalement, $signalement->getDateS());
+        $this->assertEquals(0, $signalement->getStatut());
+        $this->assertEquals('Propos injurieux', $signalement->getMotif());
+        
+        // Vérification stricte des relations
+        $this->assertNotNull($signalement->getAuteur());
+        $this->assertNotNull($signalement->getCible());
+        $this->assertEquals('AuteurSignalement', $signalement->getAuteur()->getPseudo());
+        $this->assertEquals('CibleSignalement', $signalement->getCible()->getPseudo());
     }
 }

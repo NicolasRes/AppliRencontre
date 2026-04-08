@@ -2,98 +2,96 @@
 
 namespace App\Tests;
 
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use App\Entity\Utilisateur;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-
-class UtilisateurTest extends KernelTestCase{
-
-    public function testSomething(): void
-    {
-        $this->assertTrue(true);
-    }
-
-     public function testUploadFichier(){
-
-        self::bootKernel();
-        $container = static::getContainer();
-        $uploadPath = $container->getParameter('uploads_directory');
-
-        // On crée un faux fichier pour le test
-        $filePath = $uploadPath . '/test_image.jpg';
-
-        // On s'assure que le dossier de test existe
-        if (!is_dir($uploadPath)) {
-            mkdir($uploadPath, 0777, true);
-        }
-
-        file_put_contents($filePath, 'contenu factice');
-
-        $this->assertFileExists($filePath);
-
-        // Nettoyage après le test
-        unlink($filePath);
-    }
-
-    public function testCreationMinimale(): void
+class UtilisateurTest extends KernelTestCase
+{
+    /**
+     * Test Minimal : Vérifie que l'entité peut être créée avec ses champs obligatoires.
+     */
+    public function testCreationUtilisateurMinimal(): void
     {
         self::bootKernel();
         $entityManager = static::getContainer()->get('doctrine')->getManager();
 
-        $user = new Utilisateur();
-        $user->setEmail('min@test.fr')
-            ->setPseudo('MinUser')
-            ->setMdp('password')
-            ->setStatus(Utilisateur::STATUS_APPROVED)
-            ->setIsModo(false);
+        $utilisateur = new Utilisateur();
+        $utilisateur->setPseudo('JohnDoe')
+                    ->setEmail('john.doe@test.com')
+                    ->setMdp('password123')
+                    ->setIsModo(false);
+        // On ne set pas le statut, on veut vérifier qu'il prend bien la valeur par défaut
 
-        $entityManager->persist($user);
+        $entityManager->persist($utilisateur);
         $entityManager->flush();
 
-        // Vérification de l'instanciation et des types
-        $this->assertNotNull($user->getId());
-        $this->assertIsInt($user->getId());
-
-        // Vérification des valeurs (Est-ce que le string est bien le bon string ?)
-        $this->assertEquals('min@test.fr', $user->getEmail());
-        $this->assertEquals('MinUser', $user->getPseudo());
-        $this->assertFalse($user->isModo());
-        $this->assertNull($user->getImageIdentite()); // Doit être nul car non renseigné
+        $this->assertNotNull($utilisateur->getId());
+        $this->assertEquals('JohnDoe', $utilisateur->getPseudo());
+        $this->assertNull($utilisateur->getImageIdentite()); // Champ nullable
+        
+        // Vérification de la valeur par défaut du statut
+        $this->assertEquals(Utilisateur::STATUS_PENDING, $utilisateur->getStatus());
+        $this->assertTrue($utilisateur->isPending());
+        $this->assertFalse($utilisateur->isApproved());
     }
 
-    public function testCreationMaximale(): void
+    /**
+     * Test Maximal : Vérifie l'intégrité de tous les champs, y compris les champs optionnels.
+     */
+    public function testCreationUtilisateurMaximal(): void
     {
         self::bootKernel();
         $entityManager = static::getContainer()->get('doctrine')->getManager();
 
-        $user = new Utilisateur();
-        $email = 'max@test.fr';
-        $pseudo = 'MaxUser';
-        $image = 'photo.jpg';
+        $utilisateur = new Utilisateur();
+        $utilisateur->setPseudo('JaneDoe')
+                    ->setEmail('jane.doe@test.com') // Email différent pour éviter les conflits
+                    ->setMdp('securepassword456')
+                    ->setIsModo(true)
+                    ->setImageIdentite('carte_id.png')
+                    ->setStatus(Utilisateur::STATUS_APPROVED);
 
-        $user->setEmail($email)
-            ->setPseudo($pseudo)
-            ->setMdp('secret')
-            ->setStatus(Utilisateur::STATUS_APPROVED)
-            ->setIsModo(true)
-            ->setImageIdentite($image);
-
-        $entityManager->persist($user);
+        $entityManager->persist($utilisateur);
         $entityManager->flush();
 
-        // Vérification complète des données
-        $this->assertEquals($email, $user->getEmail());
-        $this->assertIsString($user->getEmail());
-
-        $this->assertEquals($pseudo, $user->getPseudo());
-
-        $this->assertEquals($image, $user->getImageIdentite());
-        $this->assertIsString($user->getImageIdentite());
-
-        // Test de la logique métier (Roles)
-        $this->assertContains('ROLE_ADMIN', $user->getRoles());
-        $this->assertContains('ROLE_USER', $user->getRoles());
+        $this->assertNotNull($utilisateur->getId());
+        $this->assertEquals('carte_id.png', $utilisateur->getImageIdentite());
+        $this->assertTrue($utilisateur->isApproved());
+        $this->assertFalse($utilisateur->isPending());
     }
 
+    /**
+     * Test de l'exception : Vérifie que la modification avec un statut invalide plante bien.
+     */
+    public function testStatutInvalideDeclencheException(): void
+    {
+        $utilisateur = new Utilisateur();
+        
+        // On dit à PHPUnit qu'on s'attend à recevoir cette exception précise
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Statut invalide : status_inexistant');
 
+        // L'appel qui doit déclencher l'erreur
+        $utilisateur->setStatus('status_inexistant');
+    }
+
+    /**
+     * Test des rôles : Vérifie la logique de la méthode getRoles() selon isModo.
+     */
+    public function testRolesUtilisateur(): void
+    {
+        $utilisateur = new Utilisateur();
+        
+        // Cas 1 : Utilisateur normal
+        $utilisateur->setIsModo(false);
+        $roles = $utilisateur->getRoles();
+        $this->assertContains('ROLE_USER', $roles);
+        $this->assertNotContains('ROLE_ADMIN', $roles);
+
+        // Cas 2 : Utilisateur modérateur
+        $utilisateur->setIsModo(true);
+        $rolesAdmin = $utilisateur->getRoles();
+        $this->assertContains('ROLE_USER', $rolesAdmin);
+        $this->assertContains('ROLE_ADMIN', $rolesAdmin);
+    }
 }
