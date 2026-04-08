@@ -7,6 +7,7 @@ use App\Entity\Utilisateur;
 use App\Repository\SignalementRepository;
 use App\Repository\UtilisateurRepository;
 use App\Repository\ProfilRepository;
+use App\Repository\ConversationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +20,7 @@ final class HomePageModerateurController extends AbstractController
     // ======================================================
 
     #[Route('/moderateur/signalements', name: 'app_moderateur_signalements')]
-    public function index(SignalementRepository $signalementRepository): Response
+    public function index(SignalementRepository $signalementRepository, ConversationRepository $convRepo): Response
     {
         /** @var Utilisateur $user */
         $user = $this->getUser();
@@ -36,82 +37,17 @@ final class HomePageModerateurController extends AbstractController
             ['dateS' => 'ASC']
         );
 
-        $conversationCommune = null;
+        // On prépare la conversation à afficher pour le premier signalement
+        $conversation = null;
         if (!empty($signalements)) {
-            $premierSignalement = $signalements[0];
-            $auteur = $premierSignalement->getAuteur();
-            $cible = $premierSignalement->getCible();
-
-            // On cherche la conversation commune aux deux participants
-            foreach ($auteur->getConversations() as $conv) {
-                if ($conv->getParticipants()->contains($cible)) {
-                    $conversationCommune = $conv;
-                    break;
-                }
-            }
+            $premierSig = $signalements[0];
+            // On récupère la conv entre l'auteur du signalement et la personne visée
+            $conversation = $convRepo->findByUsers($premierSig->getAuteur(), $premierSig->getCible());
         }
 
         return $this->render('home_page_moderateur/index.html.twig', [
             'signalements' => $signalements,
-            'conversation' => $conversationCommune,
-        ]);
-    }
-
-    #[Route('/moderateur/signalement/{id}/ignorer', name: 'app_moderateur_ignorer')]
-    public function ignorer(Signalement $signalement, EntityManagerInterface $em): Response
-    {
-        // On supprime directement la ligne du signalement de la BDD
-        $em->remove($signalement);
-        $em->flush();
-
-        $this->addFlash('success', 'Le signalement a été ignoré et supprimé de la base.');
-        return $this->redirectToRoute('app_moderateur_signalements');
-    }
-
-    #[Route('/moderateur/signalement/{id}/bannir', name: 'app_moderateur_bannir')]
-    public function bannir(Signalement $signalement, EntityManagerInterface $em): Response
-    {
-        // 1. On récupère la personne signalée
-        $cible = $signalement->getCible();
-        
-        // 2. On change son statut pour le nouveau statut BANNED
-        $cible->setStatus(Utilisateur::STATUS_BANNED);
-        
-        // 3. On supprime la ligne du signalement puisqu'il a été traité
-        $em->remove($signalement);
-
-        $em->flush();
-
-        $this->addFlash('danger', 'Le profil de ' . $cible->getPseudo() . ' a été banni définitivement.');
-        return $this->redirectToRoute('app_moderateur_signalements');
-    }
-
-    // ======================================================
-    // SECTION 2 : VALIDATIONS DES NOUVEAUX PROFILS
-    // ======================================================
-
-    #[Route('/moderateur/validations', name: 'app_moderateur_validations')]
-    public function validations(UtilisateurRepository $utilisateurRepository, ProfilRepository $profilRepo): Response
-    {
-        /** @var Utilisateur $user */
-        $user = $this->getUser();
-
-        if (!$user || !$user->isModo()) {
-            $this->addFlash('error', 'Accès refusé : cette page est réservée aux modérateurs.');
-            return $this->redirectToRoute('app_home_page'); 
-        }
-
-        $utilisateursEnAttente = $utilisateurRepository->findBy(['status' => Utilisateur::STATUS_PENDING]);
-        
-        $profilCible = null;
-        if (!empty($utilisateursEnAttente)) {
-            $premierUtilisateur = $utilisateursEnAttente[0];
-            $profilCible = $profilRepo->findOneBy(['utilisateur' => $premierUtilisateur]);
-        }
-
-        return $this->render('home_page_moderateur/validations.html.twig', [
-            'utilisateurs' => $utilisateursEnAttente,
-            'profilCible' => $profilCible
+            'conversation' => $conversation // On passe la conv à Twig pour l'historique
         ]);
     }
 
@@ -131,7 +67,65 @@ final class HomePageModerateurController extends AbstractController
         $utilisateur->setStatus(Utilisateur::STATUS_REJECTED);
         $em->flush();
 
-        $this->addFlash('warning', "Le profil de {$utilisateur->getPseudo()} a été invalidé.");
+        $this->addFlash('error', "Le profil de {$utilisateur->getPseudo()} a été refusé.");
         return $this->redirectToRoute('app_moderateur_validations');
+    }
+
+    #[Route('/moderateur/bannir/{id}', name: 'app_moderateur_bannir', methods: ['GET', 'POST'])]
+    public function bannir(Signalement $signalement, EntityManagerInterface $em): Response
+    {
+        // 1. On récupère l'utilisateur ciblé par le signalement
+        $cible = $signalement->getCible();
+        
+        // 2. On change son statut en "banni" (assurez-vous que la constante existe dans Utilisateur)
+        $cible->setStatus(Utilisateur::STATUS_BANNED);
+        
+        // 3. On marque le signalement comme traité (statut 1 par exemple)
+        $signalement->setStatut(1);
+        
+        $em->flush();
+
+        $this->addFlash('success', "L'utilisateur {$cible->getPseudo()} a été banni.");
+        return $this->redirectToRoute('app_moderateur_signalements');
+    }
+
+    #[Route('/moderateur/ignorer/{id}', name: 'app_moderateur_ignorer', methods: ['GET', 'POST'])]
+    public function ignorer(Signalement $signalement, EntityManagerInterface $em): Response
+    {
+        // On marque simplement le signalement comme traité sans sanctionner l'utilisateur
+        $signalement->setStatut(1);
+        $em->flush();
+
+        $this->addFlash('info', "Le signalement a été classé sans suite.");
+        return $this->redirectToRoute('app_moderateur_signalements');
+    }
+
+    // ======================================================
+    // SECTION 2 : GESTION DES PROFILS (VALIDATIONS)
+    // ======================================================
+
+    #[Route('/moderateur/validations', name: 'app_moderateur_validations')]
+    public function validations(UtilisateurRepository $utilisateurRepository, ProfilRepository $profilRepo): Response
+    {
+        /** @var Utilisateur $user */
+        $user = $this->getUser();
+
+        if (!$user || !$user->isModo()) {
+            $this->addFlash('error', 'Accès réservé aux modérateurs.');
+            return $this->redirectToRoute('app_home_page'); 
+        }
+
+        $utilisateursEnAttente = $utilisateurRepository->findBy(['status' => Utilisateur::STATUS_PENDING]);
+        
+        $profilCible = null;
+        if (!empty($utilisateursEnAttente)) {
+            $premierUtilisateur = $utilisateursEnAttente[0];
+            $profilCible = $profilRepo->findOneBy(['utilisateur' => $premierUtilisateur]);
+        }
+
+        return $this->render('home_page_moderateur/validations.html.twig', [
+            'utilisateurs' => $utilisateursEnAttente,
+            'profilCible' => $profilCible
+        ]);
     }
 }

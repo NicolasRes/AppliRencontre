@@ -4,16 +4,18 @@ namespace App\Controller;
 
 use App\Factory\ConversationFactory;
 use App\Entity\Utilisateur;
+use App\Entity\Signalement;
+use App\Entity\Conversation;
 use App\Repository\UtilisateurRepository;
+use App\Repository\ConversationRepository;
+use App\Service\TopicService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\ConversationRepository;
 use Symfony\Component\Mercure\Authorization;
 use Symfony\Component\Mercure\Discovery;
-use Symfony\Component\HttpFoundation\Request;
-use App\Service\TopicService;
-use App\Entity\Conversation;
 
 /**
  * @method Utilisateur|null getUser()
@@ -66,14 +68,46 @@ final class ConversationController extends AbstractController {
         $topic = $this->topicService->getTopicUrl($conversation);
 
         $this->discovery->addLink($request);
-        $this->authorization->setCookie($request, [$topic]);
+        $this->authorization->setCookie($request, [$topic], [], [], null);
 
         return $this->render('conversation/chat.html.twig', [
             'users' => $users,
             'conversation' => $conversation,
             'topic' => $topic,
-            'conversations' => $conversations
+            'conversations' => $conversations,
         ]);
     }
 
+    // Notre nouvelle méthode pour gérer le signalement de la conv
+    #[Route('/conversation/{id}/signaler', name: 'conversation.signaler', methods: ['POST'])]
+    public function signaler(Conversation $conversation, Request $request, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+        $motif = $request->request->get('motif');
+
+        // On cherche qui est l'autre personne dans la conv pour savoir qui on signale
+        $cible = null;
+        foreach ($conversation->getParticipants() as $participant) {
+            if ($participant->getId() !== $user->getId()) {
+                $cible = $participant;
+                break;
+            }
+        }
+
+        if ($cible && $motif) {
+            $sig = new Signalement();
+            $sig->setAuteur($user);
+            $sig->setCible($cible);
+            $sig->setMotif($motif);
+            $sig->setDateS(new \DateTime());
+            $sig->setStatut(0); // Statut 0 = En attente
+
+            $em->persist($sig);
+            $em->flush();
+
+            $this->addFlash('success', 'Signalement envoyé. Les modérateurs vont étudier la conversation.');
+        }
+
+        return $this->redirectToRoute('conversation.show', ['recipient' => $cible->getId()]);
+    }
 }

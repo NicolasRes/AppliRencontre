@@ -1,114 +1,246 @@
 {% extends 'base.html.twig' %}
 
-{# Si on inclut le header
 {% block stylesheets %}
-    {{ parent() }}
+    {# On importe le CSS global pour la sidebar #}
     <link rel="stylesheet" href="{{ asset('css/app_design.css') }}">
-{% endblock %}
- #}
+    <style>
+        /* Conteneur principal qui occupe tout l'écran */
+        .messaging-wrapper {
+            display: flex;
+            height: 100vh;
+            background-color: #f0f2f5;
+            overflow: hidden;
+        }
 
-{% block navbar %}
-    {% include 'conversation/navbar.html.twig' %}
+        /* Liste des conversations (à gauche) */
+        .conversations-sidebar {
+            width: 350px;
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        /* Zone de chat (à droite) */
+        .chat-main-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            position: relative;
+        }
+
+        /* Style des items de la liste */
+        .conv-item {
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+            text-decoration: none !important;
+            color: inherit !important;
+        }
+        .conv-item:hover {
+            background-color: #f8f9fa;
+        }
+        .conv-item.active {
+            background-color: #fff0f6;
+            border-left-color: #ed3692;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #ed3692;
+        }
+
+        /* Zone des messages scrollable */
+        #messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            background-color: #f0f2f5;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Barre d'input en bas */
+        .chat-input-bar {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .custom-input {
+            border-radius: 25px !important;
+            padding-left: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .btn-send {
+            background-color: #ed3692;
+            color: white;
+            border-radius: 25px;
+            padding: 8px 25px;
+            margin-left: 10px;
+            font-weight: bold;
+            border: none;
+            transition: transform 0.2s;
+        }
+        .btn-send:hover {
+            transform: scale(1.05);
+            background-color: #d62e81;
+            color: white;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col">
-                <div class="card">
-                    <div class="card-header">
-                        Messages
+<div class="app-body-reset">
+    <div id="date-app-container" style="display: flex; width: 100%; height: 100vh;">
+        
+        {# TA SIDEBAR MENU (IDENTIQUE AUX AUTRES PAGES) #}
+        <aside class="sidebar">
+            {{ include('partials/_header_app.html.twig') }}
+        </aside>
+
+        {# ZONE DE MESSAGERIE MIXÉE #}
+        <main class="main-content" style="flex-grow: 1; padding: 0; overflow: hidden;">
+            <div class="messaging-wrapper">
+                
+                {# COLONNE GAUCHE : LISTE DES MATCHS #}
+                <div class="conversations-sidebar">
+                    <div class="p-4 border-bottom">
+                        <h4 class="fw-bold mb-0" style="color: #ed3692;">Mes Matchs</h4>
                     </div>
-
-                    <div class="card-body">
-                        <div class="overflow-y-auto" {# Scroll automatique quand trop de messages sont affichés #}
-                             id="messages"
-                             hx-ext="sse"
-                             {% if topic is defined %}
-                                sse-connect="{{ mercure(topic) }}"
-                             {% endif %}
-                             sse-swap="message"
-                             style="height: 500px;">
-                            {# Affichage des messages #}
-                            {% include 'conversation/messages.html.twig' %}
+                    <div class="overflow-y-auto">
+                        <div class="list-group list-group-flush">
+                            {% for user in users %}
+                                <a href="{{ path('conversation.show', {recipient: user.id}) }}" 
+                                   class="list-group-item conv-item p-3 {{ conversation and user in conversation.participants ? 'active' : '' }}">
+                                    <div class="d-flex align-items-center">
+                                        <img src="{{ user.imageIdentite ? asset('images/' ~ user.imageIdentite) : asset('images/PlaceHolderProfil.jpg') }}" 
+                                             alt="Avatar" class="user-avatar me-3">
+                                        <div>
+                                            <div class="fw-bold text-dark">{{ user.pseudo }}</div>
+                                            <small class="text-muted">Cliquez pour discuter</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            {% else %}
+                                <div class="p-4 text-center text-muted">
+                                    <p>Pas encore de match... Continuez à swiper !</p>
+                                </div>
+                            {% endfor %}
                         </div>
-
-                        <hr>
-
-                        {# Formulaire pour le chat #}
-                        {# Le hx-post : Crée une requête post et assigne toutes les valeurs qui ont un nom à la requête #}
-                        {% if conversation %}
-                            <form class="d-flex gap-3 mt-3" hx-post="{{ path('message.create') }}" hx-swap="none">
-
-                                <input aria-label="Message"
-                                       class="form-control"
-                                       name="content"
-                                       placeholder="Message"
-                                       id="content"
-                                       type="text">
-
-                                <input type="hidden"
-                                       name="conversationId"
-                                       value="{{ conversation.id }}">
-
-                                <button class="btn btn-primary">
-                                    Envoyer
-                                </button>
-                            </form>
-                        {% else %}
-                            <p class="text-muted">Sélectionne une conversation</p>
-                        {% endif %}
                     </div>
                 </div>
+
+                {# COLONNE DROITE : LE CHAT #}
+                <div class="chat-main-area">
+                    {% if conversation %}
+                        {# Header du chat #}
+                        {% set recipient = conversation.participants|filter(p => p.id != app.user.id)|first %}
+                        <div class="p-3 border-bottom d-flex justify-content-between align-items-center shadow-sm bg-white" style="z-index: 10;">
+                            <div class="d-flex align-items-center">
+                                <strong class="fs-5 ms-2">{{ recipient.pseudo }}</strong>
+                            </div>
+                            
+                            <button onclick="document.getElementById('modal-signalement').style.display='flex'" 
+                                    class="btn btn-outline-danger btn-sm px-3" style="border-radius: 20px;">
+                                ⚠️ Signaler
+                            </button>
+                        </div>
+
+                        {# Zone des messages #}
+                        <div id="messages" 
+                             hx-ext="sse" 
+                             sse-connect="{{ mercure(topic) }}" 
+                             sse-swap="message">
+                            <div id="messages-content">
+                                {% include 'conversation/messages.html.twig' %}
+                            </div>
+                        </div>
+
+                        {# Input bas de page #}
+                        <div class="chat-input-bar">
+                            <div class="d-flex">
+                                <input type="text" id="content" name="content" 
+                                       class="form-control custom-input" 
+                                       placeholder="Écrivez votre message à {{ recipient.pseudo }}..."
+                                       onkeypress="if(event.keyCode==13) document.getElementById('send-btn').click()">
+                                
+                                <button id="send-btn" class="btn btn-send"
+                                        hx-post="{{ path('message.create') }}" 
+                                        hx-ext="json-enc"
+                                        hx-vals='js:{"conversationId": {{ conversation.id }}, "content": document.querySelector("#content").value}'>
+                                    Envoyer
+                                </button>
+                            </div>
+                        </div>
+                    {% else %}
+                        {# État vide #}
+                        <div class="h-100 d-flex flex-column justify-content-center align-items-center text-muted">
+                            <div style="font-size: 5rem; opacity: 0.3;">💌</div>
+                            <h4 class="mt-3">Prêt(e) pour une rencontre ?</h4>
+                            <p>Sélectionnez un match dans la liste pour démarrer la discussion.</p>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
+        </main>
+    </div>
+</div>
+
+{# MODALE DE SIGNALEMENT DESIGN #}
+{% if conversation %}
+    <div id="modal-signalement" style="display:none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 20px; width: 100%; max-width: 400px; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
+            <h4 class="fw-bold mb-3">Signaler la conversation</h4>
+            <p class="text-muted small mb-4">La sécurité est notre priorité. Pourquoi signalez-vous ce membre ?</p>
+            
+            <form action="{{ path('conversation.signaler', {'id': conversation.id}) }}" method="POST">
+                <select name="motif" class="form-select mb-4" required style="border-radius: 10px; padding: 12px;">
+                    <option value="" disabled selected>Choisir un motif...</option>
+                    <option value="Harcèlement">Harcèlement</option>
+                    <option value="Comportement déplacé">Comportement déplacé</option>
+                    <option value="Faux profil / Spam">Faux profil / Spam</option>
+                    <option value="Autre">Autre</option>
+                </select>
+                
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger flex-grow-1" style="border-radius: 10px; padding: 10px;">Signaler</button>
+                    <button type="button" class="btn btn-light flex-grow-1" style="border-radius: 10px;" onclick="document.getElementById('modal-signalement').style.display='none'">Annuler</button>
+                </div>
+            </form>
         </div>
     </div>
-{% endblock %}
+{% endif %}
 
-{# Affichage en temps réel #}
-{% block javascripts %}
-    {{ parent() }}
+<script>
+    const userId = {{ app.user.id }};
+    const container = document.querySelector('#messages');
 
-    <script>
-        const messages = document.querySelector('#messages');
-        const userId = {{ app.user.id }}
+    // Scroll automatique au chargement
+    if (container) container.scrollTop = container.scrollHeight;
 
-        // Scroll automatiquement vers le bas de l'écran quand la chatbox est pleine et fait apparaitre une barre de défilement
-        document.addEventListener('DOMContentLoaded', () => {
-            scrollToBottom(messages)
+    document.body.addEventListener('htmx:sseBeforeMessage', function (e) {
+        e.preventDefault();
+        const data = JSON.parse(e.detail.data);
+        
+        htmx.swap('#messages-content', `<message-element author-id="${data.authorId}" user-id="${userId}" content="${data.content}"></message-element>`, {
+            swapStyle: 'beforeend'
         });
 
-
-        document.body.addEventListener('htmx:sseBeforeMessage', function (e) {
-            e.preventDefault(); // Évite d'afficher le message en json dans la chatbox
-
-            const json = JSON.parse(e.detail.data);
-            const authorId = json['authorId'];
-            const content = json['content'];
-
-            // Le message se supprime de la zone de texte s'il est bien envoyé
-            if (authorId === userId) {
-                document.querySelector('#content').value = '';
-            }
-
-            // On crée un message-element qui contient author-id, user-id et le contenu
-            // Le beforeend fait apparaitre le message avant la fin de la div (du conteneur)
-            htmx.swap('#messages', `<message-element author-id="${authorId}" user-id="${userId}" content="${content}"></message-element>`, {
-                swapStyle: 'beforeend'
-            });
-
-            scrollToBottom(messages);
-        });
-
-        /**
-         * Scroll vers le bas de la page
-         * @param container la chatbox
-         */
-        function scrollToBottom(container) {
-            container.scrollTo({
-                top: container.scrollHeight,
-                behavior: 'smooth'
-            });
+        if (data.authorId === userId) {
+            document.querySelector('#content').value = '';
         }
-    </script>
+
+        // Scroll fluide vers le bas
+        container.scrollTo({
+            top: container.scrollHeight,
+            behavior: 'smooth'
+        });
+    });
+</script>
 {% endblock %}
