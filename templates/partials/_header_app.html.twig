@@ -44,7 +44,7 @@
         <img class="sidebar-icon" style="border-radius: 50%;"
             src="{{ app.user and app.user.imageIdentite ? asset('uploads/identites/' ~ app.user.imageIdentite) : asset('images/PlaceHolderProfil.jpeg') }}"
             alt="Moi">
-        <span>Mon Profil</span>
+        <span>{{ app.user.pseudo }}</span>
     </div>
 </div>
 <script>
