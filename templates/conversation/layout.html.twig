@@ -171,11 +171,12 @@
                                        onkeypress="if(event.keyCode==13) document.getElementById('send-btn').click()">
                                 
                                 <button id="send-btn" class="btn btn-send"
-                                        hx-post="{{ path('message.create') }}" 
-                                        hx-ext="json-enc"
-                                        hx-vals='js:{"conversationId": {{ conversation.id }}, "content": document.querySelector("#content").value}'>
-                                    Envoyer
-                                </button>
+                                    hx-post="{{ path('message.create') }}" 
+                                    hx-ext="json-enc"
+                                    hx-swap="none" {# Empêche HTMX de remplacer le bouton par la réponse du serveur #}
+                                    hx-vals='js:{"conversationId": {{ conversation.id }}, "content": document.querySelector("#content").value}'>
+                                Envoyer
+                            </button>
                             </div>
                         </div>
                     {% else %}
