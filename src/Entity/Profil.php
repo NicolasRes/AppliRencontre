@@ -43,6 +43,10 @@ class Profil
     #[ORM\Column(length: 255)]
     private ?string $prenom = null;
 
+    #[ORM\OneToOne(inversedBy: 'lienProfil', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?PhotoProfil $photoProfil = null;
+
     public function __construct()
     {
         $this->photoProfils = new ArrayCollection();
@@ -163,6 +167,18 @@ class Profil
     public function setPrenom(?string $prenom): static
     {
         $this->prenom = $prenom;
+
+        return $this;
+    }
+
+    public function getPhotoProfil(): ?PhotoProfil
+    {
+        return $this->photoProfil;
+    }
+
+    public function setPhotoProfil(PhotoProfil $photoProfil): static
+    {
+        $this->photoProfil = $photoProfil;
 
         return $this;
     }
