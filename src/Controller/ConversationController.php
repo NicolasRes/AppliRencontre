@@ -36,8 +36,20 @@ final class ConversationController extends AbstractController {
         /** @var Utilisateur $user */
         $user = $this->getUser();
 
-        $conversations = $user->getConversations();
-        $users = $this->utilisateurRepository->findMatchedUsers($user);;
+        // On récupère les conversations et on filtre celles qui auraient un participant corrompu
+        $conversations = $user->getConversations()->filter(function(Conversation $conv) {
+            foreach ($conv->getParticipants() as $participant) {
+                // Si Doctrine n'arrive pas à charger le pseudo, c'est un fantôme
+                try {
+                    $participant->getPseudo();
+                } catch (\Exception $e) {
+                    return false; 
+                }
+            }
+            return true;
+        });
+
+        $users = $this->utilisateurRepository->findMatchedUsers($user);
 
         return $this->render('conversation/chat.html.twig', [
             'users' => $users,
