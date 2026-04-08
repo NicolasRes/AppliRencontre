@@ -11,7 +11,7 @@
 
     <img class="profile-avatar"
          src="{{ profile.utilisateur.imageIdentite
-         ? asset('images/' ~ profile.utilisateur.imageIdentite)
+         ? asset('uploads/identites/' ~ profile.utilisateur.imageIdentite)
          : asset('images/PlaceHolderProfil.jpg') }}"
          alt="Photo">
 
@@ -36,5 +36,3 @@
             {{ profile.presentation ?? 'Aucune présentation pour le moment.' }}
         </p>
     </div>
-
-</div>

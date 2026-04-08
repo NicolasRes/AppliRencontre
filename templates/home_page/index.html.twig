@@ -17,7 +17,7 @@
                 {% if profil is defined and profil is not null %}
 
                     <img class="profile-img"
-                         src="{{ profil.utilisateur.imageIdentite ? asset('images/' ~ profil.utilisateur.imageIdentite) : asset('images/PlaceHolderProfil.jpg') }}"
+                         src="{{ profil.utilisateur.imageIdentite ? asset('uploads/identites/' ~ profil.utilisateur.imageIdentite) : asset('images/PlaceHolderProfil.jpg') }}"
                          alt="Profil de {{ profil.prenom | default("l'utilisateur") }}">
 
                     <div class="report">
