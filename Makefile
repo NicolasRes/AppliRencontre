@@ -6,7 +6,7 @@ CADDYFILE=./bin/dev.Caddyfile
 
 start:
 	@echo "🚀 Starting Symfony..."
-	symfony server:start --no-tls -d
+	symfony server:start --no-tls
 
 	@echo "🟡 Starting Mercure..."
 
@@ -20,7 +20,7 @@ endif
 
 stop:
 	symfony server:stop
-	pkill -f mercure || true # Si la commande échoue, makefile ignore l'erreur et ne s'arrête pas
+	taskkill //IM mercure.exe //F || true # Si la commande échoue, makefile ignore l'erreur et ne s'arrête pas
 
 check:
 	@echo "━━━━━━━━━━━━━━━━━━━━━━"
