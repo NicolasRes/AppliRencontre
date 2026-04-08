@@ -74,7 +74,7 @@ final class HomePageController extends AbstractController
                 $notifCible = new Notification();
                 $notifCible->setUtilisateur($cible);
                 $notifCible->setContenu("Nouveau match avec " . substr($user->getPseudo(), 0, 20) . " !");
-                $notifCible->setType(1); // Type 1 pour match
+                $notifCible->setType(2); // Type 2 pour match
                 $notifCible->setLu(false);
                 $em->persist($notifCible);
 
