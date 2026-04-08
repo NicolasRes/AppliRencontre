@@ -19,9 +19,6 @@ class PhotoProfil
     #[ORM\ManyToOne(inversedBy: 'photoProfils')]
     private ?Profil $profil = null;
 
-    #[ORM\OneToOne(mappedBy: 'photoProfil', cascade: ['persist', 'remove'])]
-    private ?Profil $lienProfil = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -47,23 +44,6 @@ class PhotoProfil
     public function setProfil(?Profil $profil): static
     {
         $this->profil = $profil;
-
-        return $this;
-    }
-
-    public function getLienProfil(): ?Profil
-    {
-        return $this->lienProfil;
-    }
-
-    public function setLienProfil(Profil $lienProfil): static
-    {
-        // set the owning side of the relation if necessary
-        if ($lienProfil->getPhotoProfil() !== $this) {
-            $lienProfil->setPhotoProfil($this);
-        }
-
-        $this->lienProfil = $lienProfil;
 
         return $this;
     }
