@@ -10,7 +10,6 @@
 <div class="app-body-reset">
     <div id="date-app-container">
         <aside class="sidebar">
-            <h1 class="tindr-logo">Tindr</h1>
             {{ include('partials/_header_app.html.twig') }}
         </aside>
         <div class="auth-container">
@@ -44,6 +43,20 @@
                     {{ form_widget(formulaire.presentation) }}
                     {{ form_errors(formulaire.presentation) }}
                 </div>
+                <div class="form-group">
+                    {{ form_label(formulaire.photoProfils) }}
+                    {{ form_widget(formulaire.photoProfils) }}
+                    {{ form_errors(formulaire.photoProfils) }}
+                </div>
+                {% if profil.photoProfils is not empty %}
+                    <h4>Mes photos :</h4>
+                    {% for photo in profil.photoProfils %}
+                        <div style="display: inline;">
+                            <img src="{{ asset('uploads/identites/' ~ photo.lienPhoto) }}" width="100">
+                            <a href="{{ path('app_photo_delete', {id: photo.id}) }}" onclick="return confirm('Supprimer cette photo ?')">❌</a>
+                        </div>
+                    {% endfor %}
+                {% endif %}
                 <div class="form-group">
                     <input type="submit" value="Valider">
                 </div>

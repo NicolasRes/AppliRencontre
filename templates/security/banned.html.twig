@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Compte Suspendu - Tindr{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+{% endblock %}
+
+{% block body %}
+{# On reprend le fond dégradé signature de l'application #}
+<div style="display: flex; align-items: center; justify-content: center; height: 100vh; width: 100vw; background: linear-gradient(to bottom right, #fbd3ae, #f3b1c3); margin: 0; padding: 0; font-family: Lucida, sans-serif;">
+
+    {# La carte blanche au centre #}
+    <div style="background: white; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); padding: 50px 40px; text-align: center; max-width: 450px; width: 90%;">
+
+        <div style="font-size: 4.5rem; margin-bottom: 15px;">
+            🚫
+        </div>
+
+        <h1 style="color: #ed3692; margin-bottom: 20px; font-weight: 900; letter-spacing: -1px; margin-top: 0;">
+            Compte Suspendu
+        </h1>
+
+        <p style="color: #444; font-size: 1.1rem; line-height: 1.5; margin-bottom: 30px;">
+            Suite à plusieurs <strong>signalements</strong> de la part de notre communauté et après vérification par notre équipe de modération, votre compte a été banni définitivement.
+        </p>
+
+        <div style="background: #fff1f5; padding: 15px; border-left: 4px solid #ed3692; border-radius: 5px; margin-bottom: 40px; text-align: left; font-size: 0.9rem; color: #555;">
+            Chez Tindr, nous prenons le respect et la sécurité de nos membres très au sérieux. Les comportements inappropriés ou irrespectueux vont à l'encontre de nos conditions d'utilisation.
+        </div>
+
+        {# Bouton de déconnexion obligatoire pour sortir de la boucle #}
+        <a href="{{ path('app_logout') }}" class="btn-modern" style="margin: 0 auto;">
+            Quitter l'application
+        </a>
+
+        <p style="margin-top: 25px; font-size: 0.85rem; color: #999;">
+            Si vous pensez qu'il s'agit d'une erreur, contactez <br>
+            <a href="mailto:moderation@tindr.fr" style="color: #ed3692; text-decoration: none; font-weight: bold;">moderation@tindr.fr</a>.
+        </p>
+
+    </div>
+
+</div>
+
+<style>
+    /* Reprise du bouton stylisé de ta page d'accueil */
+    .btn-modern {
+        background: #ed3692;
+        color: white;
+        padding: 15px 30px;
+        border-radius: 100px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1rem;
+        box-shadow: 0 10px 20px rgba(237, 54, 146, 0.3);
+        transition: all 0.3s ease;
+        border: none;
+        display: inline-block;
+    }
+
+    .btn-modern:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(237, 54, 146, 0.4);
+        filter: brightness(1.1);
+    }
+</style>
+{% endblock %}

@@ -36,27 +36,49 @@ final class HomePageModerateurController extends AbstractController
             ['dateS' => 'ASC']
         );
 
+        $conversationCommune = null;
+        if (!empty($signalements)) {
+            $premierSignalement = $signalements[0];
+            $auteur = $premierSignalement->getAuteur();
+            $cible = $premierSignalement->getCible();
+
+            // On cherche la conversation commune aux deux participants
+            foreach ($auteur->getConversations() as $conv) {
+                if ($conv->getParticipants()->contains($cible)) {
+                    $conversationCommune = $conv;
+                    break;
+                }
+            }
+        }
+
         return $this->render('home_page_moderateur/index.html.twig', [
             'signalements' => $signalements,
+            'conversation' => $conversationCommune,
         ]);
     }
 
     #[Route('/moderateur/signalement/{id}/ignorer', name: 'app_moderateur_ignorer')]
     public function ignorer(Signalement $signalement, EntityManagerInterface $em): Response
     {
-        $signalement->setStatut(1);
+        // On supprime directement la ligne du signalement de la BDD
+        $em->remove($signalement);
         $em->flush();
 
-        $this->addFlash('success', 'Le signalement a été ignoré.');
+        $this->addFlash('success', 'Le signalement a été ignoré et supprimé de la base.');
         return $this->redirectToRoute('app_moderateur_signalements');
     }
 
     #[Route('/moderateur/signalement/{id}/bannir', name: 'app_moderateur_bannir')]
     public function bannir(Signalement $signalement, EntityManagerInterface $em): Response
     {
+        // 1. On récupère la personne signalée
         $cible = $signalement->getCible();
-        $cible->setStatus(Utilisateur::STATUS_REJECTED);
-        $signalement->setStatut(1);
+        
+        // 2. On change son statut pour le nouveau statut BANNED
+        $cible->setStatus(Utilisateur::STATUS_BANNED);
+        
+        // 3. On supprime la ligne du signalement puisqu'il a été traité
+        $em->remove($signalement);
 
         $em->flush();
 

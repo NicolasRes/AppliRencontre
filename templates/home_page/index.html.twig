@@ -7,19 +7,24 @@
 {% block body %}
 <div class="app-body-reset">
     <div id="date-app-container">
-        
+
         <aside class="sidebar">
-            <h1 class="tindr-logo">Tindr</h1>
             {{ include('partials/_header_app.html.twig') }}
         </aside>
 
         <main class="main-content">
             <div class="profile-card">
                 {% if profil is defined and profil is not null %}
-                    
-                    <img class="profile-img" 
-                         src="{{ profil.utilisateur.imageIdentite ? asset('images/' ~ profil.utilisateur.imageIdentite) : asset('images/PlaceHolderProfil.jpg') }}" 
+
+                    <img class="profile-img"
+                         src="{{ profil.utilisateur.imageIdentite ? asset('images/' ~ profil.utilisateur.imageIdentite) : asset('images/PlaceHolderProfil.jpg') }}"
                          alt="Profil de {{ profil.prenom | default("l'utilisateur") }}">
+
+                    <div class="report">
+                        <a href="{{ path('app_report', {'id': profil.utilisateur.id, 'from': 'home'}) }}">
+                            <img src="{{ asset('images/report.png') }}" alt="Bouton report profil">
+                        </a>
+                    </div>
 
                     <div class="profile-info-overlay">
                         <h2 class="profile-name">{{ profil.utilisateur.pseudo }}, {{ profil.age }} ans</h2>
@@ -46,7 +51,7 @@
                 {% endif %}
             </div>
         </main>
-        
+
     </div>
 </div>
 {% endblock %}

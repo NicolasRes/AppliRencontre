@@ -1,0 +1,7 @@
+{# Affichage de l'ensemble des messages d'une conversation #}
+
+{% if conversation %}
+    {% for message in conversation.messages %}
+        {% include 'message/content.html.twig' %}
+    {% endfor %}
+{% endif %}

@@ -13,7 +13,6 @@ body {
     /*background-color: #f1c0cd;*/
     background: linear-gradient(to bottom right, #fbd3ae, #f3b1c3);
     font-family: Lucida, sans-serif;
-    display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
@@ -88,7 +87,10 @@ button[type=submit] {
 .search-block input {
     margin-left: 10px;
     margin-right: 10px;
+}
 
+.flash-message {
+    animation: slideIn 0.3s ease-out;
 }
 
 .form-control { width: 90%; padding: 8px; margin-top: 5px; }

@@ -63,6 +63,10 @@ public function onAuthenticationSuccess(Request $request, TokenInterface $token,
         elseif ($user->isRejected()) {
             return new RedirectResponse($this->urlGenerator->generate('app_register'));
         }
+        // Utilisateur banni
+        elseif ($user->isBanned()) {
+                return new RedirectResponse($this->urlGenerator->generate('home'));
+        }
         // Redirection vers la homepage si validé
         elseif ($user->isApproved()) {
             return new RedirectResponse($this->urlGenerator->generate('app_home_page'));

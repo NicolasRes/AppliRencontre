@@ -4,35 +4,36 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}RencontreApp{% endblock %}</title>
-        
+
         {% block stylesheets %}
             <link rel="stylesheet" href="{{ asset('css/style.css') }}">
         {% endblock %}
 
-        {% block javascripts %}
-            {# {% block importmap %}{{ importmap('app') }}{% endblock %} #}
-        {% endblock %}
+        <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/htmx-ext-sse@2.2.4" integrity="sha384-A986SAtodyH8eg8x8irJnYUk7i9inVQqYigD6qZ9evobksGNIXfeFvDwLSHcp31N" crossorigin="anonymous"></script>
 
-        <style>
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        </style>
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
     </head>
 
-    {# templates/base.html.twig #}
-    <body>
+    <body hx-ext="sse">
+        {# Permet de fermer la carte de profil en cliquant en dehors de la carte #}
+        <div id="profile-overlay" onclick="this.innerHTML=''"></div>
+
+        {% block navbar %}{% endblock %}
+
         <div class="main-content">
             {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                <div style="padding: 15px 25px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); font-family: sans-serif; font-weight: bold; animation: slideIn 0.3s ease-out;
-                            background-color: {{ label == 'success' ? '#d4edda' : (label == 'warning' ? '#fff3cd' : '#f8d7da') }}; 
-                            color: {{ label == 'success' ? '#155724' : (label == 'warning' ? '#856404' : '#721c24') }};">
-                    {{ message }}
-                </div>
+                {% for message in messages %}
+                    <div style="padding: 15px 25px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); font-family: sans-serif; font-weight: bold; animation: slideIn 0.3s ease-out;
+                                background-color: {{ label == 'success' ? '#d4edda' : (label == 'warning' ? '#fff3cd' : '#f8d7da') }};
+                                color: {{ label == 'success' ? '#155724' : (label == 'warning' ? '#856404' : '#721c24') }};">
+                        {{ message }}
+                    </div>
+                {% endfor %}
             {% endfor %}
-            {% endfor %}
+            
             {% block body %}{% endblock %}
         </div>
     </body>

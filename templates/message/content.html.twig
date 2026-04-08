@@ -1,0 +1,19 @@
+{# Affichage du contenu d'un message #}
+
+{% if app.user.id == message.author.id %}
+    <div class="d-flex justify-content-end mb-2">
+        <div class="message bg-primary small p-2 me-3 mb-2 text-white rounded-3 text-start"
+           data-bs-toggle="tooltip"
+           data-bs-title="{{ message.createdAt|date('d/m/Y H:i')}}">
+            {{ message.content }}
+        </div>
+    </div>
+    {% else %}
+    <div class="d-flex justify-content-start mb-2">
+        <div class="message bg-secondary message-end small p-2 me-3 mb-1 text-white rounded-3"
+           data-bs-toggle="tooltip"
+           data-bs-title="{{ message.createdAt|date('d/m/Y H:i') }}">
+            {{ message.content }}
+        </div>
+    </div>
+{% endif %}
