@@ -1,9 +1,17 @@
+
+
 # Tableau d'avancement
 https://docs.google.com/document/d/1u32_x2NByHAUZhRkqmQCCkhgpQBoKV2wL1orQeiDycY/edit?pli=1&tab=t.0#heading=h.6jynaot9cbnq
 
 # Site en ligne
 https://projetpso.fr
 
+# Tests users
+Utilisateur : user1@tindr.fr (fonctionne avec 1-5)
+MDP : user1
+
+Utilisateur : admin1@tindr.fr (fonctionne avec 1-5)
+MDP : admin1
 
 # Guide d'installation du projet
 
